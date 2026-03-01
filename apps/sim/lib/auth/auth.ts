@@ -3295,6 +3295,35 @@ export async function getSession() {
     return createAnonymousSession()
   }
 
+  // Try Enduria JWT first (cookie-based or Authorization header)
+  const { getEnduriaUser } = await import('@/lib/auth/enduria-jwt')
+  const enduriaUser = await getEnduriaUser()
+  if (enduriaUser) {
+    const now = new Date()
+    return {
+      user: {
+        id: enduriaUser.userId,
+        name: enduriaUser.name || `${enduriaUser.firstName || ''} ${enduriaUser.lastName || ''}`.trim() || enduriaUser.email,
+        email: enduriaUser.email,
+        emailVerified: true,
+        image: null,
+        createdAt: now,
+        updatedAt: now,
+      },
+      session: {
+        id: `enduria-${enduriaUser.userId}`,
+        userId: enduriaUser.userId,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        createdAt: now,
+        updatedAt: now,
+        token: 'enduria-session',
+        ipAddress: null,
+        userAgent: null,
+      },
+    }
+  }
+
+  // Fall back to Better Auth session
   const hdrs = await headers()
   return await auth.api.getSession({
     headers: hdrs,

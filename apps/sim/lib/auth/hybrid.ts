@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server'
 import { authenticateApiKeyFromHeader, updateApiKeyLastUsed } from '@/lib/api-key/service'
 import { getSession } from '@/lib/auth'
 import { verifyInternalToken } from '@/lib/auth/internal'
+import { validateInternalApiSecret } from '@/lib/auth/internal-api'
 
 const logger = createLogger('HybridAuth')
 
@@ -14,6 +15,42 @@ export interface AuthResult {
   authType?: 'session' | 'api_key' | 'internal_jwt'
   apiKeyType?: 'personal' | 'workspace'
   error?: string
+}
+
+/**
+ * Try to authenticate via Enduria proxy headers.
+ * The Enduria reverse proxy sets x-enduria-* headers after JWT validation.
+ * Also handles the internal API secret pattern (x-internal-api-secret + x-org-id).
+ */
+function tryEnduriaProxyAuth(request: NextRequest): AuthResult | null {
+  // Pattern 1: Enduria proxy headers (set by middleware after JWT validation)
+  const orgId = request.headers.get('x-enduria-org-id')
+  const userId = request.headers.get('x-enduria-user-id')
+  const email = request.headers.get('x-enduria-email')
+
+  if (orgId && userId) {
+    return {
+      success: true,
+      userId,
+      userName: email || undefined,
+      userEmail: email || undefined,
+      authType: 'session', // Treat as session from the route's perspective
+    }
+  }
+
+  // Pattern 2: Internal API secret with org context
+  const internalSecret = request.headers.get('x-internal-api-secret')
+  const internalUserId = request.headers.get('x-user-id')
+
+  if (internalSecret && validateInternalApiSecret(internalSecret)) {
+    return {
+      success: true,
+      userId: internalUserId || undefined,
+      authType: 'internal_jwt',
+    }
+  }
+
+  return null
 }
 
 /**
@@ -70,6 +107,17 @@ export async function checkInternalAuth(
   options: { requireWorkflowId?: boolean } = {}
 ): Promise<AuthResult> {
   try {
+    // Check for Enduria internal API secret first
+    const internalSecret = request.headers.get('x-internal-api-secret')
+    if (internalSecret && validateInternalApiSecret(internalSecret)) {
+      const userId = request.headers.get('x-user-id') || request.headers.get('x-enduria-user-id')
+      return {
+        success: true,
+        userId: userId || undefined,
+        authType: 'internal_jwt',
+      }
+    }
+
     const authHeader = request.headers.get('authorization')
 
     const apiKeyHeader = request.headers.get('x-api-key')
@@ -118,6 +166,12 @@ export async function checkSessionOrInternalAuth(
   options: { requireWorkflowId?: boolean } = {}
 ): Promise<AuthResult> {
   try {
+    // 0. Check for Enduria proxy headers first
+    const enduriaAuth = tryEnduriaProxyAuth(request)
+    if (enduriaAuth) {
+      return enduriaAuth
+    }
+
     // 1. Reject API keys first
     const apiKeyHeader = request.headers.get('x-api-key')
     if (apiKeyHeader) {
@@ -138,7 +192,7 @@ export async function checkSessionOrInternalAuth(
       }
     }
 
-    // 3. Try session auth (for web UI)
+    // 3. Try session auth (for web UI) - includes Enduria JWT cookie check
     const session = await getSession()
     if (session?.user?.id) {
       return {
@@ -176,6 +230,12 @@ export async function checkHybridAuth(
   options: { requireWorkflowId?: boolean } = {}
 ): Promise<AuthResult> {
   try {
+    // 0. Check for Enduria proxy headers first
+    const enduriaAuth = tryEnduriaProxyAuth(request)
+    if (enduriaAuth) {
+      return enduriaAuth
+    }
+
     // 1. Check for internal JWT token first
     const authHeader = request.headers.get('authorization')
     if (authHeader?.startsWith('Bearer ')) {
@@ -187,7 +247,7 @@ export async function checkHybridAuth(
       }
     }
 
-    // 2. Try session auth (for web UI)
+    // 2. Try session auth (for web UI) - includes Enduria JWT cookie check
     const session = await getSession()
     if (session?.user?.id) {
       return {
