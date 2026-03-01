@@ -7,10 +7,21 @@
 #   docker compose -f docker-compose.enduria.yml up -d
 #
 # Services:
-#   sim       - Next.js app (port 3000)
-#   realtime  - WebSocket server (port 3002)
+#   sim        - Next.js app (port 3000)
+#   realtime   - WebSocket server (port 3002)
 #   migrations - Runs db:migrate then exits
-#   db        - PostgreSQL 17 + pgvector
+#   db         - PostgreSQL 17 + pgvector
+#   redis      - Redis 7 for async job queue and realtime pub/sub
+#
+# Background Jobs:
+#   SIM supports three async job backends (fallback chain):
+#     1. Trigger.dev  - Full-featured, requires separate self-hosted or cloud instance
+#     2. Redis         - Built-in BullMQ-style queue (default when Redis is available)
+#     3. Database      - Polling-based fallback (no extra infra needed)
+#
+#   Redis is included in this stack. To use Trigger.dev instead, set
+#   TRIGGER_DEV_ENABLED=true and provide TRIGGER_SECRET_KEY / TRIGGER_PROJECT_ID.
+#   See "Trigger.dev Self-Hosting" section in .env.enduria.example for details.
 
 services:
   sim:
@@ -36,14 +47,20 @@ services:
       - API_ENCRYPTION_KEY=${API_ENCRYPTION_KEY:-${ENCRYPTION_KEY}}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
-      - REDIS_URL=${REDIS_URL:-}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
       - DISABLE_AUTH=${DISABLE_AUTH:-false}
+      # Trigger.dev (optional — leave unset to use Redis or database backend)
+      - TRIGGER_DEV_ENABLED=${TRIGGER_DEV_ENABLED:-false}
+      - TRIGGER_PROJECT_ID=${TRIGGER_PROJECT_ID:-}
+      - TRIGGER_SECRET_KEY=${TRIGGER_SECRET_KEY:-}
     depends_on:
       db:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
       realtime:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
@@ -69,9 +86,11 @@ services:
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - INTERNAL_API_SECRET=${INTERNAL_API_SECRET}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-      - REDIS_URL=${REDIS_URL:-}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
@@ -111,5 +130,20 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    command: ['redis-server', '--appendonly', 'yes', '--maxmemory', '256mb', '--maxmemory-policy', 'allkeys-lru']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
 volumes:
   sim_data:
+  redis_data:
