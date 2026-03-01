@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { SIM_AGENT_API_URL } from '@/lib/copilot/constants'
+import { isCopilotBackendAvailable, SIM_AGENT_API_URL } from '@/lib/copilot/constants'
 import { env } from '@/lib/core/config/env'
 
 export async function GET(request: NextRequest) {
@@ -8,6 +8,11 @@ export async function GET(request: NextRequest) {
     const session = await getSession()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // When no managed copilot backend, return empty keys list
+    if (!isCopilotBackendAvailable()) {
+      return NextResponse.json({ keys: [] }, { status: 200 })
     }
 
     const userId = session.user.id
@@ -57,6 +62,14 @@ export async function DELETE(request: NextRequest) {
     const session = await getSession()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // When no managed copilot backend, key management is not available
+    if (!isCopilotBackendAvailable()) {
+      return NextResponse.json(
+        { error: 'Key management not available without copilot backend' },
+        { status: 501 }
+      )
     }
 
     const userId = session.user.id

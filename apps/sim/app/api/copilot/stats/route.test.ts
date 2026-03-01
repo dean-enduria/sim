@@ -34,6 +34,8 @@ vi.mock('@/lib/copilot/request-helpers', () => ({
 vi.mock('@/lib/copilot/constants', () => ({
   SIM_AGENT_API_URL_DEFAULT: 'https://agent.sim.example.com',
   SIM_AGENT_API_URL: 'https://agent.sim.example.com',
+  isCopilotBackendAvailable: () => true,
+  getDirectProviderKey: () => null,
 }))
 
 vi.mock('@/lib/core/config/env', () => ({

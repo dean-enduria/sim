@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
-import { SIM_AGENT_API_URL } from '@/lib/copilot/constants'
+import { isCopilotBackendAvailable, SIM_AGENT_API_URL } from '@/lib/copilot/constants'
 import { env } from '@/lib/core/config/env'
 
 const GenerateApiKeySchema = z.object({
@@ -13,6 +13,14 @@ export async function POST(req: NextRequest) {
     const session = await getSession()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // When no managed copilot backend, key generation is not available
+    if (!isCopilotBackendAvailable()) {
+      return NextResponse.json(
+        { error: 'Key generation not available without copilot backend' },
+        { status: 501 }
+      )
     }
 
     const userId = session.user.id

@@ -10,6 +10,34 @@ export const SIM_AGENT_API_URL =
     ? rawAgentUrl
     : SIM_AGENT_API_URL_DEFAULT
 
+/**
+ * Whether the managed copilot backend is available.
+ * Returns true only when COPILOT_API_KEY is set (required to authenticate
+ * with the hosted Sim Agent service). When false, the copilot falls back to
+ * direct AI provider calls using OPENAI_API_KEY or ANTHROPIC_API_KEY_1.
+ */
+export function isCopilotBackendAvailable(): boolean {
+  return !!env.COPILOT_API_KEY
+}
+
+/**
+ * Get the first available AI provider API key for direct calls.
+ * Prefers OpenAI, falls back to Anthropic.
+ * Returns { provider, apiKey } or null if none configured.
+ */
+export function getDirectProviderKey(): { provider: 'openai' | 'anthropic'; apiKey: string } | null {
+  if (env.OPENAI_API_KEY) {
+    return { provider: 'openai', apiKey: env.OPENAI_API_KEY }
+  }
+  if (env.OPENAI_API_KEY_1) {
+    return { provider: 'openai', apiKey: env.OPENAI_API_KEY_1 }
+  }
+  if (env.ANTHROPIC_API_KEY_1) {
+    return { provider: 'anthropic', apiKey: env.ANTHROPIC_API_KEY_1 }
+  }
+  return null
+}
+
 // ---------------------------------------------------------------------------
 // Redis key prefixes
 // ---------------------------------------------------------------------------

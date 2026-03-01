@@ -1,5 +1,5 @@
 import { createLogger } from '@sim/logger'
-import { SIM_AGENT_API_URL } from '@/lib/copilot/constants'
+import { isCopilotBackendAvailable, SIM_AGENT_API_URL } from '@/lib/copilot/constants'
 import { prepareExecutionContext } from '@/lib/copilot/orchestrator/tool-executor'
 import type {
   ExecutionContext,
@@ -40,6 +40,17 @@ export async function orchestrateSubagentStream(
   requestPayload: Record<string, unknown>,
   options: SubagentOrchestratorOptions
 ): Promise<SubagentOrchestratorResult> {
+  // When no managed copilot backend, subagent orchestration is not available
+  if (!isCopilotBackendAvailable()) {
+    return {
+      success: false,
+      content: '',
+      toolCalls: [],
+      error:
+        'Subagent orchestration requires the managed copilot backend. Set COPILOT_API_KEY to enable.',
+    }
+  }
+
   const { userId, workflowId, workspaceId } = options
   const execContext = await buildExecutionContext(userId, workflowId, workspaceId)
 

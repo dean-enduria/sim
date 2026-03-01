@@ -28,9 +28,9 @@ export const env = createEnv({
     API_ENCRYPTION_KEY:                    z.string().min(32).optional(),          // Dedicated key for encrypting API keys (optional for OSS)
     INTERNAL_API_SECRET:                   z.string().min(32),                     // Secret for internal API authentication
 
-    // Copilot
-    COPILOT_API_KEY:                       z.string().min(1).optional(),           // Secret for internal sim agent API authentication
-    SIM_AGENT_API_URL:                     z.string().url().optional(),            // URL for internal sim agent API
+    // Copilot (optional — when not set, copilot falls back to direct OPENAI_API_KEY / ANTHROPIC_API_KEY_1 calls)
+    COPILOT_API_KEY:                       z.string().min(1).optional(),           // Secret for managed sim agent API authentication (optional for self-hosted)
+    SIM_AGENT_API_URL:                     z.string().url().optional(),            // URL for managed sim agent API (optional for self-hosted)
     AGENT_INDEXER_URL:                     z.string().url().optional(),            // URL for agent training data indexer
     AGENT_INDEXER_API_KEY:                 z.string().min(1).optional(),           // API key for agent indexer authentication
     COPILOT_STREAM_TTL_SECONDS:            z.number().optional(),                  // Redis TTL for copilot SSE buffer

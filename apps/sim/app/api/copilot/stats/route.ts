@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { SIM_AGENT_API_URL } from '@/lib/copilot/constants'
+import { isCopilotBackendAvailable, SIM_AGENT_API_URL } from '@/lib/copilot/constants'
 import {
   authenticateCopilotRequestSessionOnly,
   createBadRequestResponse,
@@ -28,6 +28,11 @@ export async function POST(req: NextRequest) {
     const parsed = BodySchema.safeParse(json)
     if (!parsed.success) {
       return createBadRequestResponse('Invalid request body for copilot stats')
+    }
+
+    // When no managed copilot backend, silently accept stats (no-op)
+    if (!isCopilotBackendAvailable()) {
+      return NextResponse.json({ success: true })
     }
 
     const { messageId, diffCreated, diffAccepted } = parsed.data as any

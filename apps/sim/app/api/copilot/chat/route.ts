@@ -8,7 +8,11 @@ import { getSession } from '@/lib/auth'
 import { buildConversationHistory } from '@/lib/copilot/chat-context'
 import { resolveOrCreateChat } from '@/lib/copilot/chat-lifecycle'
 import { buildCopilotRequestPayload } from '@/lib/copilot/chat-payload'
-import { SIM_AGENT_API_URL } from '@/lib/copilot/constants'
+import {
+  getDirectProviderKey,
+  isCopilotBackendAvailable,
+  SIM_AGENT_API_URL,
+} from '@/lib/copilot/constants'
 import { COPILOT_REQUEST_MODES } from '@/lib/copilot/models'
 import { orchestrateCopilotStream } from '@/lib/copilot/orchestrator'
 import {
@@ -28,6 +32,66 @@ import { resolveWorkflowIdForUser } from '@/lib/workflows/utils'
 
 const logger = createLogger('CopilotChatAPI')
 
+/**
+ * Generate a chat title using direct AI provider calls (no managed backend needed).
+ */
+async function generateTitleDirect(message: string): Promise<string | null> {
+  const providerKey = getDirectProviderKey()
+  if (!providerKey) return null
+
+  try {
+    if (providerKey.provider === 'openai') {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${providerKey.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'Generate a short, concise title (max 6 words) for a chat that starts with the following message. Return only the title, nothing else.',
+            },
+            { role: 'user', content: message },
+          ],
+          max_tokens: 30,
+        }),
+      })
+      if (!response.ok) return null
+      const data = await response.json()
+      const title = data.choices?.[0]?.message?.content?.trim()
+      return title || null
+    }
+
+    // Anthropic
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': providerKey.apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-3-5-haiku-20241022',
+        max_tokens: 30,
+        system:
+          'Generate a short, concise title (max 6 words) for a chat that starts with the following message. Return only the title, nothing else.',
+        messages: [{ role: 'user', content: message }],
+      }),
+    })
+    if (!response.ok) return null
+    const data = await response.json()
+    const title = data.content?.[0]?.text?.trim()
+    return title || null
+  } catch (error) {
+    logger.error('Error generating chat title via direct provider:', error)
+    return null
+  }
+}
+
 async function requestChatTitleFromCopilot(params: {
   message: string
   model: string
@@ -35,6 +99,11 @@ async function requestChatTitleFromCopilot(params: {
 }): Promise<string | null> {
   const { message, model, provider } = params
   if (!message || !model) return null
+
+  // When no managed copilot backend, generate title directly via AI provider
+  if (!isCopilotBackendAvailable()) {
+    return generateTitleDirect(message)
+  }
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

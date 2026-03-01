@@ -2,7 +2,7 @@ import { db } from '@sim/db'
 import { customTools, workflow } from '@sim/db/schema'
 import { createLogger } from '@sim/logger'
 import { and, desc, eq, isNull, or } from 'drizzle-orm'
-import { SIM_AGENT_API_URL } from '@/lib/copilot/constants'
+import { isCopilotBackendAvailable, SIM_AGENT_API_URL } from '@/lib/copilot/constants'
 import type {
   ExecutionContext,
   ToolCallResult,
@@ -521,6 +521,7 @@ const MARK_COMPLETE_TIMEOUT_MS = 30_000
 
 /**
  * Notify the copilot backend that a tool has completed.
+ * When no managed copilot backend is available, this is a no-op.
  */
 export async function markToolComplete(
   toolCallId: string,
@@ -529,6 +530,11 @@ export async function markToolComplete(
   message?: unknown,
   data?: unknown
 ): Promise<boolean> {
+  // When no managed copilot backend, skip the notification
+  if (!isCopilotBackendAvailable()) {
+    return true
+  }
+
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), MARK_COMPLETE_TIMEOUT_MS)

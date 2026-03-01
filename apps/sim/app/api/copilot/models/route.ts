@@ -1,6 +1,6 @@
 import { createLogger } from '@sim/logger'
 import { type NextRequest, NextResponse } from 'next/server'
-import { SIM_AGENT_API_URL } from '@/lib/copilot/constants'
+import { isCopilotBackendAvailable, SIM_AGENT_API_URL } from '@/lib/copilot/constants'
 import { authenticateCopilotRequestSessionOnly } from '@/lib/copilot/request-helpers'
 import type { AvailableModel } from '@/lib/copilot/types'
 import { env } from '@/lib/core/config/env'
@@ -23,10 +23,42 @@ function isRawAvailableModel(item: unknown): item is RawAvailableModel {
   )
 }
 
+/**
+ * Default models available when using direct AI provider keys
+ * (no managed copilot backend).
+ */
+function getDirectProviderModels(): AvailableModel[] {
+  const models: AvailableModel[] = []
+
+  if (env.OPENAI_API_KEY || env.OPENAI_API_KEY_1) {
+    models.push(
+      { id: 'gpt-4o', friendlyName: 'GPT-4o', provider: 'openai' },
+      { id: 'gpt-4o-mini', friendlyName: 'GPT-4o Mini', provider: 'openai' },
+      { id: 'gpt-4-turbo', friendlyName: 'GPT-4 Turbo', provider: 'openai' }
+    )
+  }
+
+  if (env.ANTHROPIC_API_KEY_1) {
+    models.push(
+      { id: 'claude-opus-4-20250514', friendlyName: 'Claude Opus 4', provider: 'anthropic' },
+      { id: 'claude-sonnet-4-20250514', friendlyName: 'Claude Sonnet 4', provider: 'anthropic' },
+      { id: 'claude-3-5-haiku-20241022', friendlyName: 'Claude 3.5 Haiku', provider: 'anthropic' }
+    )
+  }
+
+  return models
+}
+
 export async function GET(_req: NextRequest) {
   const { userId, isAuthenticated } = await authenticateCopilotRequestSessionOnly()
   if (!isAuthenticated || !userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // When no managed copilot backend, return models based on configured provider keys
+  if (!isCopilotBackendAvailable()) {
+    const models = getDirectProviderModels()
+    return NextResponse.json({ success: true, models })
   }
 
   const headers: Record<string, string> = {
