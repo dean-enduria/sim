@@ -64,7 +64,7 @@ async function cleanupOrganizationSubscription(organizationId: string): Promise<
   organizationDeleted: boolean
 }> {
   // Check if other active subscriptions still point to this org
-  // Note: The subscription being deleted is already marked as 'canceled' by better-auth
+  // Note: The subscription being deleted is already marked as 'canceled'
   // before this handler runs, so we only find truly active ones
   if (await hasActiveSubscription(organizationId)) {
     logger.info('Skipping organization deletion - other active subscriptions exist', {
@@ -326,7 +326,6 @@ export async function handleSubscriptionDeleted(subscription: {
       membersSynced = 1
     }
 
-    // Note: better-auth's Stripe plugin already updates status to 'canceled' before calling this handler
     // We handle overage billing, usage reset, Pro restoration, limit syncing, and org cleanup
 
     logger.info('Successfully processed subscription cancellation', {

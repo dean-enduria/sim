@@ -4,8 +4,6 @@ import type React from 'react'
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
-import { client } from '@/lib/auth/auth-client'
-import { extractSessionDataFromAuthClientResult } from '@/lib/auth/session-response'
 
 export type AppSession = {
   user: {
@@ -39,15 +37,19 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<Error | null>(null)
   const queryClient = useQueryClient()
 
-  const loadSession = useCallback(async (bypassCache = false) => {
+  const loadSession = useCallback(async (_bypassCache = false) => {
     try {
       setIsPending(true)
       setError(null)
-      const res = bypassCache
-        ? await client.getSession({ query: { disableCookieCache: true } })
-        : await client.getSession()
-      const session = extractSessionDataFromAuthClientResult(res) as AppSession
-      setData(session)
+
+      // Fetch session from our API endpoint which validates Enduria JWT
+      const res = await fetch('/api/session')
+      if (res.ok) {
+        const session = await res.json()
+        setData(session)
+      } else {
+        setData(null)
+      }
     } catch (e) {
       setError(e instanceof Error ? e : new Error('Failed to fetch session'))
     } finally {

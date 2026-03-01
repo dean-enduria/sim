@@ -53,7 +53,7 @@ export function CancelSubscription({ subscription, subscriptionData }: CancelSub
   const [error, setError] = useState<string | null>(null)
 
   const { data: session } = useSession()
-  const betterAuthSubscription = useSubscription()
+  const authSubscription = useSubscription()
   const { data: orgsData } = useOrganizations()
   const { data: subData } = useSubscriptionData()
   const queryClient = useQueryClient()
@@ -98,7 +98,7 @@ export function CancelSubscription({ subscription, subscriptionData }: CancelSub
         activeOrgId,
       })
 
-      if (!betterAuthSubscription.cancel) {
+      if (!authSubscription.cancel) {
         throw new Error('Subscription management not available')
       }
 
@@ -110,11 +110,11 @@ export function CancelSubscription({ subscription, subscriptionData }: CancelSub
         ...(subscriptionId && { subscriptionId }),
       }
 
-      const result = await betterAuthSubscription.cancel(cancelParams)
+      const result = await authSubscription.cancel(cancelParams) as any
 
       if (result && 'error' in result && result.error) {
-        setError(result.error.message || 'Failed to cancel subscription')
-        logger.error('Failed to cancel subscription via Better Auth', { error: result.error })
+        setError(result.error?.message || 'Failed to cancel subscription')
+        logger.error('Failed to cancel subscription', { error: result.error })
       } else {
         logger.info('Redirecting to Stripe Billing Portal for cancellation')
       }
@@ -138,7 +138,7 @@ export function CancelSubscription({ subscription, subscriptionData }: CancelSub
       const activeOrgId = activeOrganization?.id
 
       if (isCancelAtPeriodEnd) {
-        if (!betterAuthSubscription.restore) {
+        if (!authSubscription.restore) {
           throw new Error('Subscription restore not available')
         }
 
@@ -160,7 +160,7 @@ export function CancelSubscription({ subscription, subscriptionData }: CancelSub
           ...(subscriptionId && { subscriptionId }),
         }
 
-        const result = await betterAuthSubscription.restore(restoreParams)
+        const result = await authSubscription.restore(restoreParams)
 
         logger.info('Subscription restored successfully', result)
       }

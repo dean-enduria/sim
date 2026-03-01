@@ -15,7 +15,7 @@ export interface BillingPlan {
 }
 
 /**
- * Get the billing plans configuration for Better Auth Stripe plugin
+ * Get the billing plans configuration
  */
 export function getPlans(): BillingPlan[] {
   return [

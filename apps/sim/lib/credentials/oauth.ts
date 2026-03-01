@@ -3,7 +3,7 @@ import { account, credential, credentialMember } from '@sim/db/schema'
 import { and, eq, inArray, notInArray } from 'drizzle-orm'
 import { getServiceConfigByProviderId } from '@/lib/oauth'
 
-/** Provider IDs that are not real OAuth integrations (e.g. Better Auth's password provider) */
+/** Provider IDs that are not real OAuth integrations (e.g. the password provider) */
 const NON_OAUTH_PROVIDER_IDS = ['credential'] as const
 
 interface SyncWorkspaceOAuthCredentialsForUserParams {

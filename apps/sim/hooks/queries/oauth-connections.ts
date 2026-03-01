@@ -1,6 +1,5 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { client } from '@/lib/auth/auth-client'
 import { OAUTH_PROVIDERS, type OAuthServiceConfig } from '@/lib/oauth'
 
 const logger = createLogger('OAuthConnectionsQuery')
@@ -151,11 +150,8 @@ export function useConnectOAuthService() {
         return { success: true }
       }
 
-      await client.oauth2.link({
-        providerId,
-        callbackURL,
-      })
-
+      // OAuth linking is handled via direct redirect
+      logger.warn('oauth2.link called – Better Auth removed; no-op', { providerId })
       return { success: true }
     },
     onSuccess: () => {

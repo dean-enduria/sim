@@ -17,8 +17,8 @@ export const env = createEnv({
   server: {
     // Core Database & Authentication
     DATABASE_URL:                          z.string().url(),                       // Primary database connection string
-    BETTER_AUTH_URL:                       z.string().url(),                       // Base URL for Better Auth service
-    BETTER_AUTH_SECRET:                    z.string().min(32),                     // Secret key for Better Auth JWT signing
+    BETTER_AUTH_URL:                       z.string().url().optional(),             // Deprecated: was for Better Auth service (removed)
+    BETTER_AUTH_SECRET:                    z.string().min(1).optional(),           // Deprecated: was for Better Auth JWT signing (removed)
     DISABLE_REGISTRATION:                  z.boolean().optional(),                 // Flag to disable new user registration
     EMAIL_PASSWORD_SIGNUP_ENABLED:         z.boolean().optional().default(true),   // Enable email/password authentication (server-side enforcement)
     DISABLE_AUTH:                          z.boolean().optional(),                 // Bypass authentication entirely (self-hosted only, creates anonymous session)

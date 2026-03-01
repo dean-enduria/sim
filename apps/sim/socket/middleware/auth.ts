@@ -1,7 +1,7 @@
 import { createLogger } from '@sim/logger'
 import type { Socket } from 'socket.io'
-import { auth } from '@/lib/auth'
 import { ANONYMOUS_USER, ANONYMOUS_USER_ID } from '@/lib/auth/constants'
+import { validateEnduriaJWT } from '@/lib/auth/enduria-jwt'
 import { isAuthDisabled } from '@/lib/core/config/feature-flags'
 
 const logger = createLogger('SocketAuth')
@@ -48,30 +48,29 @@ export async function authenticateSocket(socket: AuthenticatedSocket, next: (err
       return next(new Error('Authentication required'))
     }
 
-    // Validate one-time token with Better Auth
+    // Validate token as an Enduria JWT
     try {
       logger.debug(`Attempting token validation for socket ${socket.id}`, {
         tokenLength: token?.length || 0,
         origin,
       })
 
-      const session = await auth.api.verifyOneTimeToken({
-        body: {
-          token,
-        },
-      })
+      const enduriaUser = validateEnduriaJWT(token)
 
-      if (!session?.user?.id) {
+      if (!enduriaUser?.userId) {
         logger.warn(`Socket ${socket.id} rejected: Invalid token - no user found`)
         return next(new Error('Invalid session'))
       }
 
       // Store user info in socket for later use
-      socket.userId = session.user.id
-      socket.userName = session.user.name || session.user.email || 'Unknown User'
-      socket.userEmail = session.user.email
-      socket.userImage = session.user.image || null
-      socket.activeOrganizationId = session.session.activeOrganizationId || undefined
+      socket.userId = enduriaUser.userId
+      socket.userName =
+        enduriaUser.name ||
+        `${enduriaUser.firstName || ''} ${enduriaUser.lastName || ''}`.trim() ||
+        enduriaUser.email ||
+        'Unknown User'
+      socket.userEmail = enduriaUser.email
+      socket.userImage = null
 
       next()
     } catch (tokenError) {

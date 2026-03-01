@@ -12,7 +12,6 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@/components/emcn'
-import { client } from '@/lib/auth/auth-client'
 import {
   getProviderIdFromServiceId,
   OAUTH_PROVIDERS,
@@ -421,10 +420,8 @@ export function OAuthRequiredModal({
         return
       }
 
-      await client.oauth2.link({
-        providerId,
-        callbackURL: window.location.href,
-      })
+      // OAuth linking via Better Auth removed; no-op
+      logger.warn('oauth2.link called – Better Auth removed; no-op', { providerId })
       onClose()
     } catch (err) {
       logger.error('Error initiating OAuth flow:', { error: err })

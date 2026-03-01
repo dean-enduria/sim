@@ -5,7 +5,7 @@ export function extractSessionDataFromAuthClientResult(result: unknown): unknown
 
   const record = result as Record<string, unknown>
 
-  // Expected shape from better-auth client: { data: <session> }
+  // Expected shape from auth client: { data: <session> }
   if ('data' in record) {
     return (record as { data?: unknown }).data ?? null
   }
