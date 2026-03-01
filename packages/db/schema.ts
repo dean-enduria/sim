@@ -29,6 +29,9 @@ export const tsvector = customType<{
   },
 })
 
+// Thin mapping table: synced from Enduria's user records.
+// Kept for FK integrity — many workflow tables reference user.id.
+// DEPRECATED billing columns (stripeCustomerId) kept for existing billing code imports.
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -37,10 +40,11 @@ export const user = pgTable('user', {
   image: text('image'),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at').notNull(),
-  stripeCustomerId: text('stripe_customer_id'),
-  isSuperUser: boolean('is_super_user').notNull().default(false),
+  stripeCustomerId: text('stripe_customer_id'), // DEPRECATED: billing
+  isSuperUser: boolean('is_super_user').notNull().default(false), // DEPRECATED: will use Enduria roles
 })
 
+// DEPRECATED: Auth sessions handled by Enduria. Kept as stub for remaining billing imports.
 export const session = pgTable(
   'session',
   {
@@ -54,9 +58,7 @@ export const session = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    activeOrganizationId: text('active_organization_id').references(() => organization.id, {
-      onDelete: 'set null',
-    }),
+    activeOrganizationId: text('active_organization_id'),
   },
   (table) => ({
     userIdIdx: index('session_user_id_idx').on(table.userId),
@@ -64,6 +66,8 @@ export const session = pgTable(
   })
 )
 
+// Kept for OAuth credential storage — the workflow engine uses account.accessToken
+// to authenticate with third-party APIs (Google, Slack, etc.)
 export const account = pgTable(
   'account',
   {
@@ -92,21 +96,15 @@ export const account = pgTable(
   })
 )
 
-export const verification = pgTable(
-  'verification',
-  {
-    id: text('id').primaryKey(),
-    identifier: text('identifier').notNull(),
-    value: text('value').notNull(),
-    expiresAt: timestamp('expires_at').notNull(),
-    createdAt: timestamp('created_at'),
-    updatedAt: timestamp('updated_at'),
-  },
-  (table) => ({
-    identifierIdx: index('verification_identifier_idx').on(table.identifier),
-    expiresAtIdx: index('verification_expires_at_idx').on(table.expiresAt),
-  })
-)
+// DEPRECATED: Auth verification handled by Enduria. Kept as stub for remaining imports.
+export const verification = pgTable('verification', {
+  id: text('id').primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
+})
 
 export const workflowFolder = pgTable(
   'workflow_folder',
@@ -254,13 +252,8 @@ export const workflowSubflows = pgTable(
   })
 )
 
-export const waitlist = pgTable('waitlist', {
-  id: text('id').primaryKey(),
-  email: text('email').notNull().unique(),
-  status: text('status').notNull().default('pending'), // pending, approved, rejected
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
+// STRIPPED: SaaS-only table (marketing)
+// export const waitlist = pgTable('waitlist', { ... })
 
 export const workflowExecutionSnapshots = pgTable(
   'workflow_execution_snapshots',
@@ -652,6 +645,7 @@ export const workspaceNotificationDelivery = pgTable(
   })
 )
 
+// Kept: API keys are used for authenticating external workflow API calls
 export const apiKey = pgTable(
   'api_key',
   {
@@ -659,7 +653,7 @@ export const apiKey = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    workspaceId: text('workspace_id').references(() => workspace.id, { onDelete: 'cascade' }), // Only set for workspace keys
+    workspaceId: text('workspace_id').references(() => workspace.id, { onDelete: 'cascade' }),
     createdBy: text('created_by').references(() => user.id, { onDelete: 'set null' }),
     name: text('name').notNull(),
     key: text('key').notNull().unique(),
@@ -679,17 +673,19 @@ export const apiKey = pgTable(
   })
 )
 
+// DEPRECATED: Billing table — candidate for removal when billing code is fully stripped
 export const billingBlockedReasonEnum = pgEnum('billing_blocked_reason', [
   'payment_failed',
   'dispute',
 ])
 
+// DEPRECATED: Billing usage tracking — candidate for removal when billing code is fully stripped
 export const userStats = pgTable('user_stats', {
   id: text('id').primaryKey(),
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' })
-    .unique(), // One record per user
+    .unique(),
   totalManualExecutions: integer('total_manual_executions').notNull().default(0),
   totalApiCalls: integer('total_api_calls').notNull().default(0),
   totalWebhookTriggers: integer('total_webhook_triggers').notNull().default(0),
@@ -699,33 +695,28 @@ export const userStats = pgTable('user_stats', {
   totalA2aExecutions: integer('total_a2a_executions').notNull().default(0),
   totalTokensUsed: integer('total_tokens_used').notNull().default(0),
   totalCost: decimal('total_cost').notNull().default('0'),
-  currentUsageLimit: decimal('current_usage_limit').default(DEFAULT_FREE_CREDITS.toString()), // Default $20 for free plan, null for team/enterprise
+  currentUsageLimit: decimal('current_usage_limit').default(DEFAULT_FREE_CREDITS.toString()),
   usageLimitUpdatedAt: timestamp('usage_limit_updated_at').defaultNow(),
-  // Billing period tracking
-  currentPeriodCost: decimal('current_period_cost').notNull().default('0'), // Usage in current billing period
-  lastPeriodCost: decimal('last_period_cost').default('0'), // Usage from previous billing period
-  billedOverageThisPeriod: decimal('billed_overage_this_period').notNull().default('0'), // Amount of overage already billed via threshold billing
-  // Pro usage snapshot when joining a team (to prevent double-billing)
-  proPeriodCostSnapshot: decimal('pro_period_cost_snapshot').default('0'), // Snapshot of Pro usage when joining team
-  // Pre-purchased credits (for Pro users only)
+  currentPeriodCost: decimal('current_period_cost').notNull().default('0'),
+  lastPeriodCost: decimal('last_period_cost').default('0'),
+  billedOverageThisPeriod: decimal('billed_overage_this_period').notNull().default('0'),
+  proPeriodCostSnapshot: decimal('pro_period_cost_snapshot').default('0'),
   creditBalance: decimal('credit_balance').notNull().default('0'),
-  // Copilot usage tracking
   totalCopilotCost: decimal('total_copilot_cost').notNull().default('0'),
   currentPeriodCopilotCost: decimal('current_period_copilot_cost').notNull().default('0'),
   lastPeriodCopilotCost: decimal('last_period_copilot_cost').default('0'),
   totalCopilotTokens: integer('total_copilot_tokens').notNull().default(0),
   totalCopilotCalls: integer('total_copilot_calls').notNull().default(0),
-  // MCP Copilot usage tracking
   totalMcpCopilotCalls: integer('total_mcp_copilot_calls').notNull().default(0),
   totalMcpCopilotCost: decimal('total_mcp_copilot_cost').notNull().default('0'),
   currentPeriodMcpCopilotCost: decimal('current_period_mcp_copilot_cost').notNull().default('0'),
-  // Storage tracking (for free/pro users)
   storageUsedBytes: bigint('storage_used_bytes', { mode: 'number' }).notNull().default(0),
   lastActive: timestamp('last_active').notNull().defaultNow(),
   billingBlocked: boolean('billing_blocked').notNull().default(false),
   billingBlockedReason: billingBlockedReasonEnum('billing_blocked_reason'),
 })
 
+// DEPRECATED: Marketing table — candidate for removal when admin routes are stripped
 export const referralCampaigns = pgTable(
   'referral_campaigns',
   {
@@ -746,40 +737,8 @@ export const referralCampaigns = pgTable(
   })
 )
 
-export const referralAttribution = pgTable(
-  'referral_attribution',
-  {
-    id: text('id').primaryKey(),
-    userId: text('user_id')
-      .notNull()
-      .references(() => user.id, { onDelete: 'cascade' })
-      .unique(),
-    organizationId: text('organization_id').references(() => organization.id, {
-      onDelete: 'set null',
-    }),
-    campaignId: text('campaign_id').references(() => referralCampaigns.id, {
-      onDelete: 'set null',
-    }),
-    utmSource: text('utm_source'),
-    utmMedium: text('utm_medium'),
-    utmCampaign: text('utm_campaign'),
-    utmContent: text('utm_content'),
-    referrerUrl: text('referrer_url'),
-    landingPage: text('landing_page'),
-    bonusCreditAmount: decimal('bonus_credit_amount').notNull().default('0'),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-  },
-  (table) => ({
-    userIdIdx: index('referral_attribution_user_id_idx').on(table.userId),
-    orgUniqueIdx: uniqueIndex('referral_attribution_org_unique_idx')
-      .on(table.organizationId)
-      .where(sql`${table.organizationId} IS NOT NULL`),
-    campaignIdIdx: index('referral_attribution_campaign_id_idx').on(table.campaignId),
-    utmCampaignIdx: index('referral_attribution_utm_campaign_idx').on(table.utmCampaign),
-    utmContentIdx: index('referral_attribution_utm_content_idx').on(table.utmContent),
-    createdAtIdx: index('referral_attribution_created_at_idx').on(table.createdAt),
-  })
-)
+// STRIPPED: SaaS-only table (marketing/referral) — zero imports
+// export const referralAttribution = pgTable('referral_attribution', { ... })
 
 export const customTools = pgTable(
   'custom_tools',
@@ -822,6 +781,7 @@ export const skill = pgTable(
   })
 )
 
+// DEPRECATED: Billing table — candidate for removal when billing code is fully stripped
 export const subscription = pgTable(
   'subscription',
   {
@@ -851,6 +811,7 @@ export const subscription = pgTable(
   })
 )
 
+// DEPRECATED: Billing rate limiting — candidate for removal when billing code is fully stripped
 export const rateLimitBucket = pgTable('rate_limit_bucket', {
   key: text('key').primaryKey(),
   tokens: decimal('tokens').notNull(),
@@ -930,6 +891,9 @@ export const form = pgTable(
   })
 )
 
+// Thin mapping table: synced from Enduria's org records.
+// Kept for FK integrity — credentialSet and permissionGroup reference organization.id.
+// DEPRECATED billing columns kept for existing billing code imports.
 export const organization = pgTable('organization', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -944,6 +908,7 @@ export const organization = pgTable('organization', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
+// DEPRECATED: Org management — membership handled by Enduria. Kept for existing imports.
 export const member = pgTable(
   'member',
   {
@@ -954,15 +919,16 @@ export const member = pgTable(
     organizationId: text('organization_id')
       .notNull()
       .references(() => organization.id, { onDelete: 'cascade' }),
-    role: text('role').notNull(), // 'admin' or 'member' - team-level permissions only
+    role: text('role').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => ({
-    userIdUnique: uniqueIndex('member_user_id_unique').on(table.userId), // Users can only belong to one org
+    userIdUnique: uniqueIndex('member_user_id_unique').on(table.userId),
     organizationIdIdx: index('member_organization_id_idx').on(table.organizationId),
   })
 )
 
+// DEPRECATED: Org management — invitations handled by Enduria. Kept for existing imports.
 export const invitation = pgTable(
   'invitation',
   {
@@ -985,12 +951,15 @@ export const invitation = pgTable(
   })
 )
 
+// Thin mapping table: maps 1:1 with Enduria's orgId for tenant scoping.
+// Many workflow tables reference workspace.id — this is the tenant scoping mechanism.
 export const workspace = pgTable('workspace', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   ownerId: text('owner_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
+  // DEPRECATED: billing fields — kept for existing code references
   billedAccountUserId: text('billed_account_user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'no action' }),
@@ -1046,34 +1015,12 @@ export const workspaceFiles = pgTable(
 
 export const permissionTypeEnum = pgEnum('permission_type', ['admin', 'write', 'read'])
 
-export const workspaceInvitationStatusEnum = pgEnum('workspace_invitation_status', [
-  'pending',
-  'accepted',
-  'rejected',
-  'cancelled',
-])
+// STRIPPED: SaaS-only tables (workspace invitations — handled by Enduria)
+// export const workspaceInvitationStatusEnum = pgEnum('workspace_invitation_status', [...])
+// export type WorkspaceInvitationStatus = ...
+// export const workspaceInvitation = pgTable('workspace_invitation', { ... })
 
-export type WorkspaceInvitationStatus = (typeof workspaceInvitationStatusEnum.enumValues)[number]
-
-export const workspaceInvitation = pgTable('workspace_invitation', {
-  id: text('id').primaryKey(),
-  workspaceId: text('workspace_id')
-    .notNull()
-    .references(() => workspace.id, { onDelete: 'cascade' }),
-  email: text('email').notNull(),
-  inviterId: text('inviter_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  role: text('role').notNull().default('member'),
-  status: workspaceInvitationStatusEnum('status').notNull().default('pending'),
-  token: text('token').notNull().unique(),
-  permissions: permissionTypeEnum('permissions').notNull().default('admin'),
-  orgInvitationId: text('org_invitation_id'),
-  expiresAt: timestamp('expires_at').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
-
+// Kept: workspace-level access control used by workflow engine
 export const permissions = pgTable(
   'permissions',
   {
@@ -1796,30 +1743,8 @@ export const mcpServers = pgTable(
   })
 )
 
-// SSO Provider table
-export const ssoProvider = pgTable(
-  'sso_provider',
-  {
-    id: text('id').primaryKey(),
-    issuer: text('issuer').notNull(),
-    domain: text('domain').notNull(),
-    oidcConfig: text('oidc_config'),
-    samlConfig: text('saml_config'),
-    userId: text('user_id')
-      .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
-    providerId: text('provider_id').notNull(),
-    organizationId: text('organization_id').references(() => organization.id, {
-      onDelete: 'cascade',
-    }),
-  },
-  (table) => ({
-    providerIdIdx: index('sso_provider_provider_id_idx').on(table.providerId),
-    domainIdx: index('sso_provider_domain_idx').on(table.domain),
-    userIdIdx: index('sso_provider_user_id_idx').on(table.userId),
-    organizationIdIdx: index('sso_provider_organization_id_idx').on(table.organizationId),
-  })
-)
+// STRIPPED: SaaS-only table (SSO handled by Enduria/SSOReady)
+// export const ssoProvider = pgTable('sso_provider', { ... })
 
 /**
  * Workflow MCP Servers - User-created MCP servers that expose workflows as tools.
@@ -2023,6 +1948,7 @@ export const a2aPushNotificationConfig = pgTable(
   })
 )
 
+// DEPRECATED: SIM audit logging — will be replaced by Enduria's audit system. Kept for existing imports.
 export const auditLog = pgTable(
   'audit_log',
   {
@@ -2052,6 +1978,7 @@ export const auditLog = pgTable(
   })
 )
 
+// DEPRECATED: Billing usage logging — candidate for removal when billing code is fully stripped
 export const usageLogCategoryEnum = pgEnum('usage_log_category', ['model', 'fixed'])
 export const usageLogSourceEnum = pgEnum('usage_log_source', [
   'workflow',
@@ -2067,21 +1994,14 @@ export const usageLog = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-
     category: usageLogCategoryEnum('category').notNull(),
-
     source: usageLogSourceEnum('source').notNull(),
-
     description: text('description').notNull(),
-
     metadata: jsonb('metadata'),
-
     cost: decimal('cost').notNull(),
-
     workspaceId: text('workspace_id').references(() => workspace.id, { onDelete: 'set null' }),
     workflowId: text('workflow_id').references(() => workflow.id, { onDelete: 'set null' }),
     executionId: text('execution_id'),
-
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
   (table) => ({
@@ -2442,6 +2362,7 @@ export const userTableRows = pgTable(
   })
 )
 
+// DEPRECATED: OAuth server tables — candidate for removal when OAuth server code is stripped
 export const oauthApplication = pgTable(
   'oauth_application',
   {
