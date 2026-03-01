@@ -119,17 +119,11 @@ interface SuperUserStatus {
 }
 
 /**
- * Fetch superuser status from API
+ * Fetch superuser status - stubbed out.
+ * Superuser API route has been removed.
  */
 async function fetchSuperUserStatus(): Promise<SuperUserStatus> {
-  const response = await fetch('/api/user/super-user')
-
-  if (!response.ok) {
-    return { isSuperUser: false }
-  }
-
-  const data = await response.json()
-  return { isSuperUser: data.isSuperUser ?? false }
+  return { isSuperUser: false }
 }
 
 /**

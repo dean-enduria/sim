@@ -7,7 +7,6 @@ import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { Button, Download, FolderPlus, Library, Loader, Tooltip } from '@/components/emcn'
 import { useSession } from '@/lib/auth/auth-client'
-import { getEnv, isTruthy } from '@/lib/core/config/env'
 import { useRegisterGlobalCommands } from '@/app/workspace/[workspaceId]/providers/global-commands-provider'
 import { useUserPermissionsContext } from '@/app/workspace/[workspaceId]/providers/workspace-permissions-provider'
 import { createCommands } from '@/app/workspace/[workspaceId]/utils/commands-utils'
@@ -16,7 +15,6 @@ import {
   NavItemContextMenu,
   SearchModal,
   SettingsModal,
-  UsageIndicator,
   WorkflowList,
   WorkspaceHeader,
 } from '@/app/workspace/[workspaceId]/w/components/sidebar/components'
@@ -43,7 +41,6 @@ import { useSidebarStore } from '@/stores/sidebar/store'
 const logger = createLogger('Sidebar')
 
 /** Feature flag for billing usage indicator visibility */
-const isBillingEnabled = isTruthy(getEnv('NEXT_PUBLIC_BILLING_ENABLED'))
 
 /** Event name for sidebar scroll operations - centralized for consistency */
 export const SIDEBAR_SCROLL_EVENT = 'sidebar-scroll-to-item'
@@ -654,9 +651,6 @@ export const Sidebar = memo(function Sidebar() {
                   />
                 </div>
               </div>
-
-              {/* Usage Indicator */}
-              {isBillingEnabled && <UsageIndicator />}
 
               {/* Footer Navigation */}
               <div className='flex flex-shrink-0 flex-col gap-[2px] border-[var(--border)] border-t px-[7.75px] pt-[8px] pb-[8px]'>

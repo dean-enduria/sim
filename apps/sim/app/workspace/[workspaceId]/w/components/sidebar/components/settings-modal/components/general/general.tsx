@@ -158,23 +158,9 @@ export function General({ onOpenChange }: GeneralProps) {
   }, [profile?.name])
 
   useEffect(() => {
-    const fetchSuperUserStatus = async () => {
-      try {
-        const response = await fetch('/api/user/super-user')
-        if (response.ok) {
-          const data = await response.json()
-          setIsSuperUser(data.isSuperUser)
-        }
-      } catch (error) {
-        logger.error('Failed to fetch super user status:', error)
-      } finally {
-        setLoadingSuperUser(false)
-      }
-    }
-
-    if (session?.user?.id) {
-      fetchSuperUserStatus()
-    }
+    // Superuser status - stubbed out (API route removed)
+    setIsSuperUser(false)
+    setLoadingSuperUser(false)
   }, [session?.user?.id])
 
   const {
@@ -344,19 +330,7 @@ export function General({ onOpenChange }: GeneralProps) {
     if (checked !== settings?.telemetryEnabled && !updateSetting.isPending) {
       await updateSetting.mutateAsync({ key: 'telemetryEnabled', value: checked })
 
-      if (checked) {
-        if (typeof window !== 'undefined') {
-          fetch('/api/telemetry', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              category: 'consent',
-              action: 'enable_from_settings',
-              timestamp: new Date().toISOString(),
-            }),
-          }).catch(() => {})
-        }
-      }
+      // Telemetry endpoint removed - no-op
     }
   }
 

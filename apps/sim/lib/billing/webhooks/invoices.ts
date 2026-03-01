@@ -1,4 +1,3 @@
-import { render } from '@react-email/components'
 import { db } from '@sim/db'
 import {
   member,
@@ -10,7 +9,7 @@ import {
 import { createLogger } from '@sim/logger'
 import { and, eq, inArray, isNull, ne, or } from 'drizzle-orm'
 import type Stripe from 'stripe'
-import { getEmailSubject, PaymentFailedEmail, renderCreditPurchaseEmail } from '@/components/emails'
+import { getEmailSubject, renderCreditPurchaseEmail, renderPaymentFailedEmail } from '@/components/emails'
 import { calculateSubscriptionOverage } from '@/lib/billing/core/billing'
 import { addCredits, getCreditBalance, removeCredits } from '@/lib/billing/credits/balance'
 import { setUsageLimitForCredits } from '@/lib/billing/credits/purchase'
@@ -194,16 +193,13 @@ async function sendPaymentFailureEmails(
     // Send emails to all affected users
     for (const userToNotify of usersToNotify) {
       try {
-        const emailHtml = await render(
-          PaymentFailedEmail({
-            userName: userToNotify.name || undefined,
-            amountDue,
-            lastFourDigits,
-            billingPortalUrl,
-            failureReason,
-            sentDate: new Date(),
-          })
-        )
+        const emailHtml = await renderPaymentFailedEmail({
+          userName: userToNotify.name || undefined,
+          amountDue,
+          lastFourDigits,
+          billingPortalUrl,
+          failureReason,
+        })
 
         const { from, replyTo } = getPersonalEmailFrom()
         await sendEmail({

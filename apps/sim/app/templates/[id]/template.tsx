@@ -188,21 +188,9 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
       }
     }
 
-    const fetchSuperUserStatus = async () => {
-      if (!currentUserId) return
+    // Superuser status - stubbed out (API route removed)
+    setIsSuperUser(false)
 
-      try {
-        const response = await fetch('/api/user/super-user')
-        if (response.ok) {
-          const data = await response.json()
-          setIsSuperUser(data.isSuperUser || false)
-        }
-      } catch (error) {
-        logger.error('Error fetching super user status:', error)
-      }
-    }
-
-    fetchSuperUserStatus()
     fetchUserOrganizations()
   }, [currentUserId])
 

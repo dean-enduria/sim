@@ -27,26 +27,8 @@ export function Debug() {
     setIsImporting(true)
 
     try {
-      const response = await fetch('/api/superuser/import-workflow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workflowId: workflowId.trim(),
-          targetWorkspaceId: workspaceId,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        await queryClient.invalidateQueries({ queryKey: workflowKeys.list(workspaceId) })
-        setWorkflowId('')
-        logger.info('Workflow imported successfully', {
-          originalWorkflowId: workflowId.trim(),
-          newWorkflowId: data.newWorkflowId,
-          copilotChatsImported: data.copilotChatsImported,
-        })
-      }
+      // Superuser import-workflow API route has been removed
+      logger.info('Superuser import-workflow is not available in this build')
     } catch (error) {
       logger.error('Failed to import workflow', error)
     } finally {

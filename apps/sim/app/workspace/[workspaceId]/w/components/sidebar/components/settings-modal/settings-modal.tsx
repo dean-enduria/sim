@@ -384,17 +384,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   }
 
   const prefetchSubscription = () => {
-    queryClient.prefetchQuery({
-      queryKey: subscriptionKeys.user(),
-      queryFn: async () => {
-        const response = await fetch('/api/billing?context=user')
-        if (!response.ok) {
-          throw new Error('Failed to fetch subscription data')
-        }
-        return response.json()
-      },
-      staleTime: 30 * 1000,
-    })
+    // Billing API route removed - subscription data is stubbed
   }
 
   const prefetchOrganization = () => {

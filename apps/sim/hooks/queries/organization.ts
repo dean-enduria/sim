@@ -111,31 +111,20 @@ export function useOrganizationSubscription(orgId: string) {
 }
 
 /**
- * Fetch organization billing data
- */
-async function fetchOrganizationBilling(orgId: string) {
-  const response = await fetch(`/api/billing?context=organization&id=${orgId}`)
-
-  if (response.status === 404) {
-    return null
-  }
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch organization billing data')
-  }
-  return response.json()
-}
-
-/**
- * Hook to fetch organization billing data
+ * Stubbed organization billing data - billing is handled by Enduria.
  */
 export function useOrganizationBilling(orgId: string) {
-  return useQuery({
+  return useQuery<any>({
     queryKey: organizationKeys.billing(orgId),
-    queryFn: () => fetchOrganizationBilling(orgId),
+    queryFn: async () => ({
+      data: {
+        totalUsageLimit: 999999,
+        usage: { current: 0, limit: 999999, percentUsed: 0 },
+      },
+    }),
     enabled: !!orgId,
     retry: false,
-    staleTime: 30 * 1000,
+    staleTime: Infinity,
     placeholderData: keepPreviousData,
   })
 }
@@ -170,85 +159,19 @@ export function useOrganizationMembers(orgId: string) {
 }
 
 /**
- * Update organization usage limit mutation with optimistic updates
+ * Stubbed organization usage limit update - billing is handled by Enduria.
  */
-interface UpdateOrganizationUsageLimitParams {
-  organizationId: string
-  limit: number
-}
-
 export function useUpdateOrganizationUsageLimit() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async ({ organizationId, limit }: UpdateOrganizationUsageLimitParams) => {
-      const response = await fetch('/api/usage', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ context: 'organization', organizationId, limit }),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || error.error || 'Failed to update usage limit')
-      }
-
-      return response.json()
-    },
-    onMutate: async ({ organizationId, limit }) => {
-      await queryClient.cancelQueries({ queryKey: organizationKeys.billing(organizationId) })
-      await queryClient.cancelQueries({ queryKey: organizationKeys.subscription(organizationId) })
-
-      const previousBillingData = queryClient.getQueryData(organizationKeys.billing(organizationId))
-      const previousSubscriptionData = queryClient.getQueryData(
-        organizationKeys.subscription(organizationId)
-      )
-
-      queryClient.setQueryData(organizationKeys.billing(organizationId), (old: any) => {
-        if (!old) return old
-        const currentUsage = old.data?.currentUsage || old.data?.usage?.current || 0
-        const newPercentUsed = limit > 0 ? (currentUsage / limit) * 100 : 0
-
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            totalUsageLimit: limit,
-            usage: {
-              ...old.data?.usage,
-              limit,
-              percentUsed: newPercentUsed,
-            },
-            percentUsed: newPercentUsed,
-          },
-        }
-      })
-
-      return { previousBillingData, previousSubscriptionData, organizationId }
-    },
-    onError: (_err, _variables, context) => {
-      if (context?.previousBillingData && context?.organizationId) {
-        queryClient.setQueryData(
-          organizationKeys.billing(context.organizationId),
-          context.previousBillingData
-        )
-      }
-      if (context?.previousSubscriptionData && context?.organizationId) {
-        queryClient.setQueryData(
-          organizationKeys.subscription(context.organizationId),
-          context.previousSubscriptionData
-        )
-      }
-    },
-    onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: organizationKeys.billing(variables.organizationId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: organizationKeys.subscription(variables.organizationId),
-      })
-    },
-  })
+  return {
+    mutate: (..._args: any[]) => {},
+    mutateAsync: async (..._args: any[]) => ({}),
+    isPending: false,
+    isError: false,
+    isSuccess: false,
+    error: null,
+    data: undefined,
+    reset: () => {},
+  }
 }
 
 /**

@@ -2,8 +2,7 @@
 export * from './_styles'
 // Auth emails
 export * from './auth'
-// Billing emails
-export * from './billing'
+// Billing emails - removed (handled by Enduria)
 // Careers emails
 export * from './careers'
 // Shared components

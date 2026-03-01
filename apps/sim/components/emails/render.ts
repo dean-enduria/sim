@@ -1,15 +1,6 @@
 import { render } from '@react-email/components'
 import { OTPVerificationEmail, ResetPasswordEmail, WelcomeEmail } from '@/components/emails/auth'
 import {
-  CreditPurchaseEmail,
-  EnterpriseSubscriptionEmail,
-  FreeTierUpgradeEmail,
-  PaymentFailedEmail,
-  PlanWelcomeEmail,
-  UsageThresholdEmail,
-} from '@/components/emails/billing'
-import { CareersConfirmationEmail, CareersSubmissionEmail } from '@/components/emails/careers'
-import {
   BatchInvitationEmail,
   InvitationEmail,
   PollingGroupInvitationEmail,
@@ -20,7 +11,6 @@ import {
   type WorkflowNotificationEmailProps,
 } from '@/components/emails/notifications'
 import { HelpConfirmationEmail } from '@/components/emails/support'
-import { getBaseUrl } from '@/lib/core/utils/urls'
 
 export type { EmailSubjectType } from './subjects'
 export { getEmailSubject } from './subjects'
@@ -92,87 +82,8 @@ export async function renderHelpConfirmationEmail(
   )
 }
 
-export async function renderEnterpriseSubscriptionEmail(userName: string): Promise<string> {
-  const baseUrl = getBaseUrl()
-  const loginLink = `${baseUrl}/login`
-
-  return await render(
-    EnterpriseSubscriptionEmail({
-      userName,
-      loginLink,
-    })
-  )
-}
-
-export async function renderUsageThresholdEmail(params: {
-  userName?: string
-  planName: string
-  percentUsed: number
-  currentUsage: number
-  limit: number
-  ctaLink: string
-}): Promise<string> {
-  return await render(
-    UsageThresholdEmail({
-      userName: params.userName,
-      planName: params.planName,
-      percentUsed: params.percentUsed,
-      currentUsage: params.currentUsage,
-      limit: params.limit,
-      ctaLink: params.ctaLink,
-    })
-  )
-}
-
-export async function renderFreeTierUpgradeEmail(params: {
-  userName?: string
-  percentUsed: number
-  currentUsage: number
-  limit: number
-  upgradeLink: string
-}): Promise<string> {
-  return await render(
-    FreeTierUpgradeEmail({
-      userName: params.userName,
-      percentUsed: params.percentUsed,
-      currentUsage: params.currentUsage,
-      limit: params.limit,
-      upgradeLink: params.upgradeLink,
-    })
-  )
-}
-
-export async function renderPlanWelcomeEmail(params: {
-  planName: 'Pro' | 'Team'
-  userName?: string
-  loginLink?: string
-}): Promise<string> {
-  return await render(
-    PlanWelcomeEmail({
-      planName: params.planName,
-      userName: params.userName,
-      loginLink: params.loginLink,
-    })
-  )
-}
-
 export async function renderWelcomeEmail(userName?: string): Promise<string> {
   return await render(WelcomeEmail({ userName }))
-}
-
-export async function renderCreditPurchaseEmail(params: {
-  userName?: string
-  amount: number
-  newBalance: number
-}): Promise<string> {
-  return await render(
-    CreditPurchaseEmail({
-      userName: params.userName,
-      amount: params.amount,
-      newBalance: params.newBalance,
-      purchaseDate: new Date(),
-    })
-  )
 }
 
 export async function renderWorkspaceInvitationEmail(
@@ -207,37 +118,73 @@ export async function renderPollingGroupInvitationEmail(params: {
   )
 }
 
-export async function renderPaymentFailedEmail(params: {
+export async function renderWorkflowNotificationEmail(
+  params: WorkflowNotificationEmailProps
+): Promise<string> {
+  return await render(WorkflowNotificationEmail(params))
+}
+
+// Billing email render functions - stubbed out (billing handled by Enduria)
+export async function renderEnterpriseSubscriptionEmail(_userName: string): Promise<string> {
+  return ''
+}
+
+export async function renderUsageThresholdEmail(_params: {
+  userName?: string
+  planName: string
+  percentUsed: number
+  currentUsage: number
+  limit: number
+  ctaLink: string
+}): Promise<string> {
+  return ''
+}
+
+export async function renderFreeTierUpgradeEmail(_params: {
+  userName?: string
+  percentUsed: number
+  currentUsage: number
+  limit: number
+  upgradeLink: string
+}): Promise<string> {
+  return ''
+}
+
+export async function renderPlanWelcomeEmail(_params: {
+  planName: 'Pro' | 'Team'
+  userName?: string
+  loginLink?: string
+}): Promise<string> {
+  return ''
+}
+
+export async function renderCreditPurchaseEmail(_params: {
+  userName?: string
+  amount: number
+  newBalance: number
+}): Promise<string> {
+  return ''
+}
+
+export async function renderPaymentFailedEmail(_params: {
   userName?: string
   amountDue: number
   lastFourDigits?: string
   billingPortalUrl: string
   failureReason?: string
 }): Promise<string> {
-  return await render(
-    PaymentFailedEmail({
-      userName: params.userName,
-      amountDue: params.amountDue,
-      lastFourDigits: params.lastFourDigits,
-      billingPortalUrl: params.billingPortalUrl,
-      failureReason: params.failureReason,
-    })
-  )
+  return ''
 }
 
+// Careers email render functions - stubbed out (careers handled by Enduria)
 export async function renderCareersConfirmationEmail(
-  name: string,
-  position: string
+  _name: string,
+  _position: string
 ): Promise<string> {
-  return await render(
-    CareersConfirmationEmail({
-      name,
-      position,
-    })
-  )
+  return ''
 }
 
-export async function renderCareersSubmissionEmail(params: {
+export async function renderCareersSubmissionEmail(_params: {
   name: string
   email: string
   phone?: string
@@ -248,23 +195,5 @@ export async function renderCareersSubmissionEmail(params: {
   location: string
   message: string
 }): Promise<string> {
-  return await render(
-    CareersSubmissionEmail({
-      name: params.name,
-      email: params.email,
-      phone: params.phone,
-      position: params.position,
-      linkedin: params.linkedin,
-      portfolio: params.portfolio,
-      experience: params.experience,
-      location: params.location,
-      message: params.message,
-    })
-  )
-}
-
-export async function renderWorkflowNotificationEmail(
-  params: WorkflowNotificationEmailProps
-): Promise<string> {
-  return await render(WorkflowNotificationEmail(params))
+  return ''
 }
