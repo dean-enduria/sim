@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react'
 import { createLogger } from '@sim/logger'
-import { BrandedButton } from '@/app/(auth)/components/branded-button'
-import { StatusPageLayout } from '@/app/(auth)/components/status-page-layout'
+import { BrandedButton } from '@/components/shared/branded-button'
+import { StatusPageLayout } from '@/components/shared/status-page-layout'
 
 const logger = createLogger('FormError')
 

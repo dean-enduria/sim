@@ -1,8 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { BrandedButton } from '@/app/(auth)/components/branded-button'
-import { StatusPageLayout } from '@/app/(auth)/components/status-page-layout'
+import { BrandedButton } from '@/components/shared/branded-button'
+import { StatusPageLayout } from '@/components/shared/status-page-layout'
 
 interface FormErrorStateProps {
   error: string

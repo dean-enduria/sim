@@ -11,15 +11,6 @@ export interface SupportFooterProps {
 /**
  * Support footer component for auth and status pages.
  * Displays a "Need help? Contact support" link using branded support email.
- *
- * @example
- * ```tsx
- * // Fixed position (for standalone pages)
- * <SupportFooter />
- *
- * // Absolute position (for pages using AuthLayout)
- * <SupportFooter position="absolute" />
- * ```
  */
 export function SupportFooter({ position = 'fixed' }: SupportFooterProps) {
   const brandConfig = useBrandConfig()

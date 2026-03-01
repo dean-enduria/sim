@@ -8,10 +8,10 @@ import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/core/utils/cn'
 import { inter } from '@/app/_styles/fonts/inter/inter'
 import { soehne } from '@/app/_styles/fonts/soehne/soehne'
-import AuthBackground from '@/app/(auth)/components/auth-background'
-import { BrandedButton } from '@/app/(auth)/components/branded-button'
-import { SupportFooter } from '@/app/(auth)/components/support-footer'
-import Nav from '@/app/(landing)/components/nav/nav'
+import AuthBackground from '@/components/shared/auth-background'
+import { BrandedButton } from '@/components/shared/branded-button'
+import { SupportFooter } from '@/components/shared/support-footer'
+import Nav from '@/components/shared/nav/nav'
 
 const logger = createLogger('PasswordAuth')
 

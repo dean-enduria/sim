@@ -20,18 +20,6 @@ export interface BrandedButtonProps extends Omit<EmcnButtonProps, 'variant' | 's
 /**
  * Branded button for auth and status pages.
  * Automatically detects whitelabel customization and applies appropriate styling.
- *
- * @example
- * ```tsx
- * // Primary branded button with arrow
- * <BrandedButton onClick={handleSubmit}>Sign In</BrandedButton>
- *
- * // Loading state
- * <BrandedButton loading loadingText="Signing in">Sign In</BrandedButton>
- *
- * // Without arrow animation
- * <BrandedButton showArrow={false}>Continue</BrandedButton>
- * ```
  */
 export const BrandedButton = forwardRef<HTMLButtonElement, BrandedButtonProps>(
   (

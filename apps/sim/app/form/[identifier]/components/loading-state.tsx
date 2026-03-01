@@ -1,7 +1,7 @@
 'use client'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import AuthBackground from '@/app/(auth)/components/auth-background'
+import AuthBackground from '@/components/shared/auth-background'
 
 export function FormLoadingState() {
   return (

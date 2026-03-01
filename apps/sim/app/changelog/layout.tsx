@@ -1,4 +1,4 @@
-import Nav from '@/app/(landing)/components/nav/nav'
+import Nav from '@/components/shared/nav/nav'
 
 export default function ChangelogLayout({ children }: { children: React.ReactNode }) {
   return (

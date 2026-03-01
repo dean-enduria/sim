@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { GithubIcon } from '@/components/icons'
 import { isHosted } from '@/lib/core/config/feature-flags'
 import { soehne } from '@/app/_styles/fonts/soehne/soehne'
-import { getFormattedGitHubStars } from '@/app/(landing)/actions/github'
+import { getFormattedGitHubStars } from '@/components/shared/nav/github'
 import { useBrandConfig } from '@/ee/whitelabeling'
 import { useBrandedButtonClass } from '@/hooks/use-branded-button-class'
 

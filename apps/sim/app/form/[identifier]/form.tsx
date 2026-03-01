@@ -4,9 +4,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { inter } from '@/app/_styles/fonts/inter/inter'
 import { soehne } from '@/app/_styles/fonts/soehne/soehne'
-import AuthBackground from '@/app/(auth)/components/auth-background'
-import { BrandedButton } from '@/app/(auth)/components/branded-button'
-import { SupportFooter } from '@/app/(auth)/components/support-footer'
+import AuthBackground from '@/components/shared/auth-background'
+import { BrandedButton } from '@/components/shared/branded-button'
+import { SupportFooter } from '@/components/shared/support-footer'
 import {
   FormErrorState,
   FormField,

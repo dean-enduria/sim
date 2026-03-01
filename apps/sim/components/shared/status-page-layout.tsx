@@ -3,8 +3,8 @@
 import type { ReactNode } from 'react'
 import { inter } from '@/app/_styles/fonts/inter/inter'
 import { soehne } from '@/app/_styles/fonts/soehne/soehne'
-import AuthBackground from '@/app/(auth)/components/auth-background'
-import Nav from '@/app/(landing)/components/nav/nav'
+import AuthBackground from '@/components/shared/auth-background'
+import Nav from '@/components/shared/nav/nav'
 import { SupportFooter } from './support-footer'
 
 export interface StatusPageLayoutProps {
@@ -23,16 +23,6 @@ export interface StatusPageLayoutProps {
 /**
  * Unified layout for status/error pages (404, form unavailable, chat error, etc.).
  * Uses AuthBackground and Nav for consistent styling with auth pages.
- *
- * @example
- * ```tsx
- * <StatusPageLayout
- *   title="Page Not Found"
- *   description="The page you're looking for doesn't exist."
- * >
- *   <BrandedButton onClick={() => router.push('/')}>Return to Home</BrandedButton>
- * </StatusPageLayout>
- * ```
  */
 export function StatusPageLayout({
   title,
