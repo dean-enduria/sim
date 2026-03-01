@@ -253,20 +253,7 @@ export function General({ onOpenChange }: GeneralProps) {
     setResetPasswordError(null)
 
     try {
-      const response = await fetch('/api/auth/forget-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: profile.email,
-          redirectTo: `${getBaseUrl()}/reset-password`,
-        }),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to send reset password email')
-      }
-
+      // Stubbed - password reset is managed by Enduria
       setResetPasswordSuccess(true)
 
       setTimeout(() => {

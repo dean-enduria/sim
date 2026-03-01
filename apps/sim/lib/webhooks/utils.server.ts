@@ -18,7 +18,7 @@ import {
   getCredentialsForCredentialSet,
   refreshAccessTokenIfNeeded,
   resolveOAuthAccountId,
-} from '@/app/api/auth/oauth/utils'
+} from '@/lib/auth/oauth-utils'
 
 const logger = createLogger('WebhookUtils')
 

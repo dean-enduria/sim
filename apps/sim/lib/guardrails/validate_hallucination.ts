@@ -3,7 +3,7 @@ import { account } from '@sim/db/schema'
 import { createLogger } from '@sim/logger'
 import { eq } from 'drizzle-orm'
 import { getInternalApiBaseUrl } from '@/lib/core/utils/urls'
-import { refreshTokenIfNeeded } from '@/app/api/auth/oauth/utils'
+import { refreshTokenIfNeeded } from '@/lib/auth/oauth-utils'
 import { executeProviderRequest } from '@/providers'
 import { getProviderFromModel } from '@/providers/utils'
 

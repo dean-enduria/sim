@@ -8,7 +8,7 @@ import type { BaseServerTool } from '@/lib/copilot/tools/server/base-tool'
 import { generateRequestId } from '@/lib/core/utils/request'
 import { getPersonalAndWorkspaceEnv } from '@/lib/environment/utils'
 import { getAllOAuthServices } from '@/lib/oauth'
-import { refreshTokenIfNeeded } from '@/app/api/auth/oauth/utils'
+import { refreshTokenIfNeeded } from '@/lib/auth/oauth-utils'
 
 interface GetCredentialsParams {
   workflowId?: string

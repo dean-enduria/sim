@@ -9,7 +9,7 @@ import {
   getOAuthToken,
   refreshAccessTokenIfNeeded,
   resolveOAuthAccountId,
-} from '@/app/api/auth/oauth/utils'
+} from '@/lib/auth/oauth-utils'
 
 const teamsLogger = createLogger('TeamsSubscription')
 const telegramLogger = createLogger('TelegramWebhook')

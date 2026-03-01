@@ -8,7 +8,7 @@ import type {
 } from '@/lib/copilot/orchestrator/types'
 import { generateRequestId } from '@/lib/core/utils/request'
 import { getEffectiveDecryptedEnv } from '@/lib/environment/utils'
-import { refreshTokenIfNeeded } from '@/app/api/auth/oauth/utils'
+import { refreshTokenIfNeeded } from '@/lib/auth/oauth-utils'
 import { resolveEnvVarReferences } from '@/executor/utils/reference-validation'
 import { executeTool } from '@/tools'
 import { resolveToolId } from '@/tools/utils'

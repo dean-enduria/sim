@@ -407,16 +407,11 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   }
 
   const prefetchSSO = () => {
+    // Stubbed - SSO is managed by Enduria
     queryClient.prefetchQuery({
       queryKey: ssoKeys.providers(),
-      queryFn: async () => {
-        const response = await fetch('/api/auth/sso/providers')
-        if (!response.ok) {
-          throw new Error('Failed to fetch SSO providers')
-        }
-        return response.json()
-      },
-      staleTime: 5 * 60 * 1000,
+      queryFn: async () => ({ providers: [] }),
+      staleTime: Infinity,
     })
   }
 

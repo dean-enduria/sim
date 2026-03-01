@@ -4,7 +4,7 @@ import { authorizeCredentialUse } from '@/lib/auth/credential-access'
 import { checkSessionOrInternalAuth } from '@/lib/auth/hybrid'
 import { validateAlphanumericId } from '@/lib/core/security/input-validation'
 import { generateRequestId } from '@/lib/core/utils/request'
-import { refreshAccessTokenIfNeeded } from '@/app/api/auth/oauth/utils'
+import { refreshAccessTokenIfNeeded } from '@/lib/auth/oauth-utils'
 export const dynamic = 'force-dynamic'
 
 const logger = createLogger('GoogleDriveFilesAPI')

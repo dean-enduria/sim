@@ -6,7 +6,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { checkInternalAuth } from '@/lib/auth/hybrid'
 import { generateRequestId } from '@/lib/core/utils/request'
 import { checkWorkspaceAccess } from '@/lib/workspaces/permissions/utils'
-import { refreshTokenIfNeeded, resolveOAuthAccountId } from '@/app/api/auth/oauth/utils'
+import { refreshTokenIfNeeded, resolveOAuthAccountId } from '@/lib/auth/oauth-utils'
 import type { StreamingExecution } from '@/executor/types'
 import { executeProviderRequest } from '@/providers'
 

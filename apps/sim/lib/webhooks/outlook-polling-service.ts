@@ -17,7 +17,7 @@ import {
   getOAuthToken,
   refreshAccessTokenIfNeeded,
   resolveOAuthAccountId,
-} from '@/app/api/auth/oauth/utils'
+} from '@/lib/auth/oauth-utils'
 import { MAX_CONSECUTIVE_FAILURES } from '@/triggers/constants'
 
 const logger = createLogger('OutlookPollingService')

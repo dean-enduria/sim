@@ -2,7 +2,7 @@ import { db } from '@sim/db'
 import { account } from '@sim/db/schema'
 import { createLogger } from '@sim/logger'
 import { eq } from 'drizzle-orm'
-import { refreshTokenIfNeeded, resolveOAuthAccountId } from '@/app/api/auth/oauth/utils'
+import { refreshTokenIfNeeded, resolveOAuthAccountId } from '@/lib/auth/oauth-utils'
 
 const logger = createLogger('VertexCredential')
 

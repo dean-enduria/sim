@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { PermissionGroupConfig } from '@/lib/permission-groups/types'
-import { fetchJson } from '@/hooks/selectors/helpers'
 
 export interface PermissionGroup {
   id: string
@@ -43,69 +42,45 @@ export const permissionGroupKeys = {
     ['permissionGroups', 'userConfig', organizationId ?? 'none'] as const,
 }
 
-interface PermissionGroupsResponse {
-  permissionGroups?: PermissionGroup[]
-}
+// All permission group hooks are stubbed - permissions are managed by Enduria.
 
 export function usePermissionGroups(organizationId?: string, enabled = true) {
   return useQuery<PermissionGroup[]>({
     queryKey: permissionGroupKeys.list(organizationId),
-    queryFn: async () => {
-      const data = await fetchJson<PermissionGroupsResponse>('/api/permission-groups', {
-        searchParams: { organizationId: organizationId ?? '' },
-      })
-      return data.permissionGroups ?? []
-    },
+    queryFn: async () => [],
     enabled: Boolean(organizationId) && enabled,
-    staleTime: 60 * 1000,
+    staleTime: Infinity,
   })
-}
-
-interface PermissionGroupDetailResponse {
-  permissionGroup?: PermissionGroup
 }
 
 export function usePermissionGroup(id?: string, enabled = true) {
   return useQuery<PermissionGroup | null>({
     queryKey: permissionGroupKeys.detail(id),
-    queryFn: async () => {
-      const data = await fetchJson<PermissionGroupDetailResponse>(`/api/permission-groups/${id}`)
-      return data.permissionGroup ?? null
-    },
+    queryFn: async () => null,
     enabled: Boolean(id) && enabled,
-    staleTime: 60 * 1000,
+    staleTime: Infinity,
   })
-}
-
-interface MembersResponse {
-  members?: PermissionGroupMember[]
 }
 
 export function usePermissionGroupMembers(permissionGroupId?: string) {
   return useQuery<PermissionGroupMember[]>({
     queryKey: permissionGroupKeys.members(permissionGroupId),
-    queryFn: async () => {
-      const data = await fetchJson<MembersResponse>(
-        `/api/permission-groups/${permissionGroupId}/members`
-      )
-      return data.members ?? []
-    },
+    queryFn: async () => [],
     enabled: Boolean(permissionGroupId),
-    staleTime: 30 * 1000,
+    staleTime: Infinity,
   })
 }
 
 export function useUserPermissionConfig(organizationId?: string) {
   return useQuery<UserPermissionConfig>({
     queryKey: permissionGroupKeys.userConfig(organizationId),
-    queryFn: async () => {
-      const data = await fetchJson<UserPermissionConfig>('/api/permission-groups/user', {
-        searchParams: { organizationId: organizationId ?? '' },
-      })
-      return data
-    },
+    queryFn: async () => ({
+      permissionGroupId: null,
+      groupName: null,
+      config: null,
+    }),
     enabled: Boolean(organizationId),
-    staleTime: 60 * 1000,
+    staleTime: Infinity,
   })
 }
 
@@ -119,20 +94,8 @@ export interface CreatePermissionGroupData {
 
 export function useCreatePermissionGroup() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: async (data: CreatePermissionGroupData) => {
-      const response = await fetch('/api/permission-groups', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-      if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to create permission group')
-      }
-      return response.json()
-    },
+    mutationFn: async (_data: CreatePermissionGroupData) => ({ success: true }),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: permissionGroupKeys.list(variables.organizationId),
@@ -152,26 +115,12 @@ export interface UpdatePermissionGroupData {
 
 export function useUpdatePermissionGroup() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: async ({ id, ...data }: UpdatePermissionGroupData) => {
-      const response = await fetch(`/api/permission-groups/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-      if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to update permission group')
-      }
-      return response.json()
-    },
+    mutationFn: async (_data: UpdatePermissionGroupData) => ({ success: true }),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: permissionGroupKeys.list(variables.organizationId),
       })
-      queryClient.invalidateQueries({ queryKey: permissionGroupKeys.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: ['permissionGroups', 'userConfig'] })
     },
   })
 }
@@ -183,73 +132,38 @@ export interface DeletePermissionGroupParams {
 
 export function useDeletePermissionGroup() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: async ({ permissionGroupId }: DeletePermissionGroupParams) => {
-      const response = await fetch(`/api/permission-groups/${permissionGroupId}`, {
-        method: 'DELETE',
-      })
-      if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to delete permission group')
-      }
-      return response.json()
-    },
+    mutationFn: async (_params: DeletePermissionGroupParams) => ({ success: true }),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: permissionGroupKeys.list(variables.organizationId),
       })
-      queryClient.invalidateQueries({ queryKey: ['permissionGroups', 'userConfig'] })
     },
   })
 }
 
 export function useAddPermissionGroupMember() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: async (data: { permissionGroupId: string; userId: string }) => {
-      const response = await fetch(`/api/permission-groups/${data.permissionGroupId}/members`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: data.userId }),
-      })
-      if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to add member')
-      }
-      return response.json()
-    },
+    mutationFn: async (_data: { permissionGroupId: string; userId: string }) => ({ success: true }),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: permissionGroupKeys.members(variables.permissionGroupId),
       })
-      queryClient.invalidateQueries({ queryKey: permissionGroupKeys.all })
     },
   })
 }
 
 export function useRemovePermissionGroupMember() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: async (data: { permissionGroupId: string; memberId: string }) => {
-      const response = await fetch(
-        `/api/permission-groups/${data.permissionGroupId}/members?memberId=${data.memberId}`,
-        { method: 'DELETE' }
-      )
-      if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to remove member')
-      }
-      return response.json()
-    },
+    mutationFn: async (_data: { permissionGroupId: string; memberId: string }) => ({
+      success: true,
+    }),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: permissionGroupKeys.members(variables.permissionGroupId),
       })
-      queryClient.invalidateQueries({ queryKey: permissionGroupKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['permissionGroups', 'userConfig'] })
     },
   })
 }
@@ -262,26 +176,15 @@ export interface BulkAddMembersData {
 
 export function useBulkAddPermissionGroupMembers() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: async ({ permissionGroupId, ...data }: BulkAddMembersData) => {
-      const response = await fetch(`/api/permission-groups/${permissionGroupId}/members/bulk`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-      if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to add members')
-      }
-      return response.json() as Promise<{ added: number; moved: number }>
+    mutationFn: async (_data: BulkAddMembersData) => ({ added: 0, moved: 0 }) as {
+      added: number
+      moved: number
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: permissionGroupKeys.members(variables.permissionGroupId),
       })
-      queryClient.invalidateQueries({ queryKey: permissionGroupKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['permissionGroups', 'userConfig'] })
     },
   })
 }

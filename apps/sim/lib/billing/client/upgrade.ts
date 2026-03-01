@@ -40,65 +40,8 @@ export function useSubscriptionUpgrade() {
       let referenceId = userId
 
       if (targetPlan === 'team') {
-        try {
-          const orgsResponse = await fetch('/api/organizations')
-          if (!orgsResponse.ok) {
-            throw new Error('Failed to check organization status')
-          }
-
-          const orgsData = await orgsResponse.json()
-          const existingOrg = orgsData.organizations?.find(
-            (org: any) => org.role === 'owner' || org.role === 'admin'
-          )
-
-          if (existingOrg) {
-            // Check if this org already has an active team subscription
-            const existingTeamSub = allSubscriptions.find(
-              (sub: any) =>
-                sub.status === 'active' &&
-                sub.referenceId === existingOrg.id &&
-                (sub.plan === 'team' || sub.plan === 'enterprise')
-            )
-
-            if (existingTeamSub) {
-              logger.warn('Organization already has an active team subscription', {
-                userId,
-                organizationId: existingOrg.id,
-                existingSubscriptionId: existingTeamSub.id,
-              })
-              throw new Error(
-                'This organization already has an active team subscription. Please manage it from the billing settings.'
-              )
-            }
-
-            logger.info('Using existing organization for team plan upgrade', {
-              userId,
-              organizationId: existingOrg.id,
-            })
-            referenceId = existingOrg.id
-
-            try {
-              await client.organization.setActive({ organizationId: referenceId })
-              logger.info('Set organization as active', { organizationId: referenceId })
-            } catch (error) {
-              logger.warn('Failed to set organization as active, proceeding with upgrade', {
-                organizationId: referenceId,
-                error: error instanceof Error ? error.message : 'Unknown error',
-              })
-            }
-          } else if (orgsData.isMemberOfAnyOrg) {
-            throw new Error(
-              'You are already a member of an organization. Please leave it or ask an admin to upgrade.'
-            )
-          } else {
-            logger.info('Will create organization after payment succeeds', { userId })
-          }
-        } catch (error) {
-          logger.error('Failed to prepare for team plan upgrade', error)
-          throw error instanceof Error
-            ? error
-            : new Error('Failed to prepare team workspace. Please try again or contact support.')
-        }
+        // Stubbed - organization management is handled by Enduria
+        logger.info('Team plan upgrade - organizations are managed by Enduria', { userId })
       }
 
       const currentUrl = `${window.location.origin}${window.location.pathname}`

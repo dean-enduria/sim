@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { validateAlphanumericId } from '@/lib/core/security/input-validation'
-import { refreshAccessTokenIfNeeded, resolveOAuthAccountId } from '@/app/api/auth/oauth/utils'
+import { refreshAccessTokenIfNeeded, resolveOAuthAccountId } from '@/lib/auth/oauth-utils'
 import type { SharepointSite } from '@/tools/sharepoint/types'
 
 export const dynamic = 'force-dynamic'

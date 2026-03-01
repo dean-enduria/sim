@@ -2,7 +2,7 @@ import '@sim/testing/mocks/executor'
 
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
 
-vi.mock('@/app/api/auth/oauth/utils', () => ({
+vi.mock('@/lib/auth/oauth-utils', () => ({
   resolveOAuthAccountId: vi
     .fn()
     .mockResolvedValue({ accountId: 'test-vertex-credential-id', usedCredentialTable: false }),

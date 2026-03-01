@@ -26,7 +26,7 @@ import {
   verifyProviderWebhook,
 } from '@/lib/webhooks/utils.server'
 import { getWorkspaceBilledAccountUserId } from '@/lib/workspaces/utils'
-import { resolveOAuthAccountId } from '@/app/api/auth/oauth/utils'
+import { resolveOAuthAccountId } from '@/lib/auth/oauth-utils'
 import { executeWebhookJob } from '@/background/webhook-execution'
 import { resolveEnvVarReferences } from '@/executor/utils/reference-validation'
 import { isConfluencePayloadMatch } from '@/triggers/confluence/utils'

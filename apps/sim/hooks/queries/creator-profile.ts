@@ -37,18 +37,10 @@ export interface CreatorProfile {
 }
 
 /**
- * Fetch organizations where user is owner or admin
- * Note: Filtering is done server-side in the API route
+ * Stubbed - organizations are managed by Enduria.
  */
 async function fetchOrganizations(): Promise<Organization[]> {
-  const response = await fetch('/api/organizations')
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch organizations')
-  }
-
-  const data = await response.json()
-  return data.organizations || []
+  return []
 }
 
 /**

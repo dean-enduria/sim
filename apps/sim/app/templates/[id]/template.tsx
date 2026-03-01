@@ -167,31 +167,10 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
   const currentUserId = session?.user?.id || null
 
   useEffect(() => {
-    const fetchUserOrganizations = async () => {
-      if (!currentUserId) return
-
-      try {
-        const response = await fetch('/api/organizations')
-        if (response.ok) {
-          const data = await response.json()
-          const orgs = data.organizations || []
-          const orgIds = orgs.map((org: any) => org.id)
-          const orgRoles = orgs.map((org: any) => ({
-            organizationId: org.id,
-            role: org.role,
-          }))
-          setCurrentUserOrgs(orgIds)
-          setCurrentUserOrgRoles(orgRoles)
-        }
-      } catch (error) {
-        logger.error('Error fetching organizations:', error)
-      }
-    }
-
-    // Superuser status - stubbed out (API route removed)
+    // Stubbed - organizations are managed by Enduria
+    setCurrentUserOrgs([])
+    setCurrentUserOrgRoles([])
     setIsSuperUser(false)
-
-    fetchUserOrganizations()
   }, [currentUserId])
 
   useEffect(() => {

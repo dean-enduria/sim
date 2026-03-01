@@ -2,7 +2,7 @@ import { createLogger } from '@sim/logger'
 import { NextResponse } from 'next/server'
 import { authorizeCredentialUse } from '@/lib/auth/credential-access'
 import { validateMicrosoftGraphId } from '@/lib/core/security/input-validation'
-import { refreshAccessTokenIfNeeded } from '@/app/api/auth/oauth/utils'
+import { refreshAccessTokenIfNeeded } from '@/lib/auth/oauth-utils'
 
 export const dynamic = 'force-dynamic'
 

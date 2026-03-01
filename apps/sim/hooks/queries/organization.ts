@@ -20,98 +20,49 @@ export const organizationKeys = {
 }
 
 /**
- * Fetch all organizations for the current user
- * Note: Billing data is fetched separately via useSubscriptionData() to avoid duplicate calls
- */
-async function fetchOrganizations() {
-  const [orgsResponse, activeOrgResponse] = await Promise.all([
-    client.organization.list(),
-    client.organization.getFullOrganization(),
-  ])
-
-  return {
-    organizations: orgsResponse.data || [],
-    activeOrganization: activeOrgResponse.data,
-  }
-}
-
-/**
- * Hook to fetch all organizations
+ * Stubbed - organizations are managed by Enduria.
  */
 export function useOrganizations() {
   return useQuery({
     queryKey: organizationKeys.lists(),
-    queryFn: fetchOrganizations,
-    staleTime: 30 * 1000,
+    queryFn: async () => ({
+      organizations: [] as any[],
+      activeOrganization: null as any,
+    }),
+    staleTime: Infinity,
     placeholderData: keepPreviousData,
   })
 }
 
 /**
- * Fetch a specific organization by ID
- */
-async function fetchOrganization() {
-  const response = await client.organization.getFullOrganization()
-  return response.data
-}
-
-/**
- * Hook to fetch a specific organization
+ * Stubbed - organizations are managed by Enduria.
  */
 export function useOrganization(orgId: string) {
   return useQuery({
     queryKey: organizationKeys.detail(orgId),
-    queryFn: fetchOrganization,
+    queryFn: async () => null as any,
     enabled: !!orgId,
-    staleTime: 30 * 1000,
+    staleTime: Infinity,
     placeholderData: keepPreviousData,
   })
 }
 
 /**
- * Fetch organization subscription data
- */
-async function fetchOrganizationSubscription(orgId: string) {
-  if (!orgId) {
-    return null
-  }
-
-  const response = await client.subscription.list({
-    query: { referenceId: orgId },
-  })
-
-  if (response.error) {
-    logger.error('Error fetching organization subscription', { error: response.error })
-    return null
-  }
-
-  const teamSubscription = response.data?.find(
-    (sub: any) => sub.status === 'active' && sub.plan === 'team'
-  )
-  const enterpriseSubscription = response.data?.find(
-    (sub: any) => sub.plan === 'enterprise' || sub.plan === 'enterprise-plus'
-  )
-  const activeSubscription = enterpriseSubscription || teamSubscription
-
-  return activeSubscription || null
-}
-
-/**
- * Hook to fetch organization subscription
+ * Stubbed - subscriptions are managed by Enduria.
  */
 export function useOrganizationSubscription(orgId: string) {
   return useQuery({
     queryKey: organizationKeys.subscription(orgId),
-    queryFn: () => fetchOrganizationSubscription(orgId),
+    queryFn: async () => null as any,
     enabled: !!orgId,
     retry: false,
-    staleTime: 30 * 1000,
+    staleTime: Infinity,
     placeholderData: keepPreviousData,
   })
 }
 
 /**
- * Stubbed organization billing data - billing is handled by Enduria.
+ * Stubbed - billing is handled by Enduria.
  */
 export function useOrganizationBilling(orgId: string) {
   return useQuery<any>({
@@ -130,36 +81,20 @@ export function useOrganizationBilling(orgId: string) {
 }
 
 /**
- * Fetch organization member usage data
- */
-async function fetchOrganizationMembers(orgId: string) {
-  const response = await fetch(`/api/organizations/${orgId}/members?include=usage`)
-
-  if (response.status === 404) {
-    return { members: [] }
-  }
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch organization members')
-  }
-  return response.json()
-}
-
-/**
- * Hook to fetch organization members with usage data
+ * Stubbed - organization members are managed by Enduria.
  */
 export function useOrganizationMembers(orgId: string) {
   return useQuery({
     queryKey: organizationKeys.memberUsage(orgId),
-    queryFn: () => fetchOrganizationMembers(orgId),
+    queryFn: async () => ({ members: [] as any[], data: [] as any[] }),
     enabled: !!orgId,
-    staleTime: 30 * 1000,
+    staleTime: Infinity,
     placeholderData: keepPreviousData,
   })
 }
 
 /**
- * Stubbed organization usage limit update - billing is handled by Enduria.
+ * Stubbed - billing is handled by Enduria.
  */
 export function useUpdateOrganizationUsageLimit() {
   return {
@@ -175,7 +110,7 @@ export function useUpdateOrganizationUsageLimit() {
 }
 
 /**
- * Invite member mutation
+ * Stubbed - invitations are managed by Enduria.
  */
 interface InviteMemberParams {
   emails: string[]
@@ -187,34 +122,18 @@ export function useInviteMember() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ emails, workspaceInvitations, orgId }: InviteMemberParams) => {
-      const response = await fetch(`/api/organizations/${orgId}/invitations?batch=true`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          emails,
-          workspaceInvitations,
-        }),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || error.message || 'Failed to invite member')
-      }
-
-      return response.json()
+    mutationFn: async (_params: InviteMemberParams) => {
+      logger.warn('useInviteMember is stubbed - organizations are managed by Enduria')
+      return { success: true }
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: organizationKeys.detail(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.billing(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.memberUsage(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.lists() })
     },
   })
 }
 
 /**
- * Remove member mutation
+ * Stubbed - member management is handled by Enduria.
  */
 interface RemoveMemberParams {
   memberId: string
@@ -226,33 +145,18 @@ export function useRemoveMember() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ memberId, orgId, shouldReduceSeats }: RemoveMemberParams) => {
-      const response = await fetch(
-        `/api/organizations/${orgId}/members/${memberId}?shouldReduceSeats=${shouldReduceSeats}`,
-        {
-          method: 'DELETE',
-        }
-      )
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to remove member')
-      }
-
-      return response.json()
+    mutationFn: async (_params: RemoveMemberParams) => {
+      logger.warn('useRemoveMember is stubbed - organizations are managed by Enduria')
+      return { success: true }
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: organizationKeys.detail(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.billing(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.memberUsage(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.subscription(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.lists() })
     },
   })
 }
 
 /**
- * Cancel invitation mutation
+ * Stubbed - invitations are managed by Enduria.
  */
 interface CancelInvitationParams {
   invitationId: string
@@ -263,31 +167,18 @@ export function useCancelInvitation() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ invitationId, orgId }: CancelInvitationParams) => {
-      const response = await fetch(
-        `/api/organizations/${orgId}/invitations?invitationId=${invitationId}`,
-        {
-          method: 'DELETE',
-        }
-      )
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to cancel invitation')
-      }
-
-      return response.json()
+    mutationFn: async (_params: CancelInvitationParams) => {
+      logger.warn('useCancelInvitation is stubbed - organizations are managed by Enduria')
+      return { success: true }
     },
     onSuccess: (_data, variables) => {
-      // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: organizationKeys.detail(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.lists() })
     },
   })
 }
 
 /**
- * Resend invitation mutation
+ * Stubbed - invitations are managed by Enduria.
  */
 interface ResendInvitationParams {
   invitationId: string
@@ -296,24 +187,15 @@ interface ResendInvitationParams {
 
 export function useResendInvitation() {
   return useMutation({
-    mutationFn: async ({ invitationId, orgId }: ResendInvitationParams) => {
-      const response = await fetch(`/api/organizations/${orgId}/invitations/${invitationId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to resend invitation')
-      }
-
-      return response.json()
+    mutationFn: async (_params: ResendInvitationParams) => {
+      logger.warn('useResendInvitation is stubbed - organizations are managed by Enduria')
+      return { success: true }
     },
   })
 }
 
 /**
- * Update seats mutation (handles both add and reduce)
+ * Stubbed - seats are managed by Enduria.
  */
 interface UpdateSeatsParams {
   orgId: string
@@ -324,31 +206,18 @@ export function useUpdateSeats() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ seats, orgId }: UpdateSeatsParams) => {
-      const response = await fetch(`/api/organizations/${orgId}/seats`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ seats }),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to update seats')
-      }
-
-      return response.json()
+    mutationFn: async (_params: UpdateSeatsParams) => {
+      logger.warn('useUpdateSeats is stubbed - organizations are managed by Enduria')
+      return { success: true }
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: organizationKeys.detail(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.subscription(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.billing(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.lists() })
     },
   })
 }
 
 /**
- * Update organization settings mutation
+ * Stubbed - organization settings are managed by Enduria.
  */
 interface UpdateOrganizationParams {
   orgId: string
@@ -361,29 +230,18 @@ export function useUpdateOrganization() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ orgId, ...updates }: UpdateOrganizationParams) => {
-      const response = await fetch(`/api/organizations/${orgId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to update organization')
-      }
-
-      return response.json()
+    mutationFn: async (_params: UpdateOrganizationParams) => {
+      logger.warn('useUpdateOrganization is stubbed - organizations are managed by Enduria')
+      return { success: true }
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: organizationKeys.detail(variables.orgId) })
-      queryClient.invalidateQueries({ queryKey: organizationKeys.lists() })
     },
   })
 }
 
 /**
- * Create organization mutation
+ * Stubbed - organization creation is managed by Enduria.
  */
 interface CreateOrganizationParams {
   name: string
@@ -394,21 +252,9 @@ export function useCreateOrganization() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ name, slug }: CreateOrganizationParams) => {
-      const response = await client.organization.create({
-        name,
-        slug: slug || name.toLowerCase().replace(/\s+/g, '-'),
-      })
-
-      if (!response.data) {
-        throw new Error('Failed to create organization')
-      }
-
-      await client.organization.setActive({
-        organizationId: response.data.id,
-      })
-
-      return response.data
+    mutationFn: async (_params: CreateOrganizationParams) => {
+      logger.warn('useCreateOrganization is stubbed - organizations are managed by Enduria')
+      return { id: 'stub', name: _params.name }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: organizationKeys.all })
