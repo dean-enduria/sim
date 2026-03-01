@@ -1,0 +1,115 @@
+# Docker Compose for Enduria-integrated SIM deployment.
+# Uses the existing Dockerfiles (docker/app.Dockerfile, docker/realtime.Dockerfile, docker/db.Dockerfile).
+#
+# Usage:
+#   cp .env.enduria.example .env
+#   # Fill in required values
+#   docker compose -f docker-compose.enduria.yml up -d
+#
+# Services:
+#   sim       - Next.js app (port 3000)
+#   realtime  - WebSocket server (port 3002)
+#   migrations - Runs db:migrate then exits
+#   db        - PostgreSQL 17 + pgvector
+
+services:
+  sim:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+    ports:
+      - '3000:3000'
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL:-postgresql://sim:simdev@db:5432/sim}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - INTERNAL_API_SECRET=${INTERNAL_API_SECRET}
+      - ENDURIA_API_URL=${ENDURIA_API_URL:-http://localhost:9002}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL:-ws://localhost:3002}
+      - SOCKET_SERVER_URL=${SOCKET_SERVER_URL:-http://realtime:3002}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - API_ENCRYPTION_KEY=${API_ENCRYPTION_KEY:-${ENCRYPTION_KEY}}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - REDIS_URL=${REDIS_URL:-}
+      - DISABLE_AUTH=${DISABLE_AUTH:-false}
+    depends_on:
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+      realtime:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '--quiet', 'http://127.0.0.1:3000']
+      interval: 90s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  realtime:
+    build:
+      context: .
+      dockerfile: docker/realtime.Dockerfile
+    ports:
+      - '3002:3002'
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL:-postgresql://sim:simdev@db:5432/sim}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - INTERNAL_API_SECRET=${INTERNAL_API_SECRET}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - REDIS_URL=${REDIS_URL:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '--quiet', 'http://127.0.0.1:3002/health']
+      interval: 90s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  migrations:
+    build:
+      context: .
+      dockerfile: docker/db.Dockerfile
+    working_dir: /app/packages/db
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://sim:simdev@db:5432/sim}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ['bun', 'run', 'db:migrate']
+    restart: 'no'
+
+  db:
+    image: pgvector/pgvector:pg17
+    restart: unless-stopped
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-sim}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-simdev}
+      - POSTGRES_DB=${POSTGRES_DB:-sim}
+    volumes:
+      - sim_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-sim}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  sim_data:
