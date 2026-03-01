@@ -1,7 +1,7 @@
 import { createLogger } from '@sim/logger'
-import { getSessionCookie } from 'better-auth/cookies'
+import { jwtVerify } from 'jose'
 import { type NextRequest, NextResponse } from 'next/server'
-import { isAuthDisabled, isHosted } from './lib/core/config/feature-flags'
+import { isAuthDisabled } from './lib/core/config/feature-flags'
 import { generateRuntimeCSP } from './lib/core/security/csp'
 
 const logger = createLogger('Proxy')
@@ -14,85 +14,84 @@ const SUSPICIOUS_UA_PATTERNS = [
   /\b(sqlmap|nikto|gobuster|dirb|nmap)\b/i, // Known scanning tools
 ] as const
 
-/**
- * Handles authentication-based redirects for root paths
- */
-function handleRootPathRedirects(
-  request: NextRequest,
-  hasActiveSession: boolean
-): NextResponse | null {
-  const url = request.nextUrl
+// Paths that don't require authentication
+const publicPaths = new Set(['/api/health', '/api/webhooks/enduria'])
 
-  if (url.pathname !== '/') {
+const publicPrefixes = [
+  '/api/health',
+  '/api/webhooks/enduria',
+  '/api/webhooks/trigger/',
+]
+
+function isPublicPath(pathname: string): boolean {
+  if (publicPaths.has(pathname)) return true
+  return publicPrefixes.some((p) => pathname.startsWith(p))
+}
+
+/**
+ * Validate Enduria JWT token using jose (Edge-compatible).
+ * Returns decoded payload or null if invalid.
+ */
+async function validateJWT(token: string): Promise<Record<string, unknown> | null> {
+  const secret = process.env.NEXTAUTH_SECRET
+  if (!secret) {
+    logger.error('NEXTAUTH_SECRET not configured')
     return null
   }
 
-  if (!isHosted) {
-    // Self-hosted: Always redirect based on session
-    if (hasActiveSession) {
-      return NextResponse.redirect(new URL('/workspace', request.url))
-    }
-    return NextResponse.redirect(new URL('/login', request.url))
+  try {
+    const encodedSecret = new TextEncoder().encode(secret)
+    const { payload } = await jwtVerify(token, encodedSecret)
+    return payload as Record<string, unknown>
+  } catch {
+    return null
   }
+}
 
-  // For root path, redirect authenticated users to workspace
-  // Unless they have a 'from' query parameter (e.g., ?from=nav, ?from=settings)
-  // This allows intentional navigation to the homepage from anywhere in the app
-  if (hasActiveSession) {
-    const from = url.searchParams.get('from')
-    if (!from) {
-      return NextResponse.redirect(new URL('/workspace', request.url))
-    }
+/**
+ * Extract JWT token from request cookies or Authorization header
+ */
+function extractToken(request: NextRequest): string | null {
+  // Check NextAuth session cookies
+  const token =
+    request.cookies.get('next-auth.session-token')?.value ||
+    request.cookies.get('__Secure-next-auth.session-token')?.value
+
+  if (token) return token
+
+  // Check Authorization header
+  const authHeader = request.headers.get('authorization')
+  if (authHeader?.startsWith('Bearer ')) {
+    return authHeader.slice(7)
   }
 
   return null
 }
 
 /**
- * Handles invitation link redirects for unauthenticated users
+ * Validate internal API secret for service-to-service calls from Enduria.
+ * Returns a response with org context headers if valid, or 401 if invalid secret,
+ * or null if this is not an S2S request.
  */
-function handleInvitationRedirects(
-  request: NextRequest,
-  hasActiveSession: boolean
-): NextResponse | null {
-  if (!request.nextUrl.pathname.startsWith('/invite/')) {
-    return null
+function handleInternalApiAuth(request: NextRequest): NextResponse | null {
+  const internalSecret = request.headers.get('x-internal-api-secret')
+  if (!internalSecret) return null
+
+  const expected = process.env.INTERNAL_API_SECRET
+  if (!expected || internalSecret !== expected) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (
-    !hasActiveSession &&
-    !request.nextUrl.pathname.endsWith('/login') &&
-    !request.nextUrl.pathname.endsWith('/signup') &&
-    !request.nextUrl.search.includes('callbackUrl')
-  ) {
-    const token = request.nextUrl.searchParams.get('token')
-    const inviteId = request.nextUrl.pathname.split('/').pop()
-    const callbackParam = encodeURIComponent(`/invite/${inviteId}${token ? `?token=${token}` : ''}`)
-    return NextResponse.redirect(
-      new URL(`/login?callbackUrl=${callbackParam}&invite_flow=true`, request.url)
-    )
-  }
-  return NextResponse.next()
-}
-
-/**
- * Handles workspace invitation API endpoint access
- */
-function handleWorkspaceInvitationAPI(
-  request: NextRequest,
-  hasActiveSession: boolean
-): NextResponse | null {
-  if (!request.nextUrl.pathname.startsWith('/api/workspaces/invitations')) {
-    return null
+  const orgId = request.headers.get('x-org-id')
+  if (!orgId) {
+    return NextResponse.json({ error: 'Missing x-org-id header' }, { status: 400 })
   }
 
-  if (request.nextUrl.pathname.includes('/accept') && !hasActiveSession) {
-    const token = request.nextUrl.searchParams.get('token')
-    if (token) {
-      return NextResponse.redirect(new URL(`/invite/${token}?token=${token}`, request.url))
-    }
-  }
-  return NextResponse.next()
+  const response = NextResponse.next()
+  response.headers.set('x-enduria-org-id', orgId)
+  response.headers.set('x-enduria-user-id', 'system')
+  response.headers.set('x-enduria-role', 'admin')
+  return response
 }
 
 /**
@@ -137,112 +136,146 @@ function handleSecurityFiltering(request: NextRequest): NextResponse | null {
   return null
 }
 
-const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const
-const UTM_COOKIE_NAME = 'sim_utm'
-const UTM_COOKIE_MAX_AGE = 3600
+/**
+ * Set Enduria user context headers on the response
+ */
+function setUserContextHeaders(
+  response: NextResponse,
+  orgId: string,
+  userId: string,
+  role: string,
+  email: string
+): void {
+  response.headers.set('x-enduria-org-id', orgId)
+  response.headers.set('x-enduria-user-id', userId)
+  response.headers.set('x-enduria-role', role)
+  response.headers.set('x-enduria-email', email)
+}
 
 /**
- * Sets a `sim_utm` cookie when UTM params are present on auth pages.
- * Captures UTM values, the HTTP Referer, landing page, and a timestamp.
+ * Set CSP headers for workspace/chat routes
  */
-function setUtmCookie(request: NextRequest, response: NextResponse): void {
-  const { searchParams, pathname } = request.nextUrl
-  const hasUtm = UTM_KEYS.some((key) => searchParams.get(key))
-  if (!hasUtm) return
-
-  const utmData: Record<string, string> = {}
-  for (const key of UTM_KEYS) {
-    const value = searchParams.get(key)
-    if (value) utmData[key] = value
+function maybeSetCSP(response: NextResponse, pathname: string): void {
+  if (
+    pathname.startsWith('/workspace') ||
+    pathname.startsWith('/chat') ||
+    pathname === '/'
+  ) {
+    response.headers.set('Content-Security-Policy', generateRuntimeCSP())
   }
-  utmData.referrer_url = request.headers.get('referer') || ''
-  utmData.landing_page = pathname
-  utmData.created_at = Date.now().toString()
-
-  response.cookies.set(UTM_COOKIE_NAME, JSON.stringify(utmData), {
-    path: '/',
-    maxAge: UTM_COOKIE_MAX_AGE,
-    sameSite: 'lax',
-    httpOnly: false, // Client-side hook needs to detect cookie presence
-  })
 }
 
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl
+  const { pathname } = url
 
-  const sessionCookie = getSessionCookie(request)
-  const hasActiveSession = isAuthDisabled || !!sessionCookie
+  // Security filtering first
+  const securityBlock = handleSecurityFiltering(request)
+  if (securityBlock) return securityBlock
 
-  const redirect = handleRootPathRedirects(request, hasActiveSession)
-  if (redirect) return redirect
-
-  if (url.pathname === '/login' || url.pathname === '/signup') {
-    if (hasActiveSession) {
-      const redirect = NextResponse.redirect(new URL('/workspace', request.url))
-      setUtmCookie(request, redirect)
-      return redirect
-    }
-    const response = NextResponse.next()
-    response.headers.set('Content-Security-Policy', generateRuntimeCSP())
-    setUtmCookie(request, response)
-    return response
+  // Public paths pass through without auth
+  if (isPublicPath(pathname)) {
+    return NextResponse.next()
   }
 
-  if (url.pathname.startsWith('/chat/')) {
+  // Allow public access to chat pages (they handle their own auth)
+  if (pathname.startsWith('/chat/')) {
     return NextResponse.next()
   }
 
   // Allow public access to template pages for SEO
-  if (url.pathname.startsWith('/templates')) {
+  if (pathname.startsWith('/templates')) {
     return NextResponse.next()
   }
 
-  if (url.pathname.startsWith('/workspace')) {
-    // Allow public access to workspace template pages - they handle their own redirects
-    if (url.pathname.match(/^\/workspace\/[^/]+\/templates/)) {
-      return NextResponse.next()
-    }
-
-    if (!hasActiveSession) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
+  // Allow public access to workspace template pages
+  if (pathname.match(/^\/workspace\/[^/]+\/templates/)) {
     return NextResponse.next()
   }
 
-  const invitationRedirect = handleInvitationRedirects(request, hasActiveSession)
-  if (invitationRedirect) return invitationRedirect
+  // Allow public access to form pages
+  if (pathname.startsWith('/form/')) {
+    return NextResponse.next()
+  }
 
-  const workspaceInvitationRedirect = handleWorkspaceInvitationAPI(request, hasActiveSession)
-  if (workspaceInvitationRedirect) return workspaceInvitationRedirect
+  // Check for internal API secret (service-to-service from Enduria)
+  const s2sResult = handleInternalApiAuth(request)
+  if (s2sResult) return s2sResult
 
-  const securityBlock = handleSecurityFiltering(request)
-  if (securityBlock) return securityBlock
+  // If auth is disabled (dev mode behind DISABLE_AUTH=true), pass through with dev context
+  if (isAuthDisabled) {
+    const response = NextResponse.next()
+    setUserContextHeaders(response, 'dev-org', 'dev-user', 'admin', 'dev@localhost')
+    response.headers.set('Vary', 'User-Agent')
+    maybeSetCSP(response, pathname)
 
+    // Root path redirects to workspace in dev mode
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL('/workspace', request.url))
+    }
+
+    return response
+  }
+
+  // Extract and validate Enduria JWT token
+  const token = extractToken(request)
+
+  if (!token) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    // For page routes, redirect to root (Enduria SaaS handles login flow)
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  const payload = await validateJWT(token)
+
+  if (!payload) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 })
+    }
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  const orgId = payload.orgId as string
+  const userId = (payload.sub || payload.userId) as string
+
+  if (!orgId || !userId) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Invalid token claims' }, { status: 401 })
+    }
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  // Root path: authenticated users go to workspace
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/workspace', request.url))
+  }
+
+  // Pass user context to downstream handlers via response headers
   const response = NextResponse.next()
+  setUserContextHeaders(
+    response,
+    orgId,
+    userId,
+    (payload.role as string) || 'user',
+    (payload.email as string) || ''
+  )
   response.headers.set('Vary', 'User-Agent')
-
-  if (
-    url.pathname.startsWith('/workspace') ||
-    url.pathname.startsWith('/chat') ||
-    url.pathname === '/'
-  ) {
-    response.headers.set('Content-Security-Policy', generateRuntimeCSP())
-  }
+  maybeSetCSP(response, pathname)
 
   return response
 }
 
 export const config = {
   matcher: [
-    '/', // Root path for self-hosted redirect logic
-    '/terms', // Whitelabel terms redirect
-    '/privacy', // Whitelabel privacy redirect
-    '/w', // Legacy /w redirect
-    '/w/:path*', // Legacy /w/* redirects
-    '/workspace/:path*', // New workspace routes
-    '/login',
-    '/signup',
-    '/invite/:path*', // Match invitation routes
+    '/', // Root path
+    '/workspace/:path*', // Workspace routes
+    '/chat/:path*', // Chat routes
+    '/templates/:path*', // Template routes
+    '/form/:path*', // Form routes
+    '/api/:path*', // API routes
+    '/.well-known/:path*', // OAuth discovery
     // Catch-all for other pages, excluding static assets and public directories
     '/((?!_next/static|_next/image|ingest|favicon.ico|logo/|static/|footer/|social/|enterprise/|favicon/|twitter/|robots.txt|sitemap.xml).*)',
   ],
