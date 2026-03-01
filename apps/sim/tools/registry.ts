@@ -368,6 +368,14 @@ import {
   elasticsearchSearchTool,
   elasticsearchUpdateDocumentTool,
 } from '@/tools/elasticsearch'
+import {
+  enduriaCreateTicketTool,
+  enduriaUpdateTicketTool,
+  enduriaGetTicketTool,
+  enduriaSearchKnowledgeBaseTool,
+  enduriaCreateIncidentTool,
+  enduriaGetAssetTool,
+} from '@/tools/enduria'
 import { elevenLabsTtsTool } from '@/tools/elevenlabs'
 import {
   enrichCheckCreditsTool,
@@ -3034,6 +3042,12 @@ export const tools: Record<string, ToolConfig> = {
   elasticsearch_list_indices: elasticsearchListIndicesTool,
   elasticsearch_cluster_health: elasticsearchClusterHealthTool,
   elasticsearch_cluster_stats: elasticsearchClusterStatsTool,
+  enduria_create_ticket: enduriaCreateTicketTool,
+  enduria_update_ticket: enduriaUpdateTicketTool,
+  enduria_get_ticket: enduriaGetTicketTool,
+  enduria_search_knowledge_base: enduriaSearchKnowledgeBaseTool,
+  enduria_create_incident: enduriaCreateIncidentTool,
+  enduria_get_asset: enduriaGetAssetTool,
   enrich_check_credits: enrichCheckCreditsTool,
   enrich_company_funding: enrichCompanyFundingTool,
   enrich_company_lookup: enrichCompanyLookupTool,

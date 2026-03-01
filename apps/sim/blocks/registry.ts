@@ -32,6 +32,7 @@ import { DSPyBlock } from '@/blocks/blocks/dspy'
 import { DuckDuckGoBlock } from '@/blocks/blocks/duckduckgo'
 import { DynamoDBBlock } from '@/blocks/blocks/dynamodb'
 import { ElasticsearchBlock } from '@/blocks/blocks/elasticsearch'
+import { EnduriaBlock } from '@/blocks/blocks/enduria'
 import { ElevenLabsBlock } from '@/blocks/blocks/elevenlabs'
 import { EnrichBlock } from '@/blocks/blocks/enrich'
 import { EvaluatorBlock } from '@/blocks/blocks/evaluator'
@@ -223,6 +224,7 @@ export const registry: Record<string, BlockConfig> = {
   duckduckgo: DuckDuckGoBlock,
   dynamodb: DynamoDBBlock,
   elasticsearch: ElasticsearchBlock,
+  enduria: EnduriaBlock,
   elevenlabs: ElevenLabsBlock,
   enrich: EnrichBlock,
   evaluator: EvaluatorBlock,

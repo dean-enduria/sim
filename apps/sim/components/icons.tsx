@@ -6012,3 +6012,23 @@ export function HexIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
+
+export function EnduriaIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...props} xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>
+      <path
+        d='M12 2L3 7v10l9 5 9-5V7l-9-5z'
+        stroke='currentColor'
+        strokeWidth='1.5'
+        fill='none'
+      />
+      <path
+        d='M12 8a4 4 0 100 8 4 4 0 000-8z'
+        stroke='currentColor'
+        strokeWidth='1.5'
+        fill='none'
+      />
+      <path d='M12 6v2M12 16v2M6.34 9l1.73 1M15.93 14l1.73 1M6.34 15l1.73-1M15.93 10l1.73-1' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' />
+    </svg>
+  )
+}
