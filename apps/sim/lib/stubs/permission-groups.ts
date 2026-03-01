@@ -1,5 +1,10 @@
 'use client'
 
+/**
+ * Stubbed permission-group hooks.
+ * Enterprise access-control has been removed — Enduria manages RBAC.
+ */
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { PermissionGroupConfig } from '@/lib/permission-groups/types'
 
@@ -41,8 +46,6 @@ export const permissionGroupKeys = {
   userConfig: (organizationId?: string) =>
     ['permissionGroups', 'userConfig', organizationId ?? 'none'] as const,
 }
-
-// All permission group hooks are stubbed - permissions are managed by Enduria.
 
 export function usePermissionGroups(organizationId?: string, enabled = true) {
   return useQuery<PermissionGroup[]>({
@@ -145,7 +148,9 @@ export function useDeletePermissionGroup() {
 export function useAddPermissionGroupMember() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (_data: { permissionGroupId: string; userId: string }) => ({ success: true }),
+    mutationFn: async (_data: { permissionGroupId: string; userId: string }) => ({
+      success: true,
+    }),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: permissionGroupKeys.members(variables.permissionGroupId),

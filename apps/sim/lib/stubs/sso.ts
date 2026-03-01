@@ -1,19 +1,21 @@
 'use client'
 
+/**
+ * Stubbed SSO hooks.
+ * SSO is managed by Enduria via SSOReady.
+ */
+
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { organizationKeys } from '@/hooks/queries/organization'
 
-/**
- * Query key factories for SSO-related queries
- */
+// Re-export constants from the server-safe module
+export { SSO_TRUSTED_PROVIDERS } from '@/lib/stubs/sso-constants'
+
 export const ssoKeys = {
   all: ['sso'] as const,
   providers: () => [...ssoKeys.all, 'providers'] as const,
 }
 
-/**
- * Stubbed - SSO is managed by Enduria.
- */
 export function useSSOProviders() {
   return useQuery({
     queryKey: ssoKeys.providers(),
@@ -23,9 +25,6 @@ export function useSSOProviders() {
   })
 }
 
-/**
- * Stubbed - SSO configuration is managed by Enduria.
- */
 interface ConfigureSSOParams {
   provider: string
   domain: string

@@ -1,6 +1,8 @@
 /**
- * Helper to detect if background is dark
+ * Generate CSS custom property overrides from brand environment variables.
+ * Moved from ee/whitelabeling/inject-theme.
  */
+
 function isDarkBackground(hexColor: string): boolean {
   const hex = hexColor.replace('#', '')
   const r = Number.parseInt(hex.substr(0, 2), 16)
@@ -32,7 +34,6 @@ export function generateThemeCSS(): string {
   if (process.env.NEXT_PUBLIC_BRAND_BACKGROUND_COLOR) {
     cssVars.push(`--brand-background-hex: ${process.env.NEXT_PUBLIC_BRAND_BACKGROUND_COLOR};`)
 
-    // Add dark theme class when background is dark
     const isDark = isDarkBackground(process.env.NEXT_PUBLIC_BRAND_BACKGROUND_COLOR)
     if (isDark) {
       cssVars.push(`--brand-is-dark: 1;`)

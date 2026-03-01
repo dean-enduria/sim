@@ -2,7 +2,7 @@ import { createLogger } from '@sim/logger'
 import { getInternalApiBaseUrl } from '@/lib/core/utils/urls'
 import { generateRouterPrompt, generateRouterV2Prompt } from '@/blocks/blocks/router'
 import type { BlockOutput } from '@/blocks/types'
-import { validateModelProvider } from '@/ee/access-control/utils/permission-check'
+import { validateModelProvider } from '@/lib/stubs/permission-check'
 import {
   BlockType,
   DEFAULTS,

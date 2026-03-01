@@ -1,7 +1,6 @@
-import { type BrandConfig, defaultBrandConfig, type ThemeColors } from '@/lib/branding'
+import type { BrandConfig, ThemeColors } from './types'
+import { defaultBrandConfig } from './defaults'
 import { getEnv } from '@/lib/core/config/env'
-
-export type { BrandConfig, ThemeColors }
 
 const getThemeColors = (): ThemeColors => {
   return {
@@ -19,8 +18,8 @@ const getThemeColors = (): ThemeColors => {
 }
 
 /**
- * Get branding configuration from environment variables
- * Supports runtime configuration via Docker/Kubernetes
+ * Get branding configuration from environment variables.
+ * Moved from ee/whitelabeling — Enduria manages branding directly.
  */
 export const getBrandConfig = (): BrandConfig => {
   return {
@@ -38,7 +37,7 @@ export const getBrandConfig = (): BrandConfig => {
 }
 
 /**
- * Hook to use brand configuration in React components
+ * Hook to use brand configuration in React components.
  */
 export const useBrandConfig = () => {
   return getBrandConfig()

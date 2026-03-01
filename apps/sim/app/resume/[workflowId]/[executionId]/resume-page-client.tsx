@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import Nav from '@/components/shared/nav/nav'
-import { useBrandConfig } from '@/ee/whitelabeling'
+import { useBrandConfig } from '@/lib/branding'
 import type { ResumeStatus } from '@/executor/types'
 
 interface ResumeLinks {

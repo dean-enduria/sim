@@ -1,6 +1,6 @@
 import { createLogger } from '@sim/logger'
 import type { BlockOutput } from '@/blocks/types'
-import { validateModelProvider } from '@/ee/access-control/utils/permission-check'
+import { validateModelProvider } from '@/lib/stubs/permission-check'
 import { BlockType, DEFAULTS, EVALUATOR } from '@/executor/constants'
 import type { BlockHandler, ExecutionContext } from '@/executor/types'
 import { buildAPIUrl, buildAuthHeaders, extractAPIErrorMessage } from '@/executor/utils/http'

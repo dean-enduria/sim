@@ -286,7 +286,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         return NextResponse.json({ error: auth.error || 'Unauthorized' }, { status: 401 })
       }
 
-      const { getUserPermissionConfig } = await import('@/ee/access-control/utils/permission-check')
+      const { getUserPermissionConfig } = await import('@/lib/stubs/permission-check')
       const ownerConfig = await getUserPermissionConfig(wf.userId)
       if (ownerConfig?.disablePublicApi) {
         return NextResponse.json({ error: auth.error || 'Unauthorized' }, { status: 401 })

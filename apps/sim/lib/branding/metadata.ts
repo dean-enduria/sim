@@ -1,15 +1,15 @@
 import type { Metadata } from 'next'
 import { getBaseUrl } from '@/lib/core/utils/urls'
-import { getBrandConfig } from '@/ee/whitelabeling/branding'
+import { getBrandConfig } from '@/lib/branding/config'
 
 /**
- * Generate dynamic metadata based on brand configuration
+ * Generate dynamic metadata based on brand configuration.
+ * Moved from ee/whitelabeling/metadata.
  */
 export function generateBrandedMetadata(override: Partial<Metadata> = {}): Metadata {
   const brand = getBrandConfig()
 
   const defaultTitle = brand.name
-  const summaryFull = `Sim is an open-source AI agent workflow builder. Developers at trail-blazing startups to Fortune 500 companies deploy agentic workflows on the Sim platform. 70,000+ developers already use Sim to build and deploy AI agent workflows and connect them to 100+ apps. Sim is SOC2 and HIPAA compliant, ensuring enterprise-grade security for AI automation.`
   const summaryShort = `Sim is an open-source AI agent workflow builder for production workflows.`
 
   return {
@@ -63,7 +63,7 @@ export function generateBrandedMetadata(override: Partial<Metadata> = {}): Metad
       locale: 'en_US',
       url: getBaseUrl(),
       title: defaultTitle,
-      description: summaryFull,
+      description: summaryShort,
       siteName: brand.name,
       images: [
         {
@@ -77,10 +77,8 @@ export function generateBrandedMetadata(override: Partial<Metadata> = {}): Metad
     twitter: {
       card: 'summary_large_image',
       title: defaultTitle,
-      description: summaryFull,
+      description: summaryShort,
       images: [brand.logoUrl || '/logo/426-240/primary/small.png'],
-      creator: '@simdotai',
-      site: '@simdotai',
     },
     manifest: '/manifest.webmanifest',
     icons: {
@@ -114,7 +112,7 @@ export function generateBrandedMetadata(override: Partial<Metadata> = {}): Metad
     other: {
       'apple-mobile-web-app-capable': 'yes',
       'mobile-web-app-capable': 'yes',
-      'msapplication-TileColor': '#701FFC', // Default Sim brand primary color
+      'msapplication-TileColor': '#701FFC',
       'msapplication-config': '/favicon/browserconfig.xml',
     },
     ...override,
@@ -122,7 +120,8 @@ export function generateBrandedMetadata(override: Partial<Metadata> = {}): Metad
 }
 
 /**
- * Generate static structured data for SEO
+ * Generate static structured data for SEO.
+ * Moved from ee/whitelabeling/metadata.
  */
 export function generateStructuredData() {
   return {
@@ -130,22 +129,13 @@ export function generateStructuredData() {
     '@type': 'SoftwareApplication',
     name: 'Sim',
     description:
-      'Sim is an open-source AI agent workflow builder. Developers at trail-blazing startups to Fortune 500 companies deploy agentic workflows on the Sim platform. 70,000+ developers already use Sim to build and deploy AI agent workflows and connect them to 100+ apps. Sim is SOC2 and HIPAA compliant, ensuring enterprise-level security.',
+      'Sim is an open-source AI agent workflow builder for production workflows.',
     url: getBaseUrl(),
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web Browser',
     applicationSubCategory: 'AIWorkflowAutomation',
     areaServed: 'Worldwide',
     availableLanguage: ['en'],
-    offers: {
-      '@type': 'Offer',
-      category: 'SaaS',
-    },
-    creator: {
-      '@type': 'Organization',
-      name: 'Sim',
-      url: 'https://sim.ai',
-    },
     featureList: [
       'Visual AI Agent Builder',
       'Workflow Canvas Interface',

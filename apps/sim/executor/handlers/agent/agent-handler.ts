@@ -11,7 +11,7 @@ import {
   validateMcpToolsAllowed,
   validateModelProvider,
   validateSkillsAllowed,
-} from '@/ee/access-control/utils/permission-check'
+} from '@/lib/stubs/permission-check'
 import { AGENT, BlockType, DEFAULTS, REFERENCE, stripCustomToolPrefix } from '@/executor/constants'
 import { memoryService } from '@/executor/handlers/agent/memory'
 import {

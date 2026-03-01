@@ -323,7 +323,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     if (isPublicApi) {
       const { validatePublicApiAllowed, PublicApiNotAllowedError } = await import(
-        '@/ee/access-control/utils/permission-check'
+        '@/lib/stubs/permission-check'
       )
       try {
         await validatePublicApiAllowed(session?.user?.id)

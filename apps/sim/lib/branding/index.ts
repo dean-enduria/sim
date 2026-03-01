@@ -1,2 +1,5 @@
 export { defaultBrandConfig } from './defaults'
 export type { BrandConfig, ThemeColors } from './types'
+export { getBrandConfig, useBrandConfig } from './config'
+export { generateThemeCSS } from './theme'
+export { generateBrandedMetadata, generateStructuredData } from './metadata'
