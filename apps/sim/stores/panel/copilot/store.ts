@@ -688,7 +688,7 @@ async function finalizeStream(
       errorType = 'forbidden'
     } else if (result.status === 426) {
       errorContent =
-        '_Please upgrade to the latest version of the Sim platform to continue using the copilot._'
+        '_Please upgrade to the latest version of the Workflows platform to continue using the agent._'
       errorType = 'upgrade_required'
     } else if (result.status === 429) {
       errorContent = '_Provider rate limit exceeded. Please try again later._'

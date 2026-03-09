@@ -233,7 +233,7 @@ export async function createOnePasswordClient(serviceAccountToken: string) {
   const { createClient } = await import('@1password/sdk')
   return createClient({
     auth: serviceAccountToken,
-    integrationName: 'Sim Studio',
+    integrationName: 'Workflows',
     integrationVersion: '1.0.0',
   })
 }

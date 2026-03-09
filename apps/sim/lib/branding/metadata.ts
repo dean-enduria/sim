@@ -10,7 +10,7 @@ export function generateBrandedMetadata(override: Partial<Metadata> = {}): Metad
   const brand = getBrandConfig()
 
   const defaultTitle = brand.name
-  const summaryShort = `Sim is an open-source AI agent workflow builder for production workflows.`
+  const summaryShort = `An open-source AI agent workflow builder for production workflows.`
 
   return {
     title: {
@@ -127,9 +127,9 @@ export function generateStructuredData() {
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'Sim',
+    name: 'Workflows',
     description:
-      'Sim is an open-source AI agent workflow builder for production workflows.',
+      'An open-source AI agent workflow builder for production workflows.',
     url: getBaseUrl(),
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web Browser',
