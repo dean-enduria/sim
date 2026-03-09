@@ -475,7 +475,7 @@ export function HelpModal({ open, onOpenChange, workflowId, workspaceId }: HelpM
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     className={cn(
-                      '!bg-card hover:!bg-accent w-full justify-center border border-border/40 border-dashed py-[10px]',
+                      '!bg-card hover:!bg-accent w-full justify-center border border-border/20 border-dashed py-[10px]',
                       {
                         'border-foreground': isDragging,
                       }
