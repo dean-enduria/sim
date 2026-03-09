@@ -28,6 +28,10 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
         { label: 'Get Incident', id: 'enduria_get_incident' },
         { label: 'List Incidents', id: 'enduria_list_incidents' },
         { label: 'List Tickets', id: 'enduria_list_tickets' },
+        { label: 'Create Change Request', id: 'enduria_create_change_request' },
+        { label: 'Update Change Request', id: 'enduria_update_change_request' },
+        { label: 'Get Change Request', id: 'enduria_get_change_request' },
+        { label: 'List Change Requests', id: 'enduria_list_change_requests' },
         { label: 'Get Asset', id: 'enduria_get_asset' },
         { label: 'Delete Ticket', id: 'enduria_delete_ticket' },
         { label: 'Add Comment', id: 'enduria_add_comment' },
@@ -324,6 +328,135 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       mode: 'advanced',
     },
 
+    // -- Create Change Request fields --
+    {
+      id: 'title',
+      title: 'Title',
+      type: 'short-input',
+      placeholder: 'Change request title',
+      condition: {
+        field: 'operation',
+        value: 'enduria_create_change_request',
+      },
+      required: true,
+    },
+    {
+      id: 'description',
+      title: 'Description',
+      type: 'long-input',
+      placeholder: 'Detailed description of the change request',
+      condition: {
+        field: 'operation',
+        value: 'enduria_create_change_request',
+      },
+      required: true,
+    },
+    {
+      id: 'changeType',
+      title: 'Change Type',
+      type: 'dropdown',
+      options: [
+        { label: 'Normal', id: 'normal' },
+        { label: 'Standard', id: 'standard' },
+        { label: 'Emergency', id: 'emergency' },
+      ],
+      condition: {
+        field: 'operation',
+        value: 'enduria_create_change_request',
+      },
+    },
+    {
+      id: 'priority',
+      title: 'Priority',
+      type: 'dropdown',
+      options: [
+        { label: 'Low', id: 'low' },
+        { label: 'Medium', id: 'medium' },
+        { label: 'High', id: 'high' },
+        { label: 'Critical', id: 'critical' },
+      ],
+      condition: {
+        field: 'operation',
+        value: 'enduria_create_change_request',
+      },
+    },
+    {
+      id: 'riskLevel',
+      title: 'Risk Level',
+      type: 'dropdown',
+      options: [
+        { label: 'Low', id: 'low' },
+        { label: 'Medium', id: 'medium' },
+        { label: 'High', id: 'high' },
+      ],
+      condition: {
+        field: 'operation',
+        value: 'enduria_create_change_request',
+      },
+    },
+
+    // -- Update Change Request fields --
+    {
+      id: 'changeRequestId',
+      title: 'Change Request ID',
+      type: 'short-input',
+      placeholder: 'Change request ID to update',
+      condition: {
+        field: 'operation',
+        value: 'enduria_update_change_request',
+      },
+      required: true,
+    },
+    {
+      id: 'fields',
+      title: 'Fields to Update (JSON)',
+      type: 'code',
+      language: 'json',
+      placeholder: '{\n  "status": "approved",\n  "riskLevel": "low"\n}',
+      condition: {
+        field: 'operation',
+        value: 'enduria_update_change_request',
+      },
+      required: true,
+    },
+
+    // -- Get Change Request fields --
+    {
+      id: 'changeRequestId',
+      title: 'Change Request ID',
+      type: 'short-input',
+      placeholder: 'Change request ID to retrieve',
+      condition: {
+        field: 'operation',
+        value: 'enduria_get_change_request',
+      },
+      required: true,
+    },
+
+    // -- List Change Requests fields --
+    {
+      id: 'status',
+      title: 'Status Filter',
+      type: 'short-input',
+      placeholder: 'draft, submitted, approved, implemented, closed',
+      condition: { field: 'operation', value: 'enduria_list_change_requests' },
+    },
+    {
+      id: 'priority',
+      title: 'Priority Filter',
+      type: 'short-input',
+      placeholder: 'low, medium, high, critical',
+      condition: { field: 'operation', value: 'enduria_list_change_requests' },
+    },
+    {
+      id: 'limit',
+      title: 'Limit',
+      type: 'short-input',
+      placeholder: '25',
+      condition: { field: 'operation', value: 'enduria_list_change_requests' },
+      mode: 'advanced',
+    },
+
     // -- Get Asset fields --
     {
       id: 'assetId',
@@ -397,6 +530,10 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       'enduria_update_incident',
       'enduria_get_incident',
       'enduria_list_incidents',
+      'enduria_create_change_request',
+      'enduria_update_change_request',
+      'enduria_get_change_request',
+      'enduria_list_change_requests',
       'enduria_get_asset',
       'enduria_list_tickets',
       'enduria_delete_ticket',
@@ -408,7 +545,7 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
         const { operation, fields, ...rest } = params
 
         // For update ticket/incident, parse the JSON fields
-        if ((operation === 'enduria_update_ticket' || operation === 'enduria_update_incident') && fields) {
+        if ((operation === 'enduria_update_ticket' || operation === 'enduria_update_incident' || operation === 'enduria_update_change_request') && fields) {
           const parsedFields = typeof fields === 'string' ? JSON.parse(fields) : fields
           return { ...rest, fields: parsedFields }
         }
@@ -427,6 +564,9 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     assignedTo: { type: 'string', description: 'Filter by assigned user' },
     ticketId: { type: 'string', description: 'Ticket ID' },
     incidentId: { type: 'string', description: 'Incident ID' },
+    changeRequestId: { type: 'string', description: 'Change request ID' },
+    changeType: { type: 'string', description: 'Change type (normal, standard, emergency)' },
+    riskLevel: { type: 'string', description: 'Risk level (low, medium, high)' },
     fields: { type: 'json', description: 'Fields to update as JSON' },
     query: { type: 'string', description: 'Search query string' },
     limit: { type: 'number', description: 'Result limit' },
@@ -443,6 +583,8 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     asset: { type: 'json', description: 'Enduria asset data' },
     tickets: { type: 'json', description: 'Array of Enduria tickets' },
     incidents: { type: 'json', description: 'Array of Enduria incidents' },
+    changeRequest: { type: 'json', description: 'Enduria change request data' },
+    changeRequests: { type: 'json', description: 'Array of Enduria change requests' },
     results: { type: 'json', description: 'Knowledge base search results' },
     comment: { type: 'json', description: 'Enduria ticket comment data' },
     metadata: { type: 'json', description: 'Operation metadata' },

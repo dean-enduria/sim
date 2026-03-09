@@ -129,6 +129,67 @@ export interface EnduriaListIncidentsResponse extends ToolResponse {
   }
 }
 
+// Create Change Request
+export interface EnduriaCreateChangeRequestParams extends EnduriaBaseParams {
+  title: string
+  description: string
+  changeType?: string
+  priority?: string
+  riskLevel?: string
+}
+
+export interface EnduriaCreateChangeRequestResponse extends ToolResponse {
+  output: {
+    changeRequest: Record<string, any>
+    metadata: {
+      changeRequestId: string
+    }
+  }
+}
+
+// Update Change Request
+export interface EnduriaUpdateChangeRequestParams extends EnduriaBaseParams {
+  changeRequestId: string
+  fields: Record<string, any>
+}
+
+export interface EnduriaUpdateChangeRequestResponse extends ToolResponse {
+  output: {
+    changeRequest: Record<string, any>
+    metadata: {
+      changeRequestId: string
+      updatedFields: string[]
+    }
+  }
+}
+
+// Get Change Request
+export interface EnduriaGetChangeRequestParams extends EnduriaBaseParams {
+  changeRequestId: string
+}
+
+export interface EnduriaGetChangeRequestResponse extends ToolResponse {
+  output: {
+    changeRequest: Record<string, any>
+  }
+}
+
+// List Change Requests
+export interface EnduriaListChangeRequestsParams extends EnduriaBaseParams {
+  status?: string
+  priority?: string
+  limit?: number
+}
+
+export interface EnduriaListChangeRequestsResponse extends ToolResponse {
+  output: {
+    changeRequests: Record<string, any>[]
+    metadata: {
+      totalCount: number
+    }
+  }
+}
+
 // List Tickets
 export interface EnduriaListTicketsParams extends EnduriaBaseParams {
   status?: string
@@ -201,3 +262,7 @@ export type EnduriaResponse =
   | EnduriaGetIncidentResponse
   | EnduriaListIncidentsResponse
   | EnduriaAddCommentResponse
+  | EnduriaCreateChangeRequestResponse
+  | EnduriaUpdateChangeRequestResponse
+  | EnduriaGetChangeRequestResponse
+  | EnduriaListChangeRequestsResponse
