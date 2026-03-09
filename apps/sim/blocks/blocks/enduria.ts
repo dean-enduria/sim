@@ -38,6 +38,8 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
         { label: 'Get KB Article', id: 'enduria_get_article' },
         { label: 'Delete Ticket', id: 'enduria_delete_ticket' },
         { label: 'Add Comment', id: 'enduria_add_comment' },
+        { label: 'Get User', id: 'enduria_get_user' },
+        { label: 'List Users', id: 'enduria_list_users' },
       ],
       value: () => 'enduria_create_ticket',
     },
@@ -549,6 +551,54 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       required: true,
     },
 
+    // -- Get User fields --
+    {
+      id: 'lookupUserId',
+      title: 'User ID',
+      type: 'short-input',
+      placeholder: 'User ID to retrieve',
+      condition: {
+        field: 'operation',
+        value: 'enduria_get_user',
+      },
+      required: true,
+    },
+
+    // -- List Users fields --
+    {
+      id: 'role',
+      title: 'Role Filter',
+      type: 'short-input',
+      placeholder: 'admin, agent, user',
+      condition: { field: 'operation', value: 'enduria_list_users' },
+    },
+    {
+      id: 'isActive',
+      title: 'Active Status',
+      type: 'dropdown',
+      options: [
+        { label: 'All', id: '' },
+        { label: 'Active', id: 'true' },
+        { label: 'Inactive', id: 'false' },
+      ],
+      condition: { field: 'operation', value: 'enduria_list_users' },
+    },
+    {
+      id: 'search',
+      title: 'Search',
+      type: 'short-input',
+      placeholder: 'Search by name or email',
+      condition: { field: 'operation', value: 'enduria_list_users' },
+    },
+    {
+      id: 'limit',
+      title: 'Limit',
+      type: 'short-input',
+      placeholder: '25',
+      condition: { field: 'operation', value: 'enduria_list_users' },
+      mode: 'advanced',
+    },
+
     // -- Delete Ticket fields --
     {
       id: 'ticketId',
@@ -620,16 +670,23 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       'enduria_list_tickets',
       'enduria_delete_ticket',
       'enduria_add_comment',
+      'enduria_get_user',
+      'enduria_list_users',
     ],
     config: {
       tool: (params) => params.operation,
       params: (params) => {
-        const { operation, fields, ...rest } = params
+        const { operation, fields, lookupUserId, ...rest } = params
 
         // For update ticket/incident, parse the JSON fields
         if ((operation === 'enduria_update_ticket' || operation === 'enduria_update_incident' || operation === 'enduria_update_change_request' || operation === 'enduria_update_asset') && fields) {
           const parsedFields = typeof fields === 'string' ? JSON.parse(fields) : fields
           return { ...rest, fields: parsedFields }
+        }
+
+        // Map lookupUserId to userId for get_user operation
+        if (operation === 'enduria_get_user' && lookupUserId) {
+          return { ...rest, userId: lookupUserId }
         }
 
         return rest
@@ -660,6 +717,9 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     search: { type: 'string', description: 'Search term for filtering' },
     content: { type: 'string', description: 'Comment content' },
     isInternal: { type: 'boolean', description: 'Whether comment is internal' },
+    lookupUserId: { type: 'string', description: 'User ID to look up' },
+    role: { type: 'string', description: 'User role filter' },
+    isActive: { type: 'string', description: 'Active status filter' },
   },
   outputs: {
     ticket: { type: 'json', description: 'Enduria ticket data' },
@@ -673,6 +733,8 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     article: { type: 'json', description: 'Enduria knowledge base article' },
     results: { type: 'json', description: 'Knowledge base search results' },
     comment: { type: 'json', description: 'Enduria ticket comment data' },
+    user: { type: 'json', description: 'Enduria user data' },
+    users: { type: 'json', description: 'Array of Enduria users' },
     metadata: { type: 'json', description: 'Operation metadata' },
   },
 }

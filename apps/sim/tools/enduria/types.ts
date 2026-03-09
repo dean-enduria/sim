@@ -207,6 +207,34 @@ export interface EnduriaListTicketsResponse extends ToolResponse {
   }
 }
 
+// Get User
+export interface EnduriaGetUserParams extends EnduriaBaseParams {
+  userId: string
+}
+
+export interface EnduriaGetUserResponse extends ToolResponse {
+  output: {
+    user: Record<string, any>
+  }
+}
+
+// List Users
+export interface EnduriaListUsersParams extends EnduriaBaseParams {
+  role?: string
+  isActive?: string
+  search?: string
+  limit?: number
+}
+
+export interface EnduriaListUsersResponse extends ToolResponse {
+  output: {
+    users: Record<string, any>[]
+    metadata: {
+      totalCount: number
+    }
+  }
+}
+
 // Get Asset
 export interface EnduriaGetAssetParams extends EnduriaBaseParams {
   assetId: string
@@ -314,3 +342,5 @@ export type EnduriaResponse =
   | EnduriaListAssetsResponse
   | EnduriaUpdateAssetResponse
   | EnduriaGetArticleResponse
+  | EnduriaGetUserResponse
+  | EnduriaListUsersResponse

@@ -388,6 +388,8 @@ import {
   enduriaGetArticleTool,
   enduriaDeleteTicketTool,
   enduriaAddCommentTool,
+  enduriaGetUserTool,
+  enduriaListUsersTool,
 } from '@/tools/enduria'
 import { elevenLabsTtsTool } from '@/tools/elevenlabs'
 import {
@@ -3074,6 +3076,8 @@ export const tools: Record<string, ToolConfig> = {
   enduria_get_article: enduriaGetArticleTool,
   enduria_delete_ticket: enduriaDeleteTicketTool,
   enduria_add_comment: enduriaAddCommentTool,
+  enduria_get_user: enduriaGetUserTool,
+  enduria_list_users: enduriaListUsersTool,
   enrich_check_credits: enrichCheckCreditsTool,
   enrich_company_funding: enrichCompanyFundingTool,
   enrich_company_lookup: enrichCompanyLookupTool,

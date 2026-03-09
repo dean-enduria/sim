@@ -1,4 +1,6 @@
 import { addCommentTool } from '@/tools/enduria/add_comment'
+import { getUserTool } from '@/tools/enduria/get_user'
+import { listUsersTool } from '@/tools/enduria/list_users'
 import { createChangeRequestTool } from '@/tools/enduria/create_change_request'
 import { createIncidentTool } from '@/tools/enduria/create_incident'
 import { createTicketTool } from '@/tools/enduria/create_ticket'
@@ -38,4 +40,6 @@ export {
   getArticleTool as enduriaGetArticleTool,
   deleteTicketTool as enduriaDeleteTicketTool,
   addCommentTool as enduriaAddCommentTool,
+  getUserTool as enduriaGetUserTool,
+  listUsersTool as enduriaListUsersTool,
 }
