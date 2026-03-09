@@ -218,6 +218,51 @@ export interface EnduriaGetAssetResponse extends ToolResponse {
   }
 }
 
+// List Assets
+export interface EnduriaListAssetsParams extends EnduriaBaseParams {
+  category?: string
+  status?: string
+  assignedTo?: string
+  search?: string
+  limit?: number
+}
+
+export interface EnduriaListAssetsResponse extends ToolResponse {
+  output: {
+    assets: Record<string, any>[]
+    metadata: {
+      totalCount: number
+    }
+  }
+}
+
+// Update Asset
+export interface EnduriaUpdateAssetParams extends EnduriaBaseParams {
+  assetId: string
+  fields: Record<string, any>
+}
+
+export interface EnduriaUpdateAssetResponse extends ToolResponse {
+  output: {
+    asset: Record<string, any>
+    metadata: {
+      assetId: string
+      updatedFields: string[]
+    }
+  }
+}
+
+// Get KB Article
+export interface EnduriaGetArticleParams extends EnduriaBaseParams {
+  articleId: string
+}
+
+export interface EnduriaGetArticleResponse extends ToolResponse {
+  output: {
+    article: Record<string, any>
+  }
+}
+
 // Delete Ticket
 export interface EnduriaDeleteTicketParams extends EnduriaBaseParams {
   ticketId: string
@@ -266,3 +311,6 @@ export type EnduriaResponse =
   | EnduriaUpdateChangeRequestResponse
   | EnduriaGetChangeRequestResponse
   | EnduriaListChangeRequestsResponse
+  | EnduriaListAssetsResponse
+  | EnduriaUpdateAssetResponse
+  | EnduriaGetArticleResponse

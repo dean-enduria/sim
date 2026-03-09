@@ -33,6 +33,9 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
         { label: 'Get Change Request', id: 'enduria_get_change_request' },
         { label: 'List Change Requests', id: 'enduria_list_change_requests' },
         { label: 'Get Asset', id: 'enduria_get_asset' },
+        { label: 'List Assets', id: 'enduria_list_assets' },
+        { label: 'Update Asset', id: 'enduria_update_asset' },
+        { label: 'Get KB Article', id: 'enduria_get_article' },
         { label: 'Delete Ticket', id: 'enduria_delete_ticket' },
         { label: 'Add Comment', id: 'enduria_add_comment' },
       ],
@@ -470,6 +473,82 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       required: true,
     },
 
+    // -- List Assets fields --
+    {
+      id: 'category',
+      title: 'Category Filter',
+      type: 'short-input',
+      placeholder: 'hardware, software, network',
+      condition: { field: 'operation', value: 'enduria_list_assets' },
+    },
+    {
+      id: 'status',
+      title: 'Status Filter',
+      type: 'short-input',
+      placeholder: 'active, retired, maintenance',
+      condition: { field: 'operation', value: 'enduria_list_assets' },
+    },
+    {
+      id: 'assignedTo',
+      title: 'Assigned To',
+      type: 'short-input',
+      placeholder: 'User ID to filter by',
+      condition: { field: 'operation', value: 'enduria_list_assets' },
+    },
+    {
+      id: 'search',
+      title: 'Search',
+      type: 'short-input',
+      placeholder: 'Search term',
+      condition: { field: 'operation', value: 'enduria_list_assets' },
+    },
+    {
+      id: 'limit',
+      title: 'Limit',
+      type: 'short-input',
+      placeholder: '25',
+      condition: { field: 'operation', value: 'enduria_list_assets' },
+      mode: 'advanced',
+    },
+
+    // -- Update Asset fields --
+    {
+      id: 'assetId',
+      title: 'Asset ID',
+      type: 'short-input',
+      placeholder: 'Asset ID to update',
+      condition: {
+        field: 'operation',
+        value: 'enduria_update_asset',
+      },
+      required: true,
+    },
+    {
+      id: 'fields',
+      title: 'Fields to Update (JSON)',
+      type: 'code',
+      language: 'json',
+      placeholder: '{\n  "status": "retired",\n  "assignedTo": "user123"\n}',
+      condition: {
+        field: 'operation',
+        value: 'enduria_update_asset',
+      },
+      required: true,
+    },
+
+    // -- Get KB Article fields --
+    {
+      id: 'articleId',
+      title: 'Article ID',
+      type: 'short-input',
+      placeholder: 'Knowledge base article ID',
+      condition: {
+        field: 'operation',
+        value: 'enduria_get_article',
+      },
+      required: true,
+    },
+
     // -- Delete Ticket fields --
     {
       id: 'ticketId',
@@ -535,6 +614,9 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       'enduria_get_change_request',
       'enduria_list_change_requests',
       'enduria_get_asset',
+      'enduria_list_assets',
+      'enduria_update_asset',
+      'enduria_get_article',
       'enduria_list_tickets',
       'enduria_delete_ticket',
       'enduria_add_comment',
@@ -545,7 +627,7 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
         const { operation, fields, ...rest } = params
 
         // For update ticket/incident, parse the JSON fields
-        if ((operation === 'enduria_update_ticket' || operation === 'enduria_update_incident' || operation === 'enduria_update_change_request') && fields) {
+        if ((operation === 'enduria_update_ticket' || operation === 'enduria_update_incident' || operation === 'enduria_update_change_request' || operation === 'enduria_update_asset') && fields) {
           const parsedFields = typeof fields === 'string' ? JSON.parse(fields) : fields
           return { ...rest, fields: parsedFields }
         }
@@ -574,6 +656,8 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     affectedService: { type: 'string', description: 'Affected service name or ID' },
     reportedBy: { type: 'string', description: 'Reporter user ID or email' },
     assetId: { type: 'string', description: 'Asset ID' },
+    articleId: { type: 'string', description: 'Knowledge base article ID' },
+    search: { type: 'string', description: 'Search term for filtering' },
     content: { type: 'string', description: 'Comment content' },
     isInternal: { type: 'boolean', description: 'Whether comment is internal' },
   },
@@ -585,6 +669,8 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     incidents: { type: 'json', description: 'Array of Enduria incidents' },
     changeRequest: { type: 'json', description: 'Enduria change request data' },
     changeRequests: { type: 'json', description: 'Array of Enduria change requests' },
+    assets: { type: 'json', description: 'Array of Enduria assets' },
+    article: { type: 'json', description: 'Enduria knowledge base article' },
     results: { type: 'json', description: 'Knowledge base search results' },
     comment: { type: 'json', description: 'Enduria ticket comment data' },
     metadata: { type: 'json', description: 'Operation metadata' },
