@@ -291,6 +291,17 @@ export async function executeTool(
     // Ensure context is preserved if it exists
     const contextParams = { ...params }
 
+    // Auto-inject Enduria credentials for native platform tools
+    if (normalizedToolId.startsWith('enduria_')) {
+      const enduriaApiUrl = process.env.ENDURIA_API_URL || process.env.NEXTAUTH_URL || ''
+      const enduriaApiSecret = process.env.INTERNAL_API_SECRET || ''
+      const enduriaOrgId = contextParams._context?.workspaceId || ''
+
+      if (!contextParams.apiUrl) contextParams.apiUrl = enduriaApiUrl
+      if (!contextParams.apiSecret) contextParams.apiSecret = enduriaApiSecret
+      if (!contextParams.orgId) contextParams.orgId = enduriaOrgId
+    }
+
     // Validate the tool and its parameters
     validateRequiredParametersAfterMerge(toolId, tool, contextParams)
 

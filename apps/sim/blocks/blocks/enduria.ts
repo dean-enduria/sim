@@ -28,35 +28,6 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       ],
       value: () => 'enduria_create_ticket',
     },
-    // API URL
-    {
-      id: 'apiUrl',
-      title: 'API URL',
-      type: 'short-input',
-      placeholder: 'https://your-enduria-instance.com',
-      required: true,
-      description: 'Enduria API base URL (ENDURIA_API_URL)',
-    },
-    // API Secret
-    {
-      id: 'apiSecret',
-      title: 'API Secret',
-      type: 'short-input',
-      placeholder: 'Enter INTERNAL_API_SECRET',
-      password: true,
-      required: true,
-      description: 'Internal API secret for service-to-service auth',
-    },
-    // Org ID
-    {
-      id: 'orgId',
-      title: 'Organization ID',
-      type: 'short-input',
-      placeholder: 'Enter organization ID',
-      required: true,
-      description: 'Organization ID to scope the request',
-    },
-
     // -- Create Ticket fields --
     {
       id: 'title',
@@ -287,9 +258,6 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
   },
   inputs: {
     operation: { type: 'string', description: 'Operation to perform' },
-    apiUrl: { type: 'string', description: 'Enduria API base URL' },
-    apiSecret: { type: 'string', description: 'Internal API secret' },
-    orgId: { type: 'string', description: 'Organization ID' },
     title: { type: 'string', description: 'Title for ticket or incident' },
     description: { type: 'string', description: 'Description for ticket or incident' },
     priority: { type: 'string', description: 'Ticket priority' },
