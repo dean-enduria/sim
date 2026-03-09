@@ -309,7 +309,7 @@ export interface EnduriaDeleteTicketResponse extends ToolResponse {
 export interface EnduriaAddCommentParams extends EnduriaBaseParams {
   ticketId: string
   content: string
-  isInternal?: boolean
+  isInternal?: boolean | string
 }
 
 export interface EnduriaAddCommentResponse extends ToolResponse {
