@@ -86,6 +86,23 @@ export interface EnduriaCreateIncidentResponse extends ToolResponse {
   }
 }
 
+// List Tickets
+export interface EnduriaListTicketsParams extends EnduriaBaseParams {
+  status?: string
+  priority?: string
+  assignedTo?: string
+  limit?: number
+}
+
+export interface EnduriaListTicketsResponse extends ToolResponse {
+  output: {
+    tickets: Record<string, any>[]
+    metadata: {
+      totalCount: number
+    }
+  }
+}
+
 // Get Asset
 export interface EnduriaGetAssetParams extends EnduriaBaseParams {
   assetId: string
@@ -104,3 +121,4 @@ export type EnduriaResponse =
   | EnduriaSearchKBResponse
   | EnduriaCreateIncidentResponse
   | EnduriaGetAssetResponse
+  | EnduriaListTicketsResponse

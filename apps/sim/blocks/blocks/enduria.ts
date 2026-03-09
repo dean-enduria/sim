@@ -24,6 +24,7 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
         { label: 'Get Ticket', id: 'enduria_get_ticket' },
         { label: 'Search Knowledge Base', id: 'enduria_search_knowledge_base' },
         { label: 'Create Incident', id: 'enduria_create_incident' },
+        { label: 'List Tickets', id: 'enduria_list_tickets' },
         { label: 'Get Asset', id: 'enduria_get_asset' },
       ],
       value: () => 'enduria_create_ticket',
@@ -219,6 +220,37 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       },
     },
 
+    // -- List Tickets fields --
+    {
+      id: 'status',
+      title: 'Status Filter',
+      type: 'short-input',
+      placeholder: 'open, in_progress, resolved, closed',
+      condition: { field: 'operation', value: 'enduria_list_tickets' },
+    },
+    {
+      id: 'priority',
+      title: 'Priority Filter',
+      type: 'short-input',
+      placeholder: 'low, medium, high, critical',
+      condition: { field: 'operation', value: 'enduria_list_tickets' },
+    },
+    {
+      id: 'assignedTo',
+      title: 'Assigned To',
+      type: 'short-input',
+      placeholder: 'User ID to filter by',
+      condition: { field: 'operation', value: 'enduria_list_tickets' },
+    },
+    {
+      id: 'limit',
+      title: 'Limit',
+      type: 'short-input',
+      placeholder: '25',
+      condition: { field: 'operation', value: 'enduria_list_tickets' },
+      mode: 'advanced',
+    },
+
     // -- Get Asset fields --
     {
       id: 'assetId',
@@ -240,6 +272,7 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       'enduria_search_knowledge_base',
       'enduria_create_incident',
       'enduria_get_asset',
+      'enduria_list_tickets',
     ],
     config: {
       tool: (params) => params.operation,
@@ -263,6 +296,7 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     priority: { type: 'string', description: 'Ticket priority' },
     category: { type: 'string', description: 'Ticket category or KB filter' },
     assignee: { type: 'string', description: 'User to assign ticket to' },
+    assignedTo: { type: 'string', description: 'Filter by assigned user' },
     ticketId: { type: 'string', description: 'Ticket ID' },
     fields: { type: 'json', description: 'Fields to update as JSON' },
     query: { type: 'string', description: 'Search query string' },
@@ -276,6 +310,7 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     ticket: { type: 'json', description: 'Enduria ticket data' },
     incident: { type: 'json', description: 'Enduria incident data' },
     asset: { type: 'json', description: 'Enduria asset data' },
+    tickets: { type: 'json', description: 'Array of Enduria tickets' },
     results: { type: 'json', description: 'Knowledge base search results' },
     metadata: { type: 'json', description: 'Operation metadata' },
   },
