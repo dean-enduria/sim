@@ -718,13 +718,13 @@ export const Toolbar = memo(
           className='mx-[-1px] flex flex-shrink-0 cursor-pointer items-center justify-between rounded-[4px] border border-[var(--border-soft)] bg-[var(--surface-4)] px-[12px] py-[6px]'
           onClick={handleSearchClick}
         >
-          <h2 className='font-medium text-[14px] text-[var(--text-primary)]'>Toolbar</h2>
+          <h2 className='font-medium text-[14px] text-[var(--text-primary)]'>Tools</h2>
           <div className='flex shrink-0 items-center gap-[8px]'>
             {!isSearchActive ? (
               <Button
                 variant='ghost'
                 className='p-0'
-                aria-label='Search toolbar'
+                aria-label='Search tools'
                 onClick={handleSearchClick}
               >
                 <Search className='h-[14px] w-[14px]' />

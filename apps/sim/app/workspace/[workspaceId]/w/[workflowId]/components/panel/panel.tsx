@@ -528,7 +528,7 @@ export const Panel = memo(function Panel() {
                 onClick={() => handleTabClick('toolbar')}
                 data-tab-button='toolbar'
               >
-                Toolbar
+                Tools
               </Button>
               <Button
                 className={`h-[28px] rounded-[6px] border px-[8px] py-[5px] text-[12.5px] ${
