@@ -565,7 +565,7 @@ const ExecutionGroupRow = memo(function ExecutionGroupRow({
   return (
     <div className='flex flex-col px-[6px]'>
       {/* Separator between executions */}
-      {showSeparator && <div className='mx-[4px] mb-[6px] border-[var(--border)] border-t' />}
+      {showSeparator && <div className='mx-[4px] mb-[6px] border-[var(--border-soft)] border-t' />}
 
       {/* Entry tree */}
       <div className='ml-[4px] flex flex-col gap-[2px] pb-[6px]'>
@@ -1293,7 +1293,7 @@ export const Terminal = memo(function Terminal() {
       <aside
         ref={terminalRef}
         className={clsx(
-          'terminal-container fixed right-[var(--panel-width)] bottom-0 left-[var(--sidebar-width)] z-10 overflow-hidden border-[var(--border)] border-t bg-[var(--surface-1)]',
+          'terminal-container fixed right-[var(--panel-width)] bottom-0 left-[var(--sidebar-width)] z-10 overflow-hidden border-t border-[var(--border-soft)] bg-[var(--bg)]',
           isToggling && 'transition-[height] duration-100 ease-out'
         )}
         onTransitionEnd={handleTransitionEnd}
@@ -1310,7 +1310,7 @@ export const Terminal = memo(function Terminal() {
           >
             {/* Header */}
             <div
-              className='group flex h-[30px] flex-shrink-0 cursor-pointer items-center justify-between bg-[var(--surface-1)] pr-[16px] pl-[16px]'
+              className='group flex h-[30px] flex-shrink-0 cursor-pointer items-center justify-between bg-[var(--bg)] pr-[16px] pl-[16px]'
               onClick={handleHeaderClick}
             >
               {/* Left side - Logs label */}

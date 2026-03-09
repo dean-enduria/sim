@@ -393,7 +393,7 @@ export function Variables() {
   return (
     <div
       ref={preventZoomRef}
-      className='fixed z-30 flex flex-col overflow-hidden rounded-[8px] border border-[var(--border)] bg-[var(--surface-1)] px-[10px] pt-[2px] pb-[8px]'
+      className='fixed z-30 flex flex-col overflow-hidden rounded-[8px] border border-[var(--border-soft)] bg-background/95 backdrop-blur-xl shadow-lg px-[10px] pt-[2px] pb-[8px]'
       style={{
         left: `${actualPosition.x}px`,
         top: `${actualPosition.y}px`,
@@ -407,7 +407,7 @@ export function Variables() {
     >
       {/* Header (drag handle) */}
       <div
-        className='flex h-[32px] flex-shrink-0 cursor-grab items-center justify-between bg-[var(--surface-1)] p-0 active:cursor-grabbing'
+        className='flex h-[32px] flex-shrink-0 cursor-grab items-center justify-between bg-transparent p-0 active:cursor-grabbing'
         onMouseDown={handleMouseDown}
       >
         <div className='flex items-center'>

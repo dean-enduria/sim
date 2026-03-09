@@ -165,7 +165,7 @@ export function SubflowEditor({
       {hasIncomingConnections && (
         <div
           className={
-            'connections-section flex flex-shrink-0 flex-col overflow-hidden border-[var(--border)] border-t' +
+            'connections-section flex flex-shrink-0 flex-col overflow-hidden border-[var(--border-soft)] border-t' +
             (!isResizing ? ' transition-[height] duration-100 ease-out' : '')
           }
           style={{ height: `${connectionsHeight}px` }}

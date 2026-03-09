@@ -111,6 +111,7 @@
     /* Borders / dividers */
     --divider: #ededed;
     --border-muted: #e4e4e4;
+    --border-soft: rgba(224, 224, 224, 0.3);
     --border-success: #e0e0e0;
 
     /* Brand & state */
@@ -228,6 +229,7 @@
     /* --border-strong: #303030; */
     --divider: #393939;
     --border-muted: #424242;
+    --border-soft: rgba(44, 44, 44, 0.3);
     --border-success: #575757;
 
     /* Brand & state */

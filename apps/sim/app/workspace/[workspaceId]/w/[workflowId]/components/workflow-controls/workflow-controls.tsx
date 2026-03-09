@@ -91,7 +91,7 @@ export const WorkflowControls = memo(function WorkflowControls() {
     <>
       <div
         className={clsx(
-          'fixed z-10 flex h-[36px] items-center gap-[2px] rounded-[8px] border border-[var(--border)] bg-[var(--surface-1)] p-[4px]',
+          'fixed z-10 flex h-[36px] items-center gap-[2px] rounded-[8px] border border-[var(--border-soft)] bg-background/80 backdrop-blur-sm p-[4px]',
           !isTerminalResizing && 'transition-[bottom] duration-100 ease-out'
         )}
         style={{

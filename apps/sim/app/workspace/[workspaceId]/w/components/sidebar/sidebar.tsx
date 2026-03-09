@@ -491,7 +491,7 @@ export const Sidebar = memo(function Sidebar() {
     <>
       {isCollapsed ? (
         /* Floating collapsed header - minimal pill showing workspace name and expand toggle */
-        <div className='fixed top-[14px] left-[10px] z-10 w-fit rounded-[8px] border border-[var(--border)] bg-[var(--surface-1)] py-[4px] pr-[10px] pl-[6px]'>
+        <div className='fixed top-[calc(64px+14px)] left-[10px] z-10 w-fit rounded-[8px] border border-[var(--border-soft)] bg-[var(--bg)] py-[4px] pr-[10px] pl-[6px]'>
           <WorkspaceHeader
             activeWorkspace={activeWorkspace}
             workspaceId={workspaceId}
@@ -520,11 +520,11 @@ export const Sidebar = memo(function Sidebar() {
         <>
           <aside
             ref={sidebarRef}
-            className='sidebar-container fixed inset-y-0 left-0 z-10 overflow-hidden bg-[var(--surface-1)]'
+            className='sidebar-container fixed top-16 bottom-0 left-0 z-10 overflow-hidden bg-[var(--bg)]'
             aria-label='Workspace sidebar'
             onClick={handleSidebarClick}
           >
-            <div className='flex h-full flex-col border-[var(--border)] border-r pt-[12px]'>
+            <div className='flex h-full flex-col border-r border-[var(--border-soft)] pt-[12px]'>
               {/* Header */}
               <div className='flex-shrink-0 px-[14px]'>
                 <WorkspaceHeader
@@ -553,7 +553,7 @@ export const Sidebar = memo(function Sidebar() {
 
               {/* Search */}
               <div
-                className='mx-[8px] mt-[10px] flex flex-shrink-0 cursor-pointer items-center justify-between rounded-[8px] border border-[var(--border)] bg-transparent px-[8px] py-[6px] transition-colors duration-100 hover:border-[var(--border-1)] hover:bg-[var(--surface-6)] dark:bg-[var(--surface-4)] dark:hover:border-[var(--border-1)] dark:hover:bg-[var(--surface-5)]'
+                className='mx-2 mt-2.5 flex flex-shrink-0 cursor-pointer items-center justify-between rounded-lg border border-[var(--border-soft)] bg-transparent px-2 py-1.5 transition-colors duration-100 hover:bg-muted/40'
                 onClick={() => setIsSearchModalOpen(true)}
               >
                 <div className='flex items-center gap-[6px]'>
@@ -570,7 +570,7 @@ export const Sidebar = memo(function Sidebar() {
                 {/* Header - Always visible */}
                 <div className='flex flex-shrink-0 flex-col space-y-[4px] px-[14px]'>
                   <div className='flex items-center justify-between'>
-                    <div className='font-medium text-[var(--text-tertiary)] text-small'>
+                    <div className='text-xs font-medium text-muted-foreground'>
                       Workflows
                     </div>
                     <div className='flex items-center justify-center gap-[10px]'>
@@ -653,12 +653,12 @@ export const Sidebar = memo(function Sidebar() {
               </div>
 
               {/* Footer Navigation */}
-              <div className='flex flex-shrink-0 flex-col gap-[2px] border-[var(--border)] border-t px-[7.75px] pt-[8px] pb-[8px]'>
+              <div className='flex flex-shrink-0 flex-col gap-[2px] border-t border-[var(--border-soft)] px-[7.75px] pt-[8px] pb-[8px]'>
                 {footerNavigationItems.map((item) => {
                   const Icon = item.icon
                   const active = item.href ? pathname?.startsWith(item.href) : false
                   const baseClasses =
-                    'group flex h-[26px] items-center gap-[8px] rounded-[8px] px-[6px] text-[14px] hover:bg-[var(--surface-6)] dark:hover:bg-[var(--surface-5)]'
+                    'group flex h-[26px] items-center gap-[8px] rounded-[8px] px-[6px] text-[14px] hover:bg-muted/40'
                   const activeClasses = active
                     ? 'bg-[var(--surface-6)] dark:bg-[var(--surface-5)]'
                     : ''
@@ -718,7 +718,7 @@ export const Sidebar = memo(function Sidebar() {
           {/* Resize Handle - Only visible on workflow pages */}
           {isOnWorkflowPage && (
             <div
-              className='fixed top-0 bottom-0 left-[calc(var(--sidebar-width)-4px)] z-20 w-[8px] cursor-ew-resize'
+              className='fixed top-16 bottom-0 left-[calc(var(--sidebar-width)-4px)] z-20 w-[8px] cursor-ew-resize'
               onMouseDown={handleMouseDown}
               role='separator'
               aria-orientation='vertical'

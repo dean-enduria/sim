@@ -27,8 +27,8 @@ export function ErrorUI({
 }: ErrorUIProps) {
   const preventZoomRef = usePreventZoom()
   const containerClass = fullScreen
-    ? 'flex flex-col w-full h-screen bg-[var(--surface-1)]'
-    : 'flex flex-col w-full h-full bg-[var(--surface-1)]'
+    ? 'flex flex-col w-full h-screen bg-[var(--bg)]'
+    : 'flex flex-col w-full h-full bg-[var(--bg)]'
 
   return (
     <div ref={preventZoomRef} className={containerClass}>
