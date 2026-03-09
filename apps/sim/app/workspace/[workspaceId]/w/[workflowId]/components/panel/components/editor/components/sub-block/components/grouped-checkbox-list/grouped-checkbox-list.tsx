@@ -82,18 +82,18 @@ export function GroupedCheckboxList({
   const SelectedCountDisplay = () => {
     if (noneSelected) {
       return (
-        <span className='truncate font-medium text-[var(--text-muted)] text-sm'>None selected</span>
+        <span className='truncate font-medium text-muted-foreground text-sm'>None selected</span>
       )
     }
     if (allSelected) {
       return (
-        <span className='truncate font-medium text-[var(--text-primary)] text-sm'>
+        <span className='truncate font-medium text-foreground text-sm'>
           All selected
         </span>
       )
     }
     return (
-      <span className='truncate font-medium text-[var(--text-primary)] text-sm'>
+      <span className='truncate font-medium text-foreground text-sm'>
         {selectedValues.length} selected
       </span>
     )
@@ -106,11 +106,11 @@ export function GroupedCheckboxList({
           variant='ghost'
           disabled={disabled}
           className={cn(
-            'flex w-full cursor-pointer items-center justify-between rounded-[4px] border border-[var(--border-1)] bg-[var(--surface-5)] px-[8px] py-[6px] font-medium font-sans text-[var(--text-primary)] text-sm outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-[var(--surface-5)]',
-            'hover:border-[var(--surface-7)] hover:bg-[var(--surface-5)] dark:hover:border-[var(--surface-7)] dark:hover:bg-[var(--border-1)]'
+            'flex w-full cursor-pointer items-center justify-between rounded-[4px] border border-border/40 bg-accent px-[8px] py-[6px] font-medium font-sans text-foreground text-sm outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-accent',
+            'hover:border-border hover:bg-accent dark:hover:border-border dark:hover:bg-accent'
           )}
         >
-          <span className='flex flex-1 items-center gap-2 truncate text-[var(--text-muted)]'>
+          <span className='flex flex-1 items-center gap-2 truncate text-muted-foreground'>
             <Settings2 className='h-4 w-4 flex-shrink-0 opacity-50' />
             <span className='truncate'>Configure PII Types</span>
           </span>

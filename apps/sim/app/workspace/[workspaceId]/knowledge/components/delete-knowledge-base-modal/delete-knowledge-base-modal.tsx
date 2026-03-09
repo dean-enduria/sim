@@ -41,17 +41,17 @@ export function DeleteKnowledgeBaseModal({
       <ModalContent size='sm'>
         <ModalHeader>Delete Knowledge Base</ModalHeader>
         <ModalBody>
-          <p className='text-[12px] text-[var(--text-secondary)]'>
+          <p className='text-[12px] text-muted-foreground'>
             {knowledgeBaseName ? (
               <>
                 Are you sure you want to delete{' '}
-                <span className='font-medium text-[var(--text-primary)]'>{knowledgeBaseName}</span>?
+                <span className='font-medium text-foreground'>{knowledgeBaseName}</span>?
                 This will permanently remove all associated documents, chunks, and embeddings.
               </>
             ) : (
               'Are you sure you want to delete this knowledge base? This will permanently remove all associated documents, chunks, and embeddings.'
             )}{' '}
-            <span className='text-[var(--text-error)]'>This action cannot be undone.</span>
+            <span className='text-destructive'>This action cannot be undone.</span>
           </p>
         </ModalBody>
         <ModalFooter>

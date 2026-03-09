@@ -11,7 +11,6 @@ import { useRegisterGlobalCommands } from '@/app/workspace/[workspaceId]/provide
 import { useUserPermissionsContext } from '@/app/workspace/[workspaceId]/providers/workspace-permissions-provider'
 import { createCommands } from '@/app/workspace/[workspaceId]/utils/commands-utils'
 import {
-  HelpModal,
   NavItemContextMenu,
   SearchModal,
   SettingsModal,
@@ -98,19 +97,11 @@ export const Sidebar = memo(function Sidebar() {
   const { handleExportWorkspace: exportWorkspace } = useExportWorkspace()
 
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false)
-  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const {
     isOpen: isSettingsModalOpen,
     openModal: openSettingsModal,
     closeModal: closeSettingsModal,
   } = useSettingsModalStore()
-
-  /** Listens for external events to open help modal */
-  useEffect(() => {
-    const handleOpenHelpModal = () => setIsHelpModalOpen(true)
-    window.addEventListener('open-help-modal', handleOpenHelpModal)
-    return () => window.removeEventListener('open-help-modal', handleOpenHelpModal)
-  }, [])
 
   /** Listens for scroll events and scrolls items into view if off-screen */
   useEffect(() => {
@@ -277,7 +268,7 @@ export const Sidebar = memo(function Sidebar() {
           id: 'help',
           label: 'Help',
           icon: HelpCircle,
-          onClick: () => setIsHelpModalOpen(true),
+          onClick: () => window.open('/docs/workflows', '_blank'),
         },
         {
           id: 'settings',
@@ -491,7 +482,7 @@ export const Sidebar = memo(function Sidebar() {
     <>
       {isCollapsed ? (
         /* Floating collapsed header - minimal pill showing workspace name and expand toggle */
-        <div className='fixed top-[calc(64px+14px)] left-[10px] z-10 w-fit rounded-[8px] border border-[var(--border-soft)] bg-[var(--bg)] py-[4px] pr-[10px] pl-[6px]'>
+        <div className='fixed top-[calc(64px+14px)] left-[10px] z-10 w-fit bg-card rounded-lg border border-border/40 shadow-sm py-[4px] pr-[10px] pl-[6px]'>
           <WorkspaceHeader
             activeWorkspace={activeWorkspace}
             workspaceId={workspaceId}
@@ -520,11 +511,11 @@ export const Sidebar = memo(function Sidebar() {
         <>
           <aside
             ref={sidebarRef}
-            className='sidebar-container fixed top-16 bottom-0 left-0 z-10 overflow-hidden bg-[var(--bg)]'
+            className='sidebar-container fixed top-16 bottom-0 left-0 z-10 overflow-hidden bg-card shadow-sm'
             aria-label='Workspace sidebar'
             onClick={handleSidebarClick}
           >
-            <div className='flex h-full flex-col border-r border-[var(--border-soft)] pt-[12px]'>
+            <div className='flex h-full flex-col border-r border-border/40 pt-[12px]'>
               {/* Header */}
               <div className='flex-shrink-0 px-[14px]'>
                 <WorkspaceHeader
@@ -553,16 +544,16 @@ export const Sidebar = memo(function Sidebar() {
 
               {/* Search */}
               <div
-                className='mx-2 mt-2.5 flex flex-shrink-0 cursor-pointer items-center justify-between rounded-lg border border-[var(--border-soft)] bg-transparent px-2 py-1.5 transition-colors duration-100 hover:bg-muted/40'
+                className='mx-2 mt-2.5 flex flex-shrink-0 cursor-pointer items-center justify-between rounded-lg border border-border/40 bg-transparent px-2 py-1.5 transition-colors duration-100 hover:bg-accent'
                 onClick={() => setIsSearchModalOpen(true)}
               >
                 <div className='flex items-center gap-[6px]'>
-                  <Search className='h-[14px] w-[14px] text-[var(--text-subtle)]' />
-                  <p className='translate-y-[0.25px] font-medium text-[var(--text-tertiary)] text-small'>
+                  <Search className='h-[14px] w-[14px] text-muted-foreground' />
+                  <p className='translate-y-[0.25px] font-medium text-muted-foreground text-small'>
                     Search
                   </p>
                 </div>
-                <p className='font-medium text-[var(--text-subtle)] text-small'>⌘K</p>
+                <p className='font-medium text-muted-foreground/70 text-small'>⌘K</p>
               </div>
 
               {/* Workflows */}
@@ -570,7 +561,7 @@ export const Sidebar = memo(function Sidebar() {
                 {/* Header - Always visible */}
                 <div className='flex flex-shrink-0 flex-col space-y-[4px] px-[14px]'>
                   <div className='flex items-center justify-between'>
-                    <div className='text-xs font-medium text-muted-foreground'>
+                    <div className='text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wider'>
                       Workflows
                     </div>
                     <div className='flex items-center justify-center gap-[10px]'>
@@ -653,18 +644,18 @@ export const Sidebar = memo(function Sidebar() {
               </div>
 
               {/* Footer Navigation */}
-              <div className='flex flex-shrink-0 flex-col gap-[2px] border-t border-[var(--border-soft)] px-[7.75px] pt-[8px] pb-[8px]'>
+              <div className='flex flex-shrink-0 flex-col gap-[2px] border-t border-border/40 px-[7.75px] pt-[8px] pb-[8px]'>
                 {footerNavigationItems.map((item) => {
                   const Icon = item.icon
                   const active = item.href ? pathname?.startsWith(item.href) : false
                   const baseClasses =
-                    'group flex h-[26px] items-center gap-[8px] rounded-[8px] px-[6px] text-[14px] hover:bg-muted/40'
+                    'group flex h-[26px] items-center gap-[8px] rounded-[8px] px-[6px] text-xs hover:bg-accent hover:text-foreground'
                   const activeClasses = active
-                    ? 'bg-[var(--surface-6)] dark:bg-[var(--surface-5)]'
+                    ? 'bg-primary/10'
                     : ''
                   const textClasses = active
-                    ? 'text-[var(--text-primary)]'
-                    : 'text-[var(--text-tertiary)] group-hover:text-[var(--text-primary)]'
+                    ? 'text-foreground'
+                    : 'text-muted-foreground group-hover:text-foreground'
 
                   const content = (
                     <>
@@ -738,12 +729,6 @@ export const Sidebar = memo(function Sidebar() {
       />
 
       {/* Footer Navigation Modals */}
-      <HelpModal
-        open={isHelpModalOpen}
-        onOpenChange={setIsHelpModalOpen}
-        workflowId={workflowId}
-        workspaceId={workspaceId}
-      />
       <SettingsModal
         open={isSettingsModalOpen}
         onOpenChange={(open) => (open ? openSettingsModal() : closeSettingsModal())}

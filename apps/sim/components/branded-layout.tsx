@@ -12,7 +12,7 @@ export function BrandedLayout({ children }: BrandedLayoutProps) {
     const config = getBrandConfig()
 
     // Update document title
-    if (config.name !== 'Sim') {
+    if (config.name !== 'Workflows') {
       document.title = config.name
     }
 

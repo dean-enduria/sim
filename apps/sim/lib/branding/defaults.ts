@@ -4,7 +4,7 @@ import type { BrandConfig } from './types'
  * Default brand configuration values
  */
 export const defaultBrandConfig: BrandConfig = {
-  name: 'Sim',
+  name: 'Workflows',
   logoUrl: undefined,
   faviconUrl: '/favicon/favicon.ico',
   customCssUrl: undefined,

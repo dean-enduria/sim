@@ -239,14 +239,14 @@ export function EditChunkModal({
           <form>
             <ModalBody>
               <div className='flex flex-col gap-[8px]'>
-                {error && <p className='text-[12px] text-[var(--text-error)]'>{error}</p>}
+                {error && <p className='text-[12px] text-destructive'>{error}</p>}
 
                 {/* Content Input Section */}
                 <Label htmlFor='content'>Chunk</Label>
                 {tokenizerOn ? (
                   /* Tokenizer view - matches Textarea styling exactly (transparent border for spacing) */
                   <div
-                    className='h-[418px] overflow-y-auto whitespace-pre-wrap break-words rounded-[4px] border border-transparent bg-[var(--surface-5)] px-[8px] py-[8px] font-medium font-sans text-[var(--text-primary)] text-sm'
+                    className='h-[418px] overflow-y-auto whitespace-pre-wrap break-words rounded-[4px] border border-transparent bg-accent px-[8px] py-[8px] font-medium font-sans text-foreground text-sm'
                     style={{ minHeight: '418px' }}
                   >
                     {tokenStrings.map((token, index) => (
@@ -282,15 +282,15 @@ export function EditChunkModal({
               {/* Tokenizer Section */}
               <div className='flex items-center justify-between pt-[12px]'>
                 <div className='flex items-center gap-[8px]'>
-                  <span className='text-[12px] text-[var(--text-secondary)]'>Tokenizer</span>
+                  <span className='text-[12px] text-muted-foreground'>Tokenizer</span>
                   <Switch checked={tokenizerOn} onCheckedChange={setTokenizerOn} />
                   {tokenizerOn && hoveredTokenIndex !== null && (
-                    <span className='text-[12px] text-[var(--text-tertiary)]'>
+                    <span className='text-[12px] text-muted-foreground/70'>
                       Token #{hoveredTokenIndex + 1}
                     </span>
                   )}
                 </div>
-                <span className='text-[12px] text-[var(--text-secondary)]'>
+                <span className='text-[12px] text-muted-foreground'>
                   {tokenCount.toLocaleString()}
                   {maxChunkSize !== undefined && `/${maxChunkSize.toLocaleString()}`} tokens
                 </span>
@@ -326,7 +326,7 @@ export function EditChunkModal({
         <ModalContent size='sm'>
           <ModalHeader>Unsaved Changes</ModalHeader>
           <ModalBody>
-            <p className='text-[12px] text-[var(--text-secondary)]'>
+            <p className='text-[12px] text-muted-foreground'>
               You have unsaved changes to this chunk content.
               {pendingNavigation
                 ? ' Do you want to discard your changes and navigate to the next chunk?'

@@ -436,23 +436,23 @@ export function OAuthRequiredModal({
         <ModalBody>
           <div className='flex flex-col gap-[16px]'>
             <div className='flex items-center gap-[14px]'>
-              <div className='flex h-[40px] w-[40px] flex-shrink-0 items-center justify-center rounded-[8px] bg-[var(--surface-5)]'>
+              <div className='flex h-[40px] w-[40px] flex-shrink-0 items-center justify-center rounded-[8px] bg-accent'>
                 <ProviderIcon className='h-[18px] w-[18px]' />
               </div>
               <div className='flex-1'>
-                <p className='font-medium text-[13px] text-[var(--text-primary)]'>
+                <p className='font-medium text-[13px] text-foreground'>
                   Connect your {providerName} account
                 </p>
-                <p className='text-[12px] text-[var(--text-tertiary)]'>
+                <p className='text-[12px] text-muted-foreground/70'>
                   The "{toolName}" tool requires access to your account
                 </p>
               </div>
             </div>
 
             {displayScopes.length > 0 && (
-              <div className='rounded-[8px] border border-[var(--border-1)] bg-[var(--surface-5)]'>
-                <div className='border-[var(--border-1)] border-b px-[14px] py-[10px]'>
-                  <h4 className='font-medium text-[12px] text-[var(--text-primary)]'>
+              <div className='rounded-[8px] border border-border/40 bg-accent'>
+                <div className='border-border/40 border-b px-[14px] py-[10px]'>
+                  <h4 className='font-medium text-[12px] text-foreground'>
                     Permissions requested
                   </h4>
                 </div>
@@ -460,9 +460,9 @@ export function OAuthRequiredModal({
                   {displayScopes.map((scope) => (
                     <li key={scope} className='flex items-start gap-[10px]'>
                       <div className='mt-[2px] flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center'>
-                        <Check className='h-[10px] w-[10px] text-[var(--text-primary)]' />
+                        <Check className='h-[10px] w-[10px] text-foreground' />
                       </div>
-                      <div className='flex flex-1 items-center gap-[8px] text-[12px] text-[var(--text-primary)]'>
+                      <div className='flex flex-1 items-center gap-[8px] text-[12px] text-foreground'>
                         <span>{getScopeDescription(scope)}</span>
                         {newScopesSet.has(scope) && (
                           <Badge variant='amber' size='sm'>
@@ -476,7 +476,7 @@ export function OAuthRequiredModal({
               </div>
             )}
 
-            {error && <p className='text-[12px] text-[var(--text-error)]'>{error}</p>}
+            {error && <p className='text-[12px] text-destructive'>{error}</p>}
           </div>
         </ModalBody>
         <ModalFooter>

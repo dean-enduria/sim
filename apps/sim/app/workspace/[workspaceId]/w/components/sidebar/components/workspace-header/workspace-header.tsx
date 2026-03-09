@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { ArrowDown, MoreHorizontal, Plus } from 'lucide-react'
 import {
-  Badge,
   Button,
   ChevronDown,
   Modal,
@@ -22,8 +21,6 @@ import {
 } from '@/components/emcn'
 import { ContextMenu } from '@/app/workspace/[workspaceId]/w/components/sidebar/components/workflow-list/components/context-menu/context-menu'
 import { DeleteModal } from '@/app/workspace/[workspaceId]/w/components/sidebar/components/workflow-list/components/delete-modal/delete-modal'
-import { InviteModal } from '@/app/workspace/[workspaceId]/w/components/sidebar/components/workspace-header/components/invite-modal'
-import { usePermissionConfig } from '@/hooks/use-permission-config'
 
 const logger = createLogger('WorkspaceHeader')
 
@@ -144,7 +141,6 @@ export function WorkspaceHeader({
   onLeaveWorkspace,
   sessionUserId,
 }: WorkspaceHeaderProps) {
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<Workspace | null>(null)
@@ -172,19 +168,6 @@ export function WorkspaceHeader({
   useEffect(() => {
     setIsMounted(true)
   }, [])
-
-  const { isInvitationsDisabled } = usePermissionConfig()
-
-  // Listen for open-invite-modal event from context menu
-  useEffect(() => {
-    const handleOpenInvite = () => {
-      if (!isInvitationsDisabled) {
-        setIsInviteModalOpen(true)
-      }
-    }
-    window.addEventListener('open-invite-modal', handleOpenInvite)
-    return () => window.removeEventListener('open-invite-modal', handleOpenInvite)
-  }, [isInvitationsDisabled])
 
   /**
    * Save and exit edit mode when popover closes
@@ -558,12 +541,6 @@ export function WorkspaceHeader({
       </div>
       {/* Workspace Actions */}
       <div className='flex flex-shrink-0 items-center gap-[10px]'>
-        {/* Invite - hidden in collapsed mode or when invitations are disabled */}
-        {!isCollapsed && !isInvitationsDisabled && (
-          <Badge className='cursor-pointer' onClick={() => setIsInviteModalOpen(true)}>
-            Invite
-          </Badge>
-        )}
         {/* Sidebar Collapse Toggle */}
         {showCollapseButton && (
           <Button
@@ -609,12 +586,6 @@ export function WorkspaceHeader({
         )
       })()}
 
-      {/* Invite Modal */}
-      <InviteModal
-        open={isInviteModalOpen}
-        onOpenChange={setIsInviteModalOpen}
-        workspaceName={activeWorkspace?.name || 'Workspace'}
-      />
       {/* Delete Confirmation Modal */}
       <DeleteModal
         isOpen={isDeleteModalOpen}

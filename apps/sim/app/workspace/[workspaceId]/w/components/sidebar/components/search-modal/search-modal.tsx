@@ -286,7 +286,7 @@ export function SearchModal({
         aria-hidden={!open}
         aria-label='Search'
         className={cn(
-          '-translate-x-1/2 fixed top-[15%] left-1/2 z-50 w-[500px] overflow-hidden rounded-[12px] border border-[var(--border)] bg-[var(--surface-4)] shadow-lg',
+          '-translate-x-1/2 fixed top-[15%] left-1/2 z-50 w-[500px] overflow-hidden rounded-[12px] border border-border/40 bg-card shadow-lg',
           open ? 'visible opacity-100' : 'invisible opacity-0'
         )}
       >
@@ -296,10 +296,10 @@ export function SearchModal({
             autoFocus
             onValueChange={handleSearchChange}
             placeholder='Search anything...'
-            className='w-full border-0 border-[var(--border)] border-b bg-transparent px-[12px] py-[10px] font-base text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none'
+            className='w-full border-0 border-border/40 border-b bg-transparent px-[12px] py-[10px] font-base text-[15px] text-foreground placeholder:text-muted-foreground focus:outline-none'
           />
           <Command.List className='scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent max-h-[400px] overflow-y-auto p-[8px]'>
-            <Command.Empty className='flex items-center justify-center px-[16px] py-[24px] text-[15px] text-[var(--text-subtle)]'>
+            <Command.Empty className='flex items-center justify-center px-[16px] py-[24px] text-[15px] text-muted-foreground'>
               No results found.
             </Command.Empty>
 
@@ -361,13 +361,13 @@ export function SearchModal({
                     key={workflow.id}
                     value={`${workflow.name} workflow-${workflow.id}`}
                     onSelect={() => handleWorkflowSelect(workflow)}
-                    className='group flex h-[28px] w-full cursor-pointer items-center gap-[8px] rounded-[6px] px-[10px] text-left text-[15px] aria-selected:bg-[var(--border)] aria-selected:shadow-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50'
+                    className='group flex h-[28px] w-full cursor-pointer items-center gap-[8px] rounded-[6px] px-[10px] text-left text-[15px] aria-selected:bg-accent aria-selected:shadow-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50'
                   >
                     <div
                       className='h-[14px] w-[14px] flex-shrink-0 rounded-[3px]'
                       style={{ backgroundColor: workflow.color }}
                     />
-                    <span className='truncate font-medium text-[var(--text-tertiary)] group-aria-selected:text-[var(--text-primary)]'>
+                    <span className='truncate font-medium text-muted-foreground/70 group-aria-selected:text-foreground'>
                       {workflow.name}
                       {workflow.isCurrent && ' (current)'}
                     </span>
@@ -400,9 +400,9 @@ export function SearchModal({
                     key={workspace.id}
                     value={`${workspace.name} workspace-${workspace.id}`}
                     onSelect={() => handleWorkspaceSelect(workspace)}
-                    className='group flex h-[28px] w-full cursor-pointer items-center gap-[8px] rounded-[6px] px-[10px] text-left text-[15px] aria-selected:bg-[var(--border)] aria-selected:shadow-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50'
+                    className='group flex h-[28px] w-full cursor-pointer items-center gap-[8px] rounded-[6px] px-[10px] text-left text-[15px] aria-selected:bg-accent aria-selected:shadow-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50'
                   >
-                    <span className='truncate font-medium text-[var(--text-tertiary)] group-aria-selected:text-[var(--text-primary)]'>
+                    <span className='truncate font-medium text-muted-foreground/70 group-aria-selected:text-foreground'>
                       {workspace.name}
                       {workspace.isCurrent && ' (current)'}
                     </span>
@@ -437,16 +437,16 @@ export function SearchModal({
                       key={page.id}
                       value={`${page.name} page-${page.id}`}
                       onSelect={() => handlePageSelect(page)}
-                      className='group flex h-[28px] w-full cursor-pointer items-center gap-[8px] rounded-[6px] px-[10px] text-left text-[15px] aria-selected:bg-[var(--border)] aria-selected:shadow-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50'
+                      className='group flex h-[28px] w-full cursor-pointer items-center gap-[8px] rounded-[6px] px-[10px] text-left text-[15px] aria-selected:bg-accent aria-selected:shadow-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50'
                     >
                       <div className='relative flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center'>
-                        <Icon className='h-[14px] w-[14px] text-[var(--text-tertiary)] group-aria-selected:text-[var(--text-primary)]' />
+                        <Icon className='h-[14px] w-[14px] text-muted-foreground/70 group-aria-selected:text-foreground' />
                       </div>
-                      <span className='truncate font-medium text-[var(--text-tertiary)] group-aria-selected:text-[var(--text-primary)]'>
+                      <span className='truncate font-medium text-muted-foreground/70 group-aria-selected:text-foreground'>
                         {page.name}
                       </span>
                       {page.shortcut && (
-                        <span className='ml-auto flex-shrink-0 font-medium text-[13px] text-[var(--text-subtle)]'>
+                        <span className='ml-auto flex-shrink-0 font-medium text-[13px] text-muted-foreground'>
                           {page.shortcut}
                         </span>
                       )}
@@ -464,7 +464,7 @@ export function SearchModal({
 }
 
 const groupHeadingClassName =
-  '[&_[cmdk-group-heading]]:pt-[2px] [&_[cmdk-group-heading]]:pb-[4px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:text-[var(--text-subtle)] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wide'
+  '[&_[cmdk-group-heading]]:pt-[2px] [&_[cmdk-group-heading]]:pb-[4px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wide'
 
 interface CommandItemProps {
   value: string
@@ -487,7 +487,7 @@ function CommandItem({
     <Command.Item
       value={value}
       onSelect={onSelect}
-      className='group flex h-[28px] w-full cursor-pointer items-center gap-[8px] rounded-[6px] px-[10px] text-left text-[15px] aria-selected:bg-[var(--border)] aria-selected:shadow-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50'
+      className='group flex h-[28px] w-full cursor-pointer items-center gap-[8px] rounded-[6px] px-[10px] text-left text-[15px] aria-selected:bg-accent aria-selected:shadow-sm data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50'
     >
       <div
         className='relative flex h-[16px] w-[16px] flex-shrink-0 items-center justify-center overflow-hidden rounded-[4px]'
@@ -498,11 +498,11 @@ function CommandItem({
             'transition-transform duration-100 group-hover:scale-110',
             showColoredIcon
               ? '!h-[10px] !w-[10px] text-white'
-              : 'h-[14px] w-[14px] text-[var(--text-tertiary)] group-aria-selected:text-[var(--text-primary)]'
+              : 'h-[14px] w-[14px] text-muted-foreground/70 group-aria-selected:text-foreground'
           )}
         />
       </div>
-      <span className='truncate font-medium text-[var(--text-tertiary)] group-aria-selected:text-[var(--text-primary)]'>
+      <span className='truncate font-medium text-muted-foreground/70 group-aria-selected:text-foreground'>
         {children}
       </span>
     </Command.Item>

@@ -108,7 +108,7 @@ export function CreditBalance({
     <div className='flex items-center justify-between'>
       <div className='flex items-center gap-[8px]'>
         <Label>Credit Balance:</Label>
-        <span className='text-[12px] text-[var(--text-secondary)]'>
+        <span className='text-[12px] text-muted-foreground'>
           {isLoading ? '...' : `$${balance.toFixed(2)}`}
         </span>
       </div>
@@ -124,7 +124,7 @@ export function CreditBalance({
             <ModalHeader>Add Credits</ModalHeader>
             <ModalBody>
               {success ? (
-                <p className='text-center text-[12px] text-[var(--text-primary)]'>
+                <p className='text-center text-[12px] text-foreground'>
                   Credits added successfully!
                 </p>
               ) : (
@@ -132,7 +132,7 @@ export function CreditBalance({
                   <div className='flex flex-col gap-[8px]'>
                     <Label htmlFor='credit-amount'>Amount (USD)</Label>
                     <div className='relative'>
-                      <span className='-translate-y-1/2 absolute top-1/2 left-[12px] text-[12px] text-[var(--text-muted)]'>
+                      <span className='-translate-y-1/2 absolute top-1/2 left-[12px] text-[12px] text-muted-foreground'>
                         $
                       </span>
                       <Input
@@ -146,16 +146,16 @@ export function CreditBalance({
                         disabled={isPurchasing}
                       />
                     </div>
-                    {error && <span className='text-[12px] text-[var(--text-error)]'>{error}</span>}
+                    {error && <span className='text-[12px] text-destructive'>{error}</span>}
                   </div>
 
-                  <div className='rounded-[6px] bg-[var(--surface-4)] p-[12px]'>
-                    <p className='text-[12px] text-[var(--text-secondary)]'>
+                  <div className='rounded-[6px] bg-accent p-[12px]'>
+                    <p className='text-[12px] text-muted-foreground'>
                       Credits are used before overage charges. Min: $10, Max: $1,000.
                     </p>
                   </div>
-                  <div className='rounded-[6px] bg-[var(--surface-4)] p-[12px]'>
-                    <p className='text-[12px] text-[var(--text-secondary)]'>
+                  <div className='rounded-[6px] bg-accent p-[12px]'>
+                    <p className='text-[12px] text-muted-foreground'>
                       Credits are non-refundable and don't expire. They'll be applied automatically
                       to your {entityType === 'organization' ? 'team' : ''} usage.
                     </p>

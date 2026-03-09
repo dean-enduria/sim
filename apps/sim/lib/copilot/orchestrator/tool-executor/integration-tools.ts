@@ -84,6 +84,7 @@ export async function executeIntegrationToolDirect(
   executionParams._context = {
     workflowId,
     userId,
+    workspaceId,
   }
 
   if (toolName === 'function_execute') {

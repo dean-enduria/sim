@@ -3,18 +3,18 @@ import { getBaseUrl } from '@/lib/core/utils/urls'
 export async function GET() {
   const baseUrl = getBaseUrl()
 
-  const llmsContent = `# Sim
+  const llmsContent = `# Workflows
 
-> Sim is an open-source AI agent workflow builder. 70,000+ developers at startups to Fortune 500 companies deploy agentic workflows on the Sim platform. SOC2 and HIPAA compliant.
+> Workflows is an open-source AI agent workflow builder. 70,000+ developers at startups to Fortune 500 companies deploy agentic workflows on the Workflows platform. SOC2 and HIPAA compliant.
 
-Sim provides a visual drag-and-drop interface for building and deploying AI agent workflows. Connect to 100+ integrations and ship production-ready AI automations.
+Workflows provides a visual drag-and-drop interface for building and deploying AI agent workflows. Connect to 100+ integrations and ship production-ready AI automations.
 
 ## Core Pages
 
 - [Homepage](${baseUrl}): Main landing page with product overview and features
 - [Templates](${baseUrl}/templates): Pre-built workflow templates to get started quickly
 - [Changelog](${baseUrl}/changelog): Product updates and release notes
-- [Sim Studio Blog](${baseUrl}/studio): Announcements, insights, and guides for AI workflows
+- [Workflows Blog](${baseUrl}/studio): Announcements, insights, and guides for AI workflows
 
 ## Documentation
 
@@ -55,7 +55,7 @@ Sim provides a visual drag-and-drop interface for building and deploying AI agen
 
 ## Optional
 
-- [Careers](${baseUrl}/careers): Join the Sim team
+- [Careers](${baseUrl}/careers): Join the Workflows team
 - [Terms of Service](${baseUrl}/terms): Legal terms
 - [Privacy Policy](${baseUrl}/privacy): Data handling practices
 `

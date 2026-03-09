@@ -643,7 +643,7 @@ Supports full and partial execution:
     name: 'sim_info',
     agentId: 'info',
     description:
-      "Inspect a workflow's blocks, connections, outputs, variables, and metadata. Use for questions about the Sim platform itself — how blocks work, what integrations are available, platform concepts, etc. Always provide workflowId to scope results to a specific workflow.",
+      "Inspect a workflow's blocks, connections, outputs, variables, and metadata. Use for questions about the Workflows platform itself — how blocks work, what integrations are available, platform concepts, etc. Always provide workflowId to scope results to a specific workflow.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -705,7 +705,7 @@ Supports full and partial execution:
     name: 'sim_platform',
     agentId: 'tour',
     description:
-      'Get help with Sim platform navigation, keyboard shortcuts, and UI actions. Use when the user asks "how do I..." about the Sim editor, wants keyboard shortcuts, or needs to know what actions are available in the UI.',
+      'Get help with Workflows platform navigation, keyboard shortcuts, and UI actions. Use when the user asks "how do I..." about the Workflows editor, wants keyboard shortcuts, or needs to know what actions are available in the UI.',
     inputSchema: {
       type: 'object',
       properties: {

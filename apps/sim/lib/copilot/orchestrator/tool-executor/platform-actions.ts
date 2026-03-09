@@ -1,8 +1,8 @@
 /**
  * Static content for the get_platform_actions tool.
- * Contains the Sim platform quick reference and keyboard shortcuts.
+ * Contains the Workflows platform quick reference and keyboard shortcuts.
  */
-export const PLATFORM_ACTIONS_CONTENT = `# Sim Platform Quick Reference & Keyboard Shortcuts
+export const PLATFORM_ACTIONS_CONTENT = `# Workflows Platform Quick Reference & Keyboard Shortcuts
 
 ## Keyboard Shortcuts
 **Mod** = Cmd (macOS) / Ctrl (Windows/Linux). Shortcuts work when canvas is focused.

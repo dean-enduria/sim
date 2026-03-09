@@ -189,7 +189,7 @@ export function RowModal({ mode, isOpen, onClose, table, row, rowIds, onSuccess 
         <ModalContent className='w-[480px]'>
           <ModalHeader>
             <div className='flex items-center gap-[10px]'>
-              <div className='flex h-[36px] w-[36px] items-center justify-center rounded-[8px] bg-[var(--bg-error)] text-[var(--text-error)]'>
+              <div className='flex h-[36px] w-[36px] items-center justify-center rounded-[8px] bg-destructive/10 text-destructive'>
                 <AlertCircle className='h-[18px] w-[18px]' />
               </div>
               <h2 className='font-semibold text-[16px]'>
@@ -200,7 +200,7 @@ export function RowModal({ mode, isOpen, onClose, table, row, rowIds, onSuccess 
           <ModalBody>
             <div className='flex flex-col gap-[16px]'>
               <ErrorMessage error={error} />
-              <p className='text-[14px] text-[var(--text-secondary)]'>
+              <p className='text-[14px] text-muted-foreground'>
                 Are you sure you want to delete {isSingleRow ? 'this row' : 'these rows'}? This
                 action cannot be undone.
               </p>
@@ -239,7 +239,7 @@ export function RowModal({ mode, isOpen, onClose, table, row, rowIds, onSuccess 
         <ModalHeader>
           <div className='flex flex-col gap-[4px]'>
             <h2 className='font-semibold text-[16px]'>{isAddMode ? 'Add New Row' : 'Edit Row'}</h2>
-            <p className='font-normal text-[13px] text-[var(--text-tertiary)]'>
+            <p className='font-normal text-[13px] text-muted-foreground/70'>
               {isAddMode ? 'Fill in the values for' : 'Update values for'} {table?.name ?? 'table'}
             </p>
           </div>
@@ -310,9 +310,9 @@ function ColumnField({ column, value, onChange }: ColumnFieldProps) {
     <div className='flex flex-col gap-[8px]'>
       <Label htmlFor={column.name} className='font-medium text-[13px]'>
         {column.name}
-        {column.required && <span className='text-[var(--text-error)]'> *</span>}
+        {column.required && <span className='text-destructive'> *</span>}
         {column.unique && (
-          <span className='ml-[6px] font-normal text-[11px] text-[var(--text-tertiary)]'>
+          <span className='ml-[6px] font-normal text-[11px] text-muted-foreground/70'>
             (unique)
           </span>
         )}
@@ -327,7 +327,7 @@ function ColumnField({ column, value, onChange }: ColumnFieldProps) {
           />
           <Label
             htmlFor={column.name}
-            className='font-normal text-[13px] text-[var(--text-tertiary)]'
+            className='font-normal text-[13px] text-muted-foreground/70'
           >
             {value ? 'True' : 'False'}
           </Label>
@@ -354,7 +354,7 @@ function ColumnField({ column, value, onChange }: ColumnFieldProps) {
         />
       )}
 
-      <div className='text-[12px] text-[var(--text-tertiary)]'>
+      <div className='text-[12px] text-muted-foreground/70'>
         Type: {column.type}
         {!column.required && ' (optional)'}
       </div>

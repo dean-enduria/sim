@@ -61,17 +61,17 @@ export function ChatHeader({ chatConfig, starCount }: ChatHeaderProps) {
               {starCount}
             </span>
           </a>
-          {/* Only show Sim logo if no custom branding is set */}
+          {/* Only show logo if no custom branding is set */}
 
           <Link
             href='https://sim.ai'
             target='_blank'
             rel='noopener noreferrer'
-            aria-label='Sim home'
+            aria-label='Workflows home'
           >
             <Image
               src='/logo/b&w/text/small.png'
-              alt='Sim - Workflows for LLMs'
+              alt='Workflows'
               width={29.869884}
               height={14.5656}
               className='h-[14.5656px] w-auto pb-[1px]'

@@ -115,7 +115,7 @@ export async function processContextsServer(
           const { searchDocumentationServerTool } = await import(
             '@/lib/copilot/tools/server/docs/search-documentation'
           )
-          const rawQuery = (userMessage || '').trim() || ctx.label || 'Sim documentation'
+          const rawQuery = (userMessage || '').trim() || ctx.label || 'Workflows documentation'
           const query = sanitizeMessageForDocs(rawQuery, contexts)
           const res = await searchDocumentationServerTool.execute({ query, topK: 10 })
           const content = JSON.stringify(res?.results || [])

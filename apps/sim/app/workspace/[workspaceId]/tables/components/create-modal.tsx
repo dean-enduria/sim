@@ -140,12 +140,12 @@ export function CreateModal({ isOpen, onClose }: CreateModalProps) {
           <ModalBody>
             <div className='min-h-0 flex-1 overflow-y-auto'>
               <div className='space-y-[12px]'>
-                <p className='text-[12px] text-[var(--text-tertiary)]'>
+                <p className='text-xs text-muted-foreground/70'>
                   Define your table schema with columns and constraints.
                 </p>
 
                 {error && (
-                  <p className='text-[12px] text-[var(--text-error)] leading-tight'>{error}</p>
+                  <p className='text-[12px] text-destructive leading-tight'>{error}</p>
                 )}
 
                 <div className='flex flex-col gap-[8px]'>
@@ -158,11 +158,11 @@ export function CreateModal({ isOpen, onClose }: CreateModalProps) {
                     }
                     placeholder='customers, orders, products'
                     className={cn(
-                      error === 'Table name is required' && 'border-[var(--text-error)]'
+                      error === 'Table name is required' && 'border-destructive'
                     )}
                     required
                   />
-                  <p className='text-[11px] text-[var(--text-muted)]'>
+                  <p className='text-[11px] text-muted-foreground'>
                     Use lowercase with underscores (e.g., customer_orders)
                   </p>
                 </div>
@@ -209,7 +209,7 @@ export function CreateModal({ isOpen, onClose }: CreateModalProps) {
                     ))}
                   </div>
 
-                  <p className='text-[11px] text-[var(--text-muted)]'>
+                  <p className='text-[11px] text-muted-foreground'>
                     Mark columns as <span className='font-medium'>unique</span> to prevent duplicate
                     values (e.g., id, email)
                   </p>
@@ -254,9 +254,9 @@ interface ColumnRowProps {
 
 function ColumnRow({ index, column, isRemovable, onChange, onRemove }: ColumnRowProps) {
   return (
-    <div className='rounded-[6px] border border-[var(--border-1)] bg-[var(--surface-1)] p-[10px]'>
+    <div className='rounded-[6px] border border-border/40 bg-card p-[10px]'>
       <div className='mb-[8px] flex items-center justify-between'>
-        <span className='font-medium text-[11px] text-[var(--text-tertiary)]'>
+        <span className='font-medium text-[11px] text-muted-foreground/70'>
           Column {index + 1}
         </span>
         <Button
@@ -265,7 +265,7 @@ function ColumnRow({ index, column, isRemovable, onChange, onRemove }: ColumnRow
           variant='ghost'
           onClick={() => onRemove(column.id)}
           disabled={!isRemovable}
-          className='h-[28px] w-[28px] p-0 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-error)] hover:text-[var(--text-error)]'
+          className='h-[28px] w-[28px] p-0 text-muted-foreground/70 transition-colors hover:bg-destructive/10 hover:text-destructive'
         >
           <Trash2 className='h-[15px] w-[15px]' />
         </Button>
@@ -275,7 +275,7 @@ function ColumnRow({ index, column, isRemovable, onChange, onRemove }: ColumnRow
         <div className='flex flex-col gap-[6px]'>
           <Label
             htmlFor={`column-name-${column.id}`}
-            className='text-[11px] text-[var(--text-muted)]'
+            className='text-[11px] text-muted-foreground'
           >
             Name
           </Label>
@@ -293,7 +293,7 @@ function ColumnRow({ index, column, isRemovable, onChange, onRemove }: ColumnRow
         <div className='flex flex-col gap-[6px]'>
           <Label
             htmlFor={`column-type-${column.id}`}
-            className='text-[11px] text-[var(--text-muted)]'
+            className='text-[11px] text-muted-foreground'
           >
             Type
           </Label>
@@ -310,7 +310,7 @@ function ColumnRow({ index, column, isRemovable, onChange, onRemove }: ColumnRow
         </div>
 
         <div className='flex flex-col items-center gap-[8px]'>
-          <span className='text-[11px] text-[var(--text-tertiary)]'>Required</span>
+          <span className='text-[11px] text-muted-foreground/70'>Required</span>
           <Checkbox
             checked={column.required}
             onCheckedChange={(checked) => onChange(column.id, 'required', checked === true)}
@@ -318,7 +318,7 @@ function ColumnRow({ index, column, isRemovable, onChange, onRemove }: ColumnRow
         </div>
 
         <div className='flex flex-col items-center gap-[8px]'>
-          <span className='text-[11px] text-[var(--text-tertiary)]'>Unique</span>
+          <span className='text-[11px] text-muted-foreground/70'>Unique</span>
           <Checkbox
             checked={column.unique}
             onCheckedChange={(checked) => onChange(column.id, 'unique', checked === true)}

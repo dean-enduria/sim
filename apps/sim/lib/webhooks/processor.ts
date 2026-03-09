@@ -1162,7 +1162,7 @@ export async function queueWebhookExecution(
       // Channel webhook (outgoing webhook) returns message response
       return NextResponse.json({
         type: 'message',
-        text: 'Sim',
+        text: 'Workflows',
       })
     }
 

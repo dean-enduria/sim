@@ -119,8 +119,8 @@ const ToolbarItem = memo(function ToolbarItem({
       onContextMenu={handleContextMenu}
       className={clsx(
         'group flex h-[28px] items-center gap-[8px] rounded-[8px] px-[6px] text-[14px]',
-        'cursor-pointer hover:bg-[var(--surface-6)] active:cursor-grabbing dark:hover:bg-[var(--surface-5)]',
-        'focus-visible:bg-[var(--surface-6)] focus-visible:outline-none dark:focus-visible:bg-[var(--surface-5)]'
+        'cursor-pointer hover:bg-accent active:cursor-grabbing',
+        'focus-visible:bg-accent focus-visible:outline-none'
       )}
       onKeyDown={handleKeyDown}
     >
@@ -141,8 +141,8 @@ const ToolbarItem = memo(function ToolbarItem({
       <span
         className={clsx(
           'truncate font-medium',
-          'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]',
-          'group-focus-visible:text-[var(--text-primary)]'
+          'text-muted-foreground group-hover:text-foreground',
+          'group-focus-visible:text-foreground'
         )}
       >
         {item.name}
@@ -715,16 +715,16 @@ export const Toolbar = memo(
       >
         {/* Header */}
         <div
-          className='mx-[-1px] flex flex-shrink-0 cursor-pointer items-center justify-between rounded-[4px] border border-[var(--border-soft)] bg-[var(--surface-4)] px-[12px] py-[6px]'
+          className='mx-[-1px] flex flex-shrink-0 cursor-pointer items-center justify-between rounded-[4px] border border-border/40 bg-card px-[12px] py-[6px]'
           onClick={handleSearchClick}
         >
-          <h2 className='font-medium text-[14px] text-[var(--text-primary)]'>Toolbar</h2>
+          <h2 className='text-sm font-semibold text-foreground'>Tools</h2>
           <div className='flex shrink-0 items-center gap-[8px]'>
             {!isSearchActive ? (
               <Button
                 variant='ghost'
                 className='p-0'
-                aria-label='Search toolbar'
+                aria-label='Search tools'
                 onClick={handleSearchClick}
               >
                 <Search className='h-[14px] w-[14px]' />
@@ -736,7 +736,7 @@ export const Toolbar = memo(
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onBlur={handleSearchBlur}
-                className='w-full border-none bg-transparent pr-[2px] text-right font-medium text-[13px] text-[var(--text-primary)] placeholder:text-[#737373] focus:outline-none'
+                className='h-8 w-full border-none bg-transparent pr-[2px] text-right text-xs text-foreground placeholder:text-muted-foreground focus:outline-none'
               />
             )}
           </div>
@@ -754,7 +754,7 @@ export const Toolbar = memo(
           >
             <div
               ref={triggersHeaderRef}
-              className='px-[10px] pt-[5px] pb-[5px] font-medium text-[13px] text-[var(--text-primary)]'
+              className='px-[10px] pt-[5px] pb-[5px] text-sm font-semibold text-foreground'
             >
               Triggers
             </div>
@@ -776,7 +776,7 @@ export const Toolbar = memo(
           </div>
 
           {/* Resize Handle */}
-          <div className='relative flex-shrink-0 border-[var(--border-soft)] border-t'>
+          <div className='relative flex-shrink-0 border-border/40 border-t'>
             <div
               className='absolute top-[-4px] right-0 left-0 z-30 h-[8px] cursor-ns-resize'
               onMouseDown={handleMouseDown}
@@ -788,7 +788,7 @@ export const Toolbar = memo(
             <div
               ref={blocksHeaderRef}
               onClick={handleBlocksHeaderClick}
-              className='cursor-pointer px-[10px] pt-[5px] pb-[5px] font-medium text-[13px] text-[var(--text-primary)]'
+              className='cursor-pointer px-[10px] pt-[5px] pb-[5px] text-sm font-semibold text-foreground'
             >
               Blocks
             </div>
