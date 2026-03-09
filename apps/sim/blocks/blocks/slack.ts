@@ -46,7 +46,7 @@ export const SlackBlock: BlockConfig<SlackResponse> = {
       title: 'Authentication Method',
       type: 'dropdown',
       options: [
-        { label: 'Sim Bot', id: 'oauth' },
+        { label: 'Workflows Bot', id: 'oauth' },
         { label: 'Custom Bot', id: 'bot_token' },
       ],
       value: () => 'oauth',
