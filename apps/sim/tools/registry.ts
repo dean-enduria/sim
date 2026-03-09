@@ -376,6 +376,8 @@ import {
   enduriaSearchKnowledgeBaseTool,
   enduriaCreateIncidentTool,
   enduriaGetAssetTool,
+  enduriaDeleteTicketTool,
+  enduriaAddCommentTool,
 } from '@/tools/enduria'
 import { elevenLabsTtsTool } from '@/tools/elevenlabs'
 import {
@@ -3050,6 +3052,8 @@ export const tools: Record<string, ToolConfig> = {
   enduria_search_knowledge_base: enduriaSearchKnowledgeBaseTool,
   enduria_create_incident: enduriaCreateIncidentTool,
   enduria_get_asset: enduriaGetAssetTool,
+  enduria_delete_ticket: enduriaDeleteTicketTool,
+  enduria_add_comment: enduriaAddCommentTool,
   enrich_check_credits: enrichCheckCreditsTool,
   enrich_company_funding: enrichCompanyFundingTool,
   enrich_company_lookup: enrichCompanyLookupTool,

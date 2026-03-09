@@ -26,6 +26,8 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
         { label: 'Create Incident', id: 'enduria_create_incident' },
         { label: 'List Tickets', id: 'enduria_list_tickets' },
         { label: 'Get Asset', id: 'enduria_get_asset' },
+        { label: 'Delete Ticket', id: 'enduria_delete_ticket' },
+        { label: 'Add Comment', id: 'enduria_add_comment' },
       ],
       value: () => 'enduria_create_ticket',
     },
@@ -263,6 +265,56 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       },
       required: true,
     },
+
+    // -- Delete Ticket fields --
+    {
+      id: 'ticketId',
+      title: 'Ticket ID',
+      type: 'short-input',
+      placeholder: 'Ticket ID to delete',
+      condition: {
+        field: 'operation',
+        value: 'enduria_delete_ticket',
+      },
+      required: true,
+    },
+
+    // -- Add Comment fields --
+    {
+      id: 'ticketId',
+      title: 'Ticket ID',
+      type: 'short-input',
+      placeholder: 'Ticket ID to comment on',
+      condition: {
+        field: 'operation',
+        value: 'enduria_add_comment',
+      },
+      required: true,
+    },
+    {
+      id: 'content',
+      title: 'Comment',
+      type: 'long-input',
+      placeholder: 'Comment content',
+      condition: {
+        field: 'operation',
+        value: 'enduria_add_comment',
+      },
+      required: true,
+    },
+    {
+      id: 'isInternal',
+      title: 'Internal Comment',
+      type: 'dropdown',
+      options: [
+        { label: 'No', id: 'false' },
+        { label: 'Yes', id: 'true' },
+      ],
+      condition: {
+        field: 'operation',
+        value: 'enduria_add_comment',
+      },
+    },
   ],
   tools: {
     access: [
@@ -273,6 +325,8 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
       'enduria_create_incident',
       'enduria_get_asset',
       'enduria_list_tickets',
+      'enduria_delete_ticket',
+      'enduria_add_comment',
     ],
     config: {
       tool: (params) => params.operation,
@@ -305,6 +359,8 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     affectedService: { type: 'string', description: 'Affected service name or ID' },
     reportedBy: { type: 'string', description: 'Reporter user ID or email' },
     assetId: { type: 'string', description: 'Asset ID' },
+    content: { type: 'string', description: 'Comment content' },
+    isInternal: { type: 'boolean', description: 'Whether comment is internal' },
   },
   outputs: {
     ticket: { type: 'json', description: 'Enduria ticket data' },
@@ -312,6 +368,7 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
     asset: { type: 'json', description: 'Enduria asset data' },
     tickets: { type: 'json', description: 'Array of Enduria tickets' },
     results: { type: 'json', description: 'Knowledge base search results' },
+    comment: { type: 'json', description: 'Enduria ticket comment data' },
     metadata: { type: 'json', description: 'Operation metadata' },
   },
 }

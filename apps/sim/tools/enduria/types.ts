@@ -114,6 +114,37 @@ export interface EnduriaGetAssetResponse extends ToolResponse {
   }
 }
 
+// Delete Ticket
+export interface EnduriaDeleteTicketParams extends EnduriaBaseParams {
+  ticketId: string
+}
+
+export interface EnduriaDeleteTicketResponse extends ToolResponse {
+  output: {
+    success: boolean
+    metadata: {
+      ticketId: string
+    }
+  }
+}
+
+// Add Comment
+export interface EnduriaAddCommentParams extends EnduriaBaseParams {
+  ticketId: string
+  content: string
+  isInternal?: boolean
+}
+
+export interface EnduriaAddCommentResponse extends ToolResponse {
+  output: {
+    comment: Record<string, any>
+    metadata: {
+      ticketId: string
+      commentId: string
+    }
+  }
+}
+
 export type EnduriaResponse =
   | EnduriaCreateTicketResponse
   | EnduriaUpdateTicketResponse
@@ -122,3 +153,5 @@ export type EnduriaResponse =
   | EnduriaCreateIncidentResponse
   | EnduriaGetAssetResponse
   | EnduriaListTicketsResponse
+  | EnduriaDeleteTicketResponse
+  | EnduriaAddCommentResponse
