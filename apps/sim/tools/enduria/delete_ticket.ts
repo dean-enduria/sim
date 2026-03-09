@@ -61,7 +61,7 @@ export const deleteTicketTool: ToolConfig<EnduriaDeleteTicketParams, EnduriaDele
     },
   },
 
-  transformResponse: async (response: Response) => {
+  transformResponse: async (response: Response, params?: EnduriaDeleteTicketParams) => {
     try {
       if (!response.ok) {
         const data = await response.json()
@@ -74,7 +74,7 @@ export const deleteTicketTool: ToolConfig<EnduriaDeleteTicketParams, EnduriaDele
         output: {
           success: true,
           metadata: {
-            ticketId: '',
+            ticketId: params?.ticketId || 'deleted',
           },
         },
       }

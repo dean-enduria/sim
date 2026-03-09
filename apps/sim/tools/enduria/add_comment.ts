@@ -74,7 +74,7 @@ export const addCommentTool: ToolConfig<EnduriaAddCommentParams, EnduriaAddComme
     },
     body: (params) => ({
       content: params.content,
-      isInternal: params.isInternal || false,
+      isInternal: params.isInternal === true || params.isInternal === 'true',
     }),
   },
 
