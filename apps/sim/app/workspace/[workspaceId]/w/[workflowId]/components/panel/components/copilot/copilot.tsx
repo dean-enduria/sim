@@ -425,7 +425,7 @@ export const Copilot = forwardRef<CopilotRef, CopilotProps>(({ panelWidth }, ref
         {!isInitialized && !isSendingMessage ? (
           <div className='flex h-full w-full items-center justify-center'>
             <div className='flex flex-col items-center gap-3'>
-              <p className='text-muted-foreground text-sm'>Loading copilot</p>
+              <p className='text-muted-foreground text-sm'>Loading agent</p>
             </div>
           </div>
         ) : (
