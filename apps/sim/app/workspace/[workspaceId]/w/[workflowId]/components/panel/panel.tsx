@@ -398,10 +398,10 @@ export const Panel = memo(function Panel() {
     <>
       <aside
         ref={panelRef}
-        className='panel-container fixed top-16 bottom-0 right-0 z-10 overflow-hidden bg-[var(--bg)]'
+        className='panel-container fixed top-16 bottom-0 right-0 z-10 overflow-hidden bg-card shadow-sm'
         aria-label='Workflow panel'
       >
-        <div className='flex h-full flex-col border-l border-[var(--border-soft)] pt-[14px]'>
+        <div className='flex h-full flex-col border-l border-border/40 pt-[14px]'>
           {/* Header */}
           <div className='flex flex-shrink-0 items-center justify-between px-[8px]'>
             {/* More and Chat */}
@@ -502,16 +502,16 @@ export const Panel = memo(function Panel() {
           </div>
 
           {/* Tabs */}
-          <div className='flex flex-shrink-0 items-center justify-between px-[8px] pt-[14px]'>
+          <div className='flex flex-shrink-0 items-center justify-between border-b border-border/40 px-[8px] pt-[14px]'>
             <div className='flex gap-[4px]'>
               {!permissionConfig.hideCopilot && (
                 <Button
-                  className={`h-[28px] truncate rounded-[6px] border px-[8px] py-[5px] text-[12.5px] ${
+                  className={`h-[28px] truncate rounded-none border-b-2 px-[8px] py-[5px] text-xs font-medium ${
                     _hasHydrated && activeTab === 'copilot'
-                      ? 'border-[var(--border-1)]'
-                      : 'border-transparent hover:border-[var(--border-1)] hover:bg-[var(--surface-5)] hover:text-[var(--text-primary)]'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
                   }`}
-                  variant={_hasHydrated && activeTab === 'copilot' ? 'active' : 'ghost'}
+                  variant='ghost'
                   onClick={() => handleTabClick('copilot')}
                   data-tab-button='copilot'
                 >
@@ -519,24 +519,24 @@ export const Panel = memo(function Panel() {
                 </Button>
               )}
               <Button
-                className={`h-[28px] rounded-[6px] border px-[8px] py-[5px] text-[12.5px] ${
+                className={`h-[28px] rounded-none border-b-2 px-[8px] py-[5px] text-xs font-medium ${
                   _hasHydrated && activeTab === 'toolbar'
-                    ? 'border-[var(--border-1)]'
-                    : 'border-transparent hover:border-[var(--border-1)] hover:bg-[var(--surface-5)] hover:text-[var(--text-primary)]'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
-                variant={_hasHydrated && activeTab === 'toolbar' ? 'active' : 'ghost'}
+                variant='ghost'
                 onClick={() => handleTabClick('toolbar')}
                 data-tab-button='toolbar'
               >
                 Tools
               </Button>
               <Button
-                className={`h-[28px] rounded-[6px] border px-[8px] py-[5px] text-[12.5px] ${
+                className={`h-[28px] rounded-none border-b-2 px-[8px] py-[5px] text-xs font-medium ${
                   _hasHydrated && activeTab === 'editor'
-                    ? 'border-[var(--border-1)]'
-                    : 'border-transparent hover:border-[var(--border-1)] hover:bg-[var(--surface-5)] hover:text-[var(--text-primary)]'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
-                variant={_hasHydrated && activeTab === 'editor' ? 'active' : 'ghost'}
+                variant='ghost'
                 onClick={() => handleTabClick('editor')}
                 data-tab-button='editor'
               >
