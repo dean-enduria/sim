@@ -86,6 +86,49 @@ export interface EnduriaCreateIncidentResponse extends ToolResponse {
   }
 }
 
+// Update Incident
+export interface EnduriaUpdateIncidentParams extends EnduriaBaseParams {
+  incidentId: string
+  fields: Record<string, any>
+}
+
+export interface EnduriaUpdateIncidentResponse extends ToolResponse {
+  output: {
+    incident: Record<string, any>
+    metadata: {
+      incidentId: string
+      updatedFields: string[]
+    }
+  }
+}
+
+// Get Incident
+export interface EnduriaGetIncidentParams extends EnduriaBaseParams {
+  incidentId: string
+}
+
+export interface EnduriaGetIncidentResponse extends ToolResponse {
+  output: {
+    incident: Record<string, any>
+  }
+}
+
+// List Incidents
+export interface EnduriaListIncidentsParams extends EnduriaBaseParams {
+  severity?: string
+  status?: string
+  limit?: number
+}
+
+export interface EnduriaListIncidentsResponse extends ToolResponse {
+  output: {
+    incidents: Record<string, any>[]
+    metadata: {
+      totalCount: number
+    }
+  }
+}
+
 // List Tickets
 export interface EnduriaListTicketsParams extends EnduriaBaseParams {
   status?: string
@@ -154,4 +197,7 @@ export type EnduriaResponse =
   | EnduriaGetAssetResponse
   | EnduriaListTicketsResponse
   | EnduriaDeleteTicketResponse
+  | EnduriaUpdateIncidentResponse
+  | EnduriaGetIncidentResponse
+  | EnduriaListIncidentsResponse
   | EnduriaAddCommentResponse
