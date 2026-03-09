@@ -401,7 +401,7 @@ export const Panel = memo(function Panel() {
         className='panel-container fixed top-16 bottom-0 right-0 z-10 overflow-hidden bg-card shadow-sm'
         aria-label='Workflow panel'
       >
-        <div className='flex h-full flex-col border-l border-border/20 pt-[14px]'>
+        <div className='flex h-full flex-col border-l border-[var(--border-soft)] pt-[14px]'>
           {/* Header */}
           <div className='flex flex-shrink-0 items-center justify-between px-[8px]'>
             {/* More and Chat */}
@@ -502,7 +502,7 @@ export const Panel = memo(function Panel() {
           </div>
 
           {/* Tabs */}
-          <div className='flex flex-shrink-0 items-center justify-between border-b border-border/20 px-[8px] pt-[14px]'>
+          <div className='flex flex-shrink-0 items-center justify-between border-b border-[var(--border-soft)] px-[8px] pt-[14px]'>
             <div className='flex gap-[4px]'>
               {!permissionConfig.hideCopilot && (
                 <Button

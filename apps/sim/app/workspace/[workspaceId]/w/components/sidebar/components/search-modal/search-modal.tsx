@@ -286,7 +286,7 @@ export function SearchModal({
         aria-hidden={!open}
         aria-label='Search'
         className={cn(
-          '-translate-x-1/2 fixed top-[15%] left-1/2 z-50 w-[500px] overflow-hidden rounded-[12px] border border-border/20 bg-card shadow-lg',
+          '-translate-x-1/2 fixed top-[15%] left-1/2 z-50 w-[500px] overflow-hidden rounded-[12px] border border-[var(--border-soft)] bg-card shadow-lg',
           open ? 'visible opacity-100' : 'invisible opacity-0'
         )}
       >
@@ -296,7 +296,7 @@ export function SearchModal({
             autoFocus
             onValueChange={handleSearchChange}
             placeholder='Search anything...'
-            className='w-full border-0 border-border/20 border-b bg-transparent px-[12px] py-[10px] font-base text-[15px] text-foreground placeholder:text-muted-foreground focus:outline-none'
+            className='w-full border-0 border-[var(--border-soft)] border-b bg-transparent px-[12px] py-[10px] font-base text-[15px] text-foreground placeholder:text-muted-foreground focus:outline-none'
           />
           <Command.List className='scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent max-h-[400px] overflow-y-auto p-[8px]'>
             <Command.Empty className='flex items-center justify-center px-[16px] py-[24px] text-[15px] text-muted-foreground'>

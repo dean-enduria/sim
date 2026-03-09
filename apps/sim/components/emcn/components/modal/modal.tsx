@@ -159,7 +159,7 @@ const ModalContent = React.forwardRef<
         className={cn(
           ANIMATION_CLASSES,
           CONTENT_ANIMATION_CLASSES,
-          'fixed top-[50%] left-[50%] z-[500] flex max-h-[84vh] translate-x-[-50%] translate-y-[-50%] flex-col overflow-hidden rounded-lg border border-border/20 bg-card shadow-sm duration-200',
+          'fixed top-[50%] left-[50%] z-[500] flex max-h-[84vh] translate-x-[-50%] translate-y-[-50%] flex-col overflow-hidden rounded-lg border border-[var(--border-soft)] bg-card shadow-sm duration-200',
           MODAL_SIZES[size],
           className
         )}
@@ -359,7 +359,7 @@ const ModalBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
     <div
       ref={ref}
       className={cn(
-        'flex-1 overflow-y-auto border-t border-border/20 bg-accent px-[14px] py-[10px]',
+        'flex-1 overflow-y-auto border-t border-[var(--border-soft)] bg-accent px-[14px] py-[10px]',
         className
       )}
       {...props}
@@ -377,7 +377,7 @@ const ModalFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
     <div
       ref={ref}
       className={cn(
-        'flex justify-end gap-[8px] border-t border-border/20 bg-accent px-[16px] py-[10px]',
+        'flex justify-end gap-[8px] border-t border-[var(--border-soft)] bg-accent px-[16px] py-[10px]',
         className
       )}
       {...props}

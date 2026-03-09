@@ -451,8 +451,8 @@ export function OAuthRequiredModal({
             </div>
 
             {displayScopes.length > 0 && (
-              <div className='rounded-[8px] border border-border/20 bg-accent'>
-                <div className='border-border/20 border-b px-[14px] py-[10px]'>
+              <div className='rounded-[8px] border border-[var(--border-soft)] bg-accent'>
+                <div className='border-[var(--border-soft)] border-b px-[14px] py-[10px]'>
                   <h4 className='font-medium text-[12px] text-foreground'>
                     Permissions requested
                   </h4>

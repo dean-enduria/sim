@@ -75,7 +75,7 @@ const SModalContent = React.forwardRef<
         className={cn(
           ANIMATION_CLASSES,
           CONTENT_ANIMATION_CLASSES,
-          'fixed top-[50%] left-[50%] z-[500] flex h-[min(calc(100vh-8rem),900px)] min-h-[400px] w-[min(calc(100vw-8rem),1080px)] min-w-[520px] translate-x-[-50%] translate-y-[-50%] flex-row rounded-lg border border-border/20 bg-card shadow-sm duration-200',
+          'fixed top-[50%] left-[50%] z-[500] flex h-[min(calc(100vh-8rem),900px)] min-h-[400px] w-[min(calc(100vw-8rem),1080px)] min-w-[520px] translate-x-[-50%] translate-y-[-50%] flex-row rounded-lg border border-[var(--border-soft)] bg-card shadow-sm duration-200',
           className
         )}
         style={style}
@@ -212,7 +212,7 @@ const SModalMain = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
     <div
       ref={ref}
       className={cn(
-        'flex min-w-0 flex-1 flex-col gap-[16px] overflow-hidden rounded-lg border-l border-border/20 bg-accent p-[14px]',
+        'flex min-w-0 flex-1 flex-col gap-[16px] overflow-hidden rounded-lg border-l border-[var(--border-soft)] bg-accent p-[14px]',
         className
       )}
       {...props}
@@ -376,7 +376,7 @@ const SModalTabsBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTM
     <div
       ref={ref}
       className={cn(
-        'min-h-0 flex-1 overflow-y-auto border-border/20 border-t pt-[10px]',
+        'min-h-0 flex-1 overflow-y-auto border-[var(--border-soft)] border-t pt-[10px]',
         className
       )}
       {...props}

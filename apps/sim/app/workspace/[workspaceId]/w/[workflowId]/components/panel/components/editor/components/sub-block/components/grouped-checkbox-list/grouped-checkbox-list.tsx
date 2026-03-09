@@ -106,7 +106,7 @@ export function GroupedCheckboxList({
           variant='ghost'
           disabled={disabled}
           className={cn(
-            'flex w-full cursor-pointer items-center justify-between rounded-[4px] border border-border/20 bg-accent px-[8px] py-[6px] font-medium font-sans text-foreground text-sm outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-accent',
+            'flex w-full cursor-pointer items-center justify-between rounded-[4px] border border-[var(--border-soft)] bg-accent px-[8px] py-[6px] font-medium font-sans text-foreground text-sm outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-accent',
             'hover:border-border hover:bg-accent dark:hover:border-border dark:hover:bg-accent'
           )}
         >

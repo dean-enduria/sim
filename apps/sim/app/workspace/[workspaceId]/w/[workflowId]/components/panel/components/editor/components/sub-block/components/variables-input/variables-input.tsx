@@ -294,7 +294,7 @@ export function VariablesInput({
 
   if (isPreview && (!assignments || assignments.length === 0)) {
     return (
-      <div className='flex flex-col items-center justify-center rounded-md border border-border/20 bg-muted/20 py-8 text-center'>
+      <div className='flex flex-col items-center justify-center rounded-md border border-[var(--border-soft)] bg-muted/20 py-8 text-center'>
         <svg
           className='mb-3 h-10 w-10 text-muted-foreground/40'
           fill='none'

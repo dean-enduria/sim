@@ -776,7 +776,7 @@ export const Toolbar = memo(
           </div>
 
           {/* Resize Handle */}
-          <div className='relative flex-shrink-0 border-border/20 border-t'>
+          <div className='relative flex-shrink-0 border-[var(--border-soft)] border-t'>
             <div
               className='absolute top-[-4px] right-0 left-0 z-30 h-[8px] cursor-ns-resize'
               onMouseDown={handleMouseDown}

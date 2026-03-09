@@ -254,7 +254,7 @@ interface ColumnRowProps {
 
 function ColumnRow({ index, column, isRemovable, onChange, onRemove }: ColumnRowProps) {
   return (
-    <div className='rounded-[6px] border border-border/20 bg-card p-[10px]'>
+    <div className='rounded-[6px] border border-[var(--border-soft)] bg-card p-[10px]'>
       <div className='mb-[8px] flex items-center justify-between'>
         <span className='font-medium text-[11px] text-muted-foreground/70'>
           Column {index + 1}
