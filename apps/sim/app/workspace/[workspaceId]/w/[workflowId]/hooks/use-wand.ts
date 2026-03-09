@@ -5,6 +5,7 @@ import { readSSEStream } from '@/lib/core/utils/sse'
 import type { GenerationType } from '@/blocks/types'
 import { subscriptionKeys } from '@/hooks/queries/subscription'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useWand')
 
@@ -177,7 +178,7 @@ export function useWand({
 
         const currentPrompt = prompt
 
-        const response = await fetch('/api/wand', {
+        const response = await fetch(apiUrl('/api/wand'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

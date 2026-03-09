@@ -1,5 +1,6 @@
 import { createLogger } from '@sim/logger'
 import { toPng } from 'html-to-image'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('OGCapturePreview')
 
@@ -84,7 +85,7 @@ export async function uploadOGImage(templateId: string, imageData: string): Prom
   try {
     logger.info(`Uploading OG image for template: ${templateId}`)
 
-    const response = await fetch(`/api/templates/${templateId}/og-image`, {
+    const response = await fetch(apiUrl(`/api/templates/${templateId}/og-image`), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

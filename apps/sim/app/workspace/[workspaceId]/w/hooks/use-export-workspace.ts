@@ -8,6 +8,7 @@ import {
   sanitizePathSegment,
   type WorkflowExportData,
 } from '@/lib/workflows/operations/import-export'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useExportWorkspace')
 
@@ -32,13 +33,13 @@ export function useExportWorkspace({ onSuccess }: UseExportWorkspaceProps = {}) 
       try {
         logger.info('Exporting workspace', { workspaceId })
 
-        const workflowsResponse = await fetch(`/api/workflows?workspaceId=${workspaceId}`)
+        const workflowsResponse = await fetch(apiUrl(`/api/workflows?workspaceId=${workspaceId}`))
         if (!workflowsResponse.ok) {
           throw new Error('Failed to fetch workflows')
         }
         const { data: workflows } = await workflowsResponse.json()
 
-        const foldersResponse = await fetch(`/api/folders?workspaceId=${workspaceId}`)
+        const foldersResponse = await fetch(apiUrl(`/api/folders?workspaceId=${workspaceId}`))
         if (!foldersResponse.ok) {
           throw new Error('Failed to fetch folders')
         }

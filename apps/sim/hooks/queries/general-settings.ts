@@ -1,6 +1,7 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { syncThemeToNextThemes } from '@/lib/core/utils/theme'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('GeneralSettingsQuery')
 
@@ -31,7 +32,7 @@ export interface GeneralSettings {
  * Fetch general settings from API
  */
 async function fetchGeneralSettings(): Promise<GeneralSettings> {
-  const response = await fetch('/api/users/me/settings')
+  const response = await fetch(apiUrl('/api/users/me/settings'))
 
   if (!response.ok) {
     throw new Error('Failed to fetch general settings')
@@ -117,7 +118,7 @@ export function useUpdateGeneralSetting() {
 
   return useMutation({
     mutationFn: async ({ key, value }: UpdateSettingParams) => {
-      const response = await fetch('/api/users/me/settings', {
+      const response = await fetch(apiUrl('/api/users/me/settings'), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ [key]: value }),

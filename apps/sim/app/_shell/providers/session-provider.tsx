@@ -4,6 +4,7 @@ import type React from 'react'
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
+import { apiUrl } from '@/lib/api/fetcher'
 
 export type AppSession = {
   user: {
@@ -43,7 +44,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setError(null)
 
       // Fetch session from our API endpoint which validates Enduria JWT
-      const res = await fetch('/api/session')
+      const res = await fetch(apiUrl('/api/session'))
       if (res.ok) {
         const session = await res.json()
         setData(session)

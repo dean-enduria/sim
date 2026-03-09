@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { createLogger } from '@sim/logger'
 import { useRouter } from 'next/navigation'
 import { useSession } from '@/lib/auth/auth-client'
+import { apiUrl } from '@/lib/api/fetcher'
 import { useReferralAttribution } from '@/hooks/use-referral-attribution'
 
 const logger = createLogger('WorkspacePage')
@@ -23,7 +24,7 @@ export default function WorkspacePage() {
       // If user is not authenticated, redirect to login
       if (!session?.user) {
         logger.info('User not authenticated, redirecting to login')
-        router.replace('/login')
+        router.replace('/')
         return
       }
 
@@ -35,7 +36,7 @@ export default function WorkspacePage() {
         if (redirectWorkflowId) {
           // Try to get the workspace for this workflow
           try {
-            const workflowResponse = await fetch(`/api/workflows/${redirectWorkflowId}`)
+            const workflowResponse = await fetch(apiUrl(`/api/workflows/${redirectWorkflowId}`))
             if (workflowResponse.ok) {
               const workflowData = await workflowResponse.json()
               const workspaceId = workflowData.data?.workspaceId
@@ -54,7 +55,7 @@ export default function WorkspacePage() {
         }
 
         // Fetch user's workspaces
-        const response = await fetch('/api/workspaces')
+        const response = await fetch(apiUrl('/api/workspaces'))
 
         if (!response.ok) {
           throw new Error('Failed to fetch workspaces')
@@ -67,7 +68,7 @@ export default function WorkspacePage() {
           logger.warn('No workspaces found for user, creating default workspace')
 
           try {
-            const createResponse = await fetch('/api/workspaces', {
+            const createResponse = await fetch(apiUrl('/api/workspaces'), {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -92,7 +93,7 @@ export default function WorkspacePage() {
           }
 
           // If we can't create a workspace, redirect to login to reset state
-          router.replace('/login')
+          router.replace('/')
           return
         }
 
@@ -110,7 +111,7 @@ export default function WorkspacePage() {
 
     // Only run this logic when we're at the root /workspace path
     // If we're already in a specific workspace, the children components will handle it
-    if (typeof window !== 'undefined' && window.location.pathname === '/workspace') {
+    if (typeof window !== 'undefined' && (window.location.pathname === '/workspace' || window.location.pathname === '/sim/workspace')) {
       redirectToFirstWorkspace()
     }
   }, [session, isPending, router])

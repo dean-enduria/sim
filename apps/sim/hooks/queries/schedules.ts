@@ -2,6 +2,7 @@ import { createLogger } from '@sim/logger'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { parseCronToHumanReadable } from '@/lib/workflows/schedules/utils'
 import { deploymentKeys } from '@/hooks/queries/deployments'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('ScheduleQueries')
 
@@ -37,7 +38,7 @@ export interface ScheduleInfo {
  */
 async function fetchSchedule(workflowId: string, blockId: string): Promise<ScheduleData | null> {
   const params = new URLSearchParams({ workflowId, blockId })
-  const response = await fetch(`/api/schedules?${params}`, {
+  const response = await fetch(apiUrl(`/api/schedules?${params}`), {
     cache: 'no-store',
     headers: { 'Cache-Control': 'no-cache' },
   })
@@ -127,7 +128,7 @@ export function useReactivateSchedule() {
       workflowId: string
       blockId: string
     }) => {
-      const response = await fetch(`/api/schedules/${scheduleId}`, {
+      const response = await fetch(apiUrl(`/api/schedules/${scheduleId}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'reactivate' }),
@@ -159,7 +160,7 @@ export function useRedeployWorkflowSchedule() {
 
   return useMutation({
     mutationFn: async ({ workflowId, blockId }: { workflowId: string; blockId: string }) => {
-      const response = await fetch(`/api/workflows/${workflowId}/deploy`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deploy`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ deployChatEnabled: false }),

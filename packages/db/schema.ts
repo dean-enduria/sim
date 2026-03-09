@@ -956,6 +956,7 @@ export const invitation = pgTable(
 export const workspace = pgTable('workspace', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
+  orgId: text('org_id').notNull().default('default-org'),
   ownerId: text('owner_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),

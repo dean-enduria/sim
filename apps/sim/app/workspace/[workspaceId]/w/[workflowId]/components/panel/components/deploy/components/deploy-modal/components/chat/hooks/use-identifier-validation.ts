@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const IDENTIFIER_PATTERN = /^[a-z0-9-]+$/
 const DEBOUNCE_MS = 500
@@ -57,8 +58,7 @@ export function useIdentifierValidation(
     setIsChecking(true)
     timeoutRef.current = setTimeout(async () => {
       try {
-        const response = await fetch(
-          `/api/chat/validate?identifier=${encodeURIComponent(identifier)}`
+        const response = await fetch(apiUrl(`/api/chat/validate?identifier=${encodeURIComponent(identifier)}`)
         )
         const data = await response.json()
 

@@ -9,6 +9,7 @@ import { isHiddenFromDisplay } from '@/blocks/types'
 import { getUserPermissionConfig } from '@/lib/stubs/permission-check'
 import { escapeRegExp } from '@/executor/constants'
 import type { ChatContext } from '@/stores/panel/copilot/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 export type AgentContextType =
   | 'past_chat'
@@ -265,7 +266,7 @@ async function processWorkflowFromDb(
 
 async function processPastChat(chatId: string, tagOverride?: string): Promise<AgentContext | null> {
   try {
-    const resp = await fetch(`/api/copilot/chat/${encodeURIComponent(chatId)}`)
+    const resp = await fetch(apiUrl(`/api/copilot/chat/${encodeURIComponent(chatId)}`))
     if (!resp.ok) {
       logger.error('Failed to fetch past chat', { chatId, status: resp.status })
       return null

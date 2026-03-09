@@ -715,7 +715,7 @@ export const Toolbar = memo(
       >
         {/* Header */}
         <div
-          className='mx-[-1px] flex flex-shrink-0 cursor-pointer items-center justify-between rounded-[4px] border border-border/40 bg-card px-[12px] py-[6px]'
+          className='mx-[-1px] flex flex-shrink-0 cursor-pointer items-center justify-between rounded-[4px] border-0 bg-transparent px-[12px] py-[6px]'
           onClick={handleSearchClick}
         >
           <h2 className='text-sm font-semibold text-foreground'>Tools</h2>
@@ -776,7 +776,7 @@ export const Toolbar = memo(
           </div>
 
           {/* Resize Handle */}
-          <div className='relative flex-shrink-0 border-border/40 border-t'>
+          <div className='relative flex-shrink-0 border-border/20 border-t'>
             <div
               className='absolute top-[-4px] right-0 left-0 z-30 h-[8px] cursor-ns-resize'
               onMouseDown={handleMouseDown}

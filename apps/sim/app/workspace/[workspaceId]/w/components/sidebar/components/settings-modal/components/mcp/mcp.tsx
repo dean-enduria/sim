@@ -15,6 +15,7 @@ import {
   ModalHeader,
   Tooltip,
 } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 import { Input } from '@/components/ui'
 import { cn } from '@/lib/core/utils/cn'
 import {
@@ -427,7 +428,7 @@ export function MCP({ initialServerId }: MCPProps) {
   const [allowedMcpDomains, setAllowedMcpDomains] = useState<string[] | null>(null)
 
   useEffect(() => {
-    fetch('/api/settings/allowed-mcp-domains')
+    fetch(apiUrl('/api/settings/allowed-mcp-domains'))
       .then((res) => res.json())
       .then((data) => setAllowedMcpDomains(data.allowedMcpDomains ?? null))
       .catch(() => setAllowedMcpDomains(null))
@@ -786,7 +787,7 @@ export function MCP({ initialServerId }: MCPProps) {
         if (activeWorkflowId && result.updatedWorkflowIds?.includes(activeWorkflowId)) {
           logger.info(`Active workflow ${activeWorkflowId} was updated, reloading subblock values`)
           try {
-            const response = await fetch(`/api/workflows/${activeWorkflowId}`)
+            const response = await fetch(apiUrl(`/api/workflows/${activeWorkflowId}`))
             if (response.ok) {
               const { data: workflowData } = await response.json()
               if (workflowData?.state?.blocks) {

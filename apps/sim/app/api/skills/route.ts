@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { checkSessionOrInternalAuth } from '@/lib/auth/hybrid'
 import { generateRequestId } from '@/lib/core/utils/request'
 import { upsertSkills } from '@/lib/workflows/skills/operations'
-import { getUserEntityPermissions } from '@/lib/workspaces/permissions/utils'
+import { getUserEntityPermissions, verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('SkillsAPI')
 
@@ -45,6 +45,12 @@ export async function GET(request: NextRequest) {
     if (!workspaceId) {
       logger.warn(`[${requestId}] Missing workspaceId`)
       return NextResponse.json({ error: 'workspaceId is required' }, { status: 400 })
+    }
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
     }
 
     const userPermission = await getUserEntityPermissions(userId, 'workspace', workspaceId)
@@ -86,6 +92,12 @@ export async function POST(req: NextRequest) {
       if (!workspaceId) {
         logger.warn(`[${requestId}] Missing workspaceId in request body`)
         return NextResponse.json({ error: 'workspaceId is required' }, { status: 400 })
+      }
+
+      // Org-scoping: verify workspace belongs to user's org
+      const orgCheck = await verifyWorkspaceOrg(workspaceId)
+      if (!orgCheck.ok) {
+        return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
       }
 
       const userPermission = await getUserEntityPermissions(userId, 'workspace', workspaceId)

@@ -3,6 +3,7 @@ import { createLogger } from '@sim/logger'
 import { useQueryClient } from '@tanstack/react-query'
 import { getFileExtension, getMimeTypeFromExtension } from '@/lib/uploads/utils/file-utils'
 import { knowledgeKeys } from '@/hooks/queries/knowledge'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('KnowledgeUpload')
 
@@ -286,7 +287,7 @@ const getPresignedData = async (
   const startTime = getHighResTime()
 
   try {
-    const presignedResponse = await fetch('/api/files/presigned?type=knowledge-base', {
+    const presignedResponse = await fetch(apiUrl('/api/files/presigned?type=knowledge-base'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -611,7 +612,7 @@ export function useKnowledgeUpload(options: UseKnowledgeUploadOptions = {}) {
     const startTime = getHighResTime()
 
     try {
-      const initiateResponse = await fetch('/api/files/multipart?action=initiate', {
+      const initiateResponse = await fetch(apiUrl('/api/files/multipart?action=initiate'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -632,7 +633,7 @@ export function useKnowledgeUpload(options: UseKnowledgeUploadOptions = {}) {
       const numParts = Math.ceil(file.size / chunkSize)
       const partNumbers = Array.from({ length: numParts }, (_, i) => i + 1)
 
-      const partUrlsResponse = await fetch('/api/files/multipart?action=get-part-urls', {
+      const partUrlsResponse = await fetch(apiUrl('/api/files/multipart?action=get-part-urls'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -643,7 +644,7 @@ export function useKnowledgeUpload(options: UseKnowledgeUploadOptions = {}) {
       })
 
       if (!partUrlsResponse.ok) {
-        await fetch('/api/files/multipart?action=abort', {
+        await fetch(apiUrl('/api/files/multipart?action=abort'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ uploadId, key }),
@@ -726,7 +727,7 @@ export function useKnowledgeUpload(options: UseKnowledgeUploadOptions = {}) {
         clearTimeout(multipartTimeoutId)
       }
 
-      const completeResponse = await fetch('/api/files/multipart?action=complete', {
+      const completeResponse = await fetch(apiUrl('/api/files/multipart?action=complete'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -783,7 +784,7 @@ export function useKnowledgeUpload(options: UseKnowledgeUploadOptions = {}) {
         formData.append('workspaceId', options.workspaceId)
       }
 
-      const uploadResponse = await fetch('/api/files/upload', {
+      const uploadResponse = await fetch(apiUrl('/api/files/upload'), {
         method: 'POST',
         body: formData,
         signal: controller.signal,
@@ -875,7 +876,7 @@ export function useKnowledgeUpload(options: UseKnowledgeUploadOptions = {}) {
           })),
         }
 
-        const batchResponse = await fetch('/api/files/presigned/batch?type=knowledge-base', {
+        const batchResponse = await fetch(apiUrl('/api/files/presigned/batch?type=knowledge-base'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(batchRequest),
@@ -1020,7 +1021,7 @@ export function useKnowledgeUpload(options: UseKnowledgeUploadOptions = {}) {
         bulk: true,
       }
 
-      const processResponse = await fetch(`/api/knowledge/${knowledgeBaseId}/documents`, {
+      const processResponse = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

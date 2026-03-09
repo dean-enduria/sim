@@ -2,6 +2,7 @@ import { createLogger } from '@sim/logger'
 import { WebflowIcon } from '@/components/icons'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
 import type { TriggerConfig } from '../types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('webflow-collection-item-changed-trigger')
 
@@ -50,7 +51,7 @@ export const webflowCollectionItemChangedTrigger: TriggerConfig = {
           throw new Error('No Webflow credential selected')
         }
         try {
-          const response = await fetch('/api/tools/webflow/sites', {
+          const response = await fetch(apiUrl('/api/tools/webflow/sites'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ credential: credentialId }),
@@ -77,7 +78,7 @@ export const webflowCollectionItemChangedTrigger: TriggerConfig = {
           | null
         if (!credentialId) return null
         try {
-          const response = await fetch('/api/tools/webflow/sites', {
+          const response = await fetch(apiUrl('/api/tools/webflow/sites'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ credential: credentialId, siteId: optionId }),
@@ -119,7 +120,7 @@ export const webflowCollectionItemChangedTrigger: TriggerConfig = {
           return []
         }
         try {
-          const response = await fetch('/api/tools/webflow/collections', {
+          const response = await fetch(apiUrl('/api/tools/webflow/collections'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ credential: credentialId, siteId }),
@@ -149,7 +150,7 @@ export const webflowCollectionItemChangedTrigger: TriggerConfig = {
           | null
         if (!credentialId || !siteId) return null
         try {
-          const response = await fetch('/api/tools/webflow/collections', {
+          const response = await fetch(apiUrl('/api/tools/webflow/collections'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ credential: credentialId, siteId }),

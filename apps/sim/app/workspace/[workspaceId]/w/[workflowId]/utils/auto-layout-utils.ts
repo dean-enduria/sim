@@ -4,6 +4,7 @@ import {
   DEFAULT_LAYOUT_PADDING,
   DEFAULT_VERTICAL_SPACING,
 } from '@/lib/workflows/autolayout/constants'
+import { apiUrl } from '@/lib/api/fetcher'
 import { useWorkflowStore } from '@/stores/workflows/workflow/store'
 
 const logger = createLogger('AutoLayoutUtils')
@@ -77,7 +78,7 @@ export async function applyAutoLayoutAndUpdateStore(
     }
 
     // Call the autolayout API route
-    const response = await fetch(`/api/workflows/${workflowId}/autolayout`, {
+    const response = await fetch(apiUrl(`/api/workflows/${workflowId}/autolayout`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -144,7 +145,7 @@ export async function applyAutoLayoutAndUpdateStore(
         }),
       }
 
-      const saveResponse = await fetch(`/api/workflows/${workflowId}/state`, {
+      const saveResponse = await fetch(apiUrl(`/api/workflows/${workflowId}/state`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

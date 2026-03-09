@@ -13,6 +13,7 @@ import AuthBackground from '@/components/shared/auth-background'
 import { BrandedButton } from '@/components/shared/branded-button'
 import { SupportFooter } from '@/components/shared/support-footer'
 import Nav from '@/components/shared/nav/nav'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('EmailAuth')
 
@@ -88,7 +89,7 @@ export default function EmailAuth({ identifier, onAuthSuccess }: EmailAuthProps)
     setIsSendingOtp(true)
 
     try {
-      const response = await fetch(`/api/chat/${identifier}/otp`, {
+      const response = await fetch(apiUrl(`/api/chat/${identifier}/otp`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -125,7 +126,7 @@ export default function EmailAuth({ identifier, onAuthSuccess }: EmailAuthProps)
     setIsVerifyingOtp(true)
 
     try {
-      const response = await fetch(`/api/chat/${identifier}/otp`, {
+      const response = await fetch(apiUrl(`/api/chat/${identifier}/otp`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +157,7 @@ export default function EmailAuth({ identifier, onAuthSuccess }: EmailAuthProps)
     setCountdown(30)
 
     try {
-      const response = await fetch(`/api/chat/${identifier}/otp`, {
+      const response = await fetch(apiUrl(`/api/chat/${identifier}/otp`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ import {
   TABLE_LIMITS,
   type TableSchema,
 } from '@/lib/table'
-import { getUserEntityPermissions } from '@/lib/workspaces/permissions/utils'
+import { getUserEntityPermissions, verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 import { normalizeColumn } from './utils'
 
 const logger = createLogger('TableAPI')
@@ -103,6 +103,12 @@ export async function POST(request: NextRequest) {
 
     const body: unknown = await request.json()
     const params = CreateTableSchema.parse(body)
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(params.workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+    }
 
     const { hasAccess, canWrite } = await checkWorkspaceAccess(
       params.workspaceId,
@@ -214,6 +220,12 @@ export async function GET(request: NextRequest) {
     }
 
     const params = validation.data
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(params.workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+    }
 
     const { hasAccess } = await checkWorkspaceAccess(params.workspaceId, authResult.userId)
 

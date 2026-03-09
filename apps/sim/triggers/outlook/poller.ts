@@ -3,6 +3,7 @@ import { OutlookIcon } from '@/components/icons'
 import { isCredentialSetValue } from '@/executor/constants'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
 import type { TriggerConfig } from '@/triggers/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('OutlookPollingTrigger')
 
@@ -58,7 +59,7 @@ export const outlookPollingTrigger: TriggerConfig = {
           return OUTLOOK_SYSTEM_FOLDERS
         }
         try {
-          const response = await fetch(`/api/tools/outlook/folders?credentialId=${credentialId}`)
+          const response = await fetch(apiUrl(`/api/tools/outlook/folders?credentialId=${credentialId}`))
           if (!response.ok) {
             throw new Error('Failed to fetch Outlook folders')
           }

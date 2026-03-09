@@ -16,6 +16,7 @@ import {
   PasswordAuth,
   VoiceInterface,
 } from '@/app/chat/components'
+import { apiUrl } from '@/lib/api/fetcher'
 import { CHAT_ERROR_MESSAGES, CHAT_REQUEST_TIMEOUT_MS } from '@/app/chat/constants'
 import { useAudioStreaming, useChatStreaming } from '@/app/chat/hooks'
 import SSOAuth from '@/lib/stubs/sso-auth'
@@ -203,7 +204,7 @@ export default function ChatClient({ identifier }: { identifier: string }) {
 
   const fetchChatConfig = async () => {
     try {
-      const response = await fetch(`/api/chat/${identifier}`, {
+      const response = await fetch(apiUrl(`/api/chat/${identifier}`), {
         credentials: 'same-origin',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -354,7 +355,7 @@ export default function ChatClient({ identifier }: { identifier: string }) {
         files: payload.files ? `${payload.files.length} files` : undefined,
       })
 
-      const response = await fetch(`/api/chat/${identifier}`, {
+      const response = await fetch(apiUrl(`/api/chat/${identifier}`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

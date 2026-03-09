@@ -14,6 +14,7 @@ import {
   ModalHeader,
   ModalTrigger,
 } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('CreditBalance')
 
@@ -67,7 +68,7 @@ export function CreditBalance({
     setError(null)
 
     try {
-      const response = await fetch('/api/billing/credits', {
+      const response = await fetch(apiUrl('/api/billing/credits'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: numAmount, requestId }),

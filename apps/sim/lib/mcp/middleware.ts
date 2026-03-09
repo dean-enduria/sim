@@ -3,7 +3,7 @@ import type { NextRequest, NextResponse } from 'next/server'
 import { checkSessionOrInternalAuth } from '@/lib/auth/hybrid'
 import { generateRequestId } from '@/lib/core/utils/request'
 import { createMcpErrorResponse } from '@/lib/mcp/utils'
-import { getUserEntityPermissions } from '@/lib/workspaces/permissions/utils'
+import { getUserEntityPermissions, verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('McpAuthMiddleware')
 
@@ -81,6 +81,19 @@ async function validateMcpAuth(
           new Error('workspaceId is required'),
           'Missing required parameter',
           400
+        ),
+      }
+    }
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(workspaceId)
+    if (!orgCheck.ok) {
+      return {
+        success: false,
+        errorResponse: createMcpErrorResponse(
+          new Error('Forbidden'),
+          'Forbidden',
+          403
         ),
       }
     }

@@ -20,6 +20,7 @@ import {
   Textarea,
   Tooltip,
 } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 import { Skeleton, Input as UiInput } from '@/components/ui'
 import { useSession } from '@/lib/auth/auth-client'
 import {
@@ -819,7 +820,7 @@ export function CredentialsManager({ onOpenChange }: CredentialsManagerProps) {
 
     setCreateError(null)
     try {
-      await fetch('/api/credentials/draft', {
+      await fetch(apiUrl('/api/credentials/draft'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -987,7 +988,7 @@ export function CredentialsManager({ onOpenChange }: CredentialsManagerProps) {
     setDetailsError(null)
 
     try {
-      await fetch('/api/credentials/draft', {
+      await fetch(apiUrl('/api/credentials/draft'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

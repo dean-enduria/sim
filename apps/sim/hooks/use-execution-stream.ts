@@ -13,6 +13,7 @@ import type {
   StreamChunkData,
   StreamDoneData,
 } from '@/lib/workflows/executor/execution-events'
+import { apiUrl } from '@/lib/api/fetcher'
 import type { SerializableExecutionState } from '@/executor/execution/types'
 
 const logger = createLogger('useExecutionStream')
@@ -183,7 +184,7 @@ export function useExecutionStream() {
     sharedAbortControllers.set(workflowId, abortController)
 
     try {
-      const response = await fetch(`/api/workflows/${workflowId}/execute`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/execute`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -249,7 +250,7 @@ export function useExecutionStream() {
     sharedAbortControllers.set(workflowId, abortController)
 
     try {
-      const response = await fetch(`/api/workflows/${workflowId}/execute`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/execute`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -316,8 +317,7 @@ export function useExecutionStream() {
     const abortController = new AbortController()
     sharedAbortControllers.set(workflowId, abortController)
     try {
-      const response = await fetch(
-        `/api/workflows/${workflowId}/executions/${executionId}/stream?from=${fromEventId}`,
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/executions/${executionId}/stream?from=${fromEventId}`),
         { signal: abortController.signal }
       )
       if (!response.ok) throw new Error(`Reconnect failed (${response.status})`)

@@ -1,7 +1,7 @@
 import { db } from '@sim/db'
 import { document, embedding, knowledgeBase } from '@sim/db/schema'
 import { and, eq, isNull } from 'drizzle-orm'
-import { getUserEntityPermissions } from '@/lib/workspaces/permissions/utils'
+import { getUserEntityPermissions, verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 export interface KnowledgeBaseData {
   id: string
@@ -164,6 +164,12 @@ export async function checkKnowledgeBaseAccess(
   const kbData = kb[0]
 
   if (kbData.workspaceId) {
+    // Org-scoping: verify KB's workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(kbData.workspaceId)
+    if (!orgCheck.ok) {
+      return { hasAccess: false }
+    }
+
     // Workspace KB: use workspace permissions only
     const userPermission = await getUserEntityPermissions(userId, 'workspace', kbData.workspaceId)
     if (userPermission !== null) {
@@ -208,6 +214,12 @@ export async function checkKnowledgeBaseWriteAccess(
   const kbData = kb[0]
 
   if (kbData.workspaceId) {
+    // Org-scoping: verify KB's workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(kbData.workspaceId)
+    if (!orgCheck.ok) {
+      return { hasAccess: false }
+    }
+
     // Workspace KB: use workspace permissions only
     const userPermission = await getUserEntityPermissions(userId, 'workspace', kbData.workspaceId)
     if (userPermission === 'write' || userPermission === 'admin') {

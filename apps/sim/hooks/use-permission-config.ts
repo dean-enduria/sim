@@ -8,6 +8,7 @@ import {
   DEFAULT_PERMISSION_GROUP_CONFIG,
   type PermissionGroupConfig,
 } from '@/lib/permission-groups/types'
+import { apiUrl } from '@/lib/api/fetcher'
 import { useUserPermissionConfig } from '@/lib/stubs/permission-groups'
 import { useOrganizations } from '@/hooks/queries/organization'
 
@@ -31,7 +32,7 @@ function useAllowedIntegrationsFromEnv() {
   return useQuery<AllowedIntegrationsResponse>({
     queryKey: ['allowedIntegrations', 'env'],
     queryFn: async () => {
-      const response = await fetch('/api/settings/allowed-integrations')
+      const response = await fetch(apiUrl('/api/settings/allowed-integrations'))
       if (!response.ok) return { allowedIntegrations: null }
       return response.json()
     },

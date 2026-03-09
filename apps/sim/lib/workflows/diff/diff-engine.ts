@@ -5,6 +5,7 @@ import type { BlockWithDiff } from '@/lib/workflows/diff/types'
 import { isValidKey } from '@/lib/workflows/sanitization/key-validation'
 import { mergeSubblockState } from '@/stores/workflows/utils'
 import type { BlockState, WorkflowState } from '@/stores/workflows/workflow/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('WorkflowDiffEngine')
 
@@ -391,7 +392,7 @@ export class WorkflowDiffEngine {
         },
       }
 
-      const response = await fetch('/api/yaml/diff/create', {
+      const response = await fetch(apiUrl('/api/yaml/diff/create'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1020,7 +1021,7 @@ export class WorkflowDiffEngine {
         },
       }
 
-      const response = await fetch('/api/yaml/diff/merge', {
+      const response = await fetch(apiUrl('/api/yaml/diff/merge'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

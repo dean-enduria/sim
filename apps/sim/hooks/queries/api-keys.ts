@@ -1,5 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { workspaceKeys } from '@/hooks/queries/workspace'
+import { apiUrl } from '@/lib/api/fetcher'
 
 /**
  * Query key factories for API keys-related queries
@@ -39,8 +40,8 @@ interface ApiKeysResponse {
  */
 async function fetchApiKeys(workspaceId: string): Promise<ApiKeysResponse> {
   const [workspaceResponse, personalResponse] = await Promise.all([
-    fetch(`/api/workspaces/${workspaceId}/api-keys`),
-    fetch('/api/users/me/api-keys'),
+    fetch(apiUrl(`/api/workspaces/${workspaceId}/api-keys`)),
+    fetch(apiUrl('/api/users/me/api-keys')),
   ])
 
   let workspaceKeys: ApiKey[] = []
@@ -184,7 +185,7 @@ export function useUpdateWorkspaceApiKeySettings() {
       workspaceId,
       allowPersonalApiKeys,
     }: UpdateWorkspaceApiKeySettingsParams) => {
-      const response = await fetch(`/api/workspaces/${workspaceId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ allowPersonalApiKeys }),

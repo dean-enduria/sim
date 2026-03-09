@@ -11,6 +11,7 @@ import type {
   VariablesStore,
   VariableType,
 } from '@/stores/variables/types'
+import { apiUrl } from '@/lib/api/fetcher'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
 
@@ -196,7 +197,7 @@ export const useVariablesStore = create<VariablesStore>()(
         async loadForWorkflow(workflowId) {
           try {
             set({ isLoading: true, error: null })
-            const res = await fetch(`/api/workflows/${workflowId}/variables`, { method: 'GET' })
+            const res = await fetch(apiUrl(`/api/workflows/${workflowId}/variables`), { method: 'GET' })
             if (!res.ok) {
               const text = await res.text().catch(() => '')
               throw new Error(text || `Failed to load variables: ${res.statusText}`)

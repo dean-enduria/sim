@@ -2,6 +2,7 @@ import { createLogger } from '@sim/logger'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { OutputConfig } from '@/stores/chat/types'
 import { deploymentKeys } from './deployments'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('ChatMutations')
 
@@ -136,7 +137,7 @@ export function useCreateChat() {
     }: CreateChatVariables): Promise<ChatMutationResult> => {
       const payload = buildChatPayload(workflowId, formData, apiKey, imageUrl, false)
 
-      const response = await fetch('/api/chat', {
+      const response = await fetch(apiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -191,7 +192,7 @@ export function useUpdateChat() {
     }: UpdateChatVariables): Promise<ChatMutationResult> => {
       const payload = buildChatPayload(workflowId, formData, undefined, imageUrl, true)
 
-      const response = await fetch(`/api/chat/manage/${chatId}`, {
+      const response = await fetch(apiUrl(`/api/chat/manage/${chatId}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -236,7 +237,7 @@ export function useDeleteChat() {
 
   return useMutation({
     mutationFn: async ({ chatId }: DeleteChatVariables): Promise<void> => {
-      const response = await fetch(`/api/chat/manage/${chatId}`, {
+      const response = await fetch(apiUrl(`/api/chat/manage/${chatId}`), {
         method: 'DELETE',
       })
 

@@ -1,5 +1,5 @@
 import { createLogger } from '@sim/logger'
-import { jwtVerify } from 'jose'
+import { jwtDecrypt, jwtVerify } from 'jose'
 import { type NextRequest, NextResponse } from 'next/server'
 import { isAuthDisabled } from './lib/core/config/feature-flags'
 import { generateRuntimeCSP } from './lib/core/security/csp'
@@ -29,8 +29,48 @@ function isPublicPath(pathname: string): boolean {
 }
 
 /**
+ * Derive the encryption key that NextAuth v4 uses for JWE tokens.
+ * Uses HKDF (SHA-256) with the NextAuth info string to produce a 32-byte key
+ * for A256GCM decryption (the algorithm NextAuth v4 uses).
+ */
+async function getDerivedEncryptionKey(secret: string): Promise<Uint8Array> {
+  const encoder = new TextEncoder()
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HKDF' },
+    false,
+    ['deriveBits']
+  )
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: 'HKDF',
+      hash: 'SHA-256',
+      salt: new Uint8Array(0),
+      info: encoder.encode('NextAuth.js Generated Encryption Key'),
+    },
+    keyMaterial,
+    256 // 32 bytes for A256GCM
+  )
+  return new Uint8Array(derivedBits)
+}
+
+// Cache the derived key to avoid re-deriving on every request
+let _encryptionKeyPromise: Promise<Uint8Array> | null = null
+
+function getEncryptionKey(secret: string): Promise<Uint8Array> {
+  if (!_encryptionKeyPromise) {
+    _encryptionKeyPromise = getDerivedEncryptionKey(secret)
+  }
+  return _encryptionKeyPromise
+}
+
+/**
  * Validate Enduria JWT token using jose (Edge-compatible).
- * Returns decoded payload or null if invalid.
+ *
+ * NextAuth v4 encrypts session tokens as JWE (not signed JWS), so we try
+ * jwtDecrypt first. Falls back to jwtVerify for plain signed tokens (e.g.
+ * service-to-service Bearer tokens created with jsonwebtoken).
  */
 async function validateJWT(token: string): Promise<Record<string, unknown> | null> {
   const secret = process.env.NEXTAUTH_SECRET
@@ -39,6 +79,18 @@ async function validateJWT(token: string): Promise<Record<string, unknown> | nul
     return null
   }
 
+  // Try 1: Decrypt as NextAuth JWE token (browser session cookies)
+  try {
+    const encryptionKey = await getEncryptionKey(secret)
+    const { payload } = await jwtDecrypt(token, encryptionKey, {
+      clockTolerance: 15,
+    })
+    return payload as Record<string, unknown>
+  } catch {
+    // Not a JWE token — fall through to JWS verification
+  }
+
+  // Try 2: Verify as plain signed JWT (service-to-service Bearer tokens)
   try {
     const encodedSecret = new TextEncoder().encode(secret)
     const { payload } = await jwtVerify(token, encodedSecret)
@@ -211,7 +263,9 @@ export async function proxy(request: NextRequest) {
 
     // Root path redirects to workspace in dev mode
     if (pathname === '/') {
-      return NextResponse.redirect(new URL('/workspace', request.url))
+      const dest = request.nextUrl.clone()
+      dest.pathname = '/workspace'
+      return NextResponse.redirect(dest)
     }
 
     return response
@@ -225,7 +279,9 @@ export async function proxy(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     // For page routes, redirect to root (Enduria SaaS handles login flow)
-    return NextResponse.redirect(new URL('/', request.url))
+    const dest = request.nextUrl.clone()
+    dest.pathname = '/'
+    return NextResponse.redirect(dest)
   }
 
   const payload = await validateJWT(token)
@@ -234,7 +290,9 @@ export async function proxy(request: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 })
     }
-    return NextResponse.redirect(new URL('/', request.url))
+    const dest = request.nextUrl.clone()
+    dest.pathname = '/'
+    return NextResponse.redirect(dest)
   }
 
   const orgId = payload.orgId as string
@@ -244,12 +302,16 @@ export async function proxy(request: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ error: 'Invalid token claims' }, { status: 401 })
     }
-    return NextResponse.redirect(new URL('/', request.url))
+    const dest = request.nextUrl.clone()
+    dest.pathname = '/'
+    return NextResponse.redirect(dest)
   }
 
   // Root path: authenticated users go to workspace
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/workspace', request.url))
+    const dest = request.nextUrl.clone()
+    dest.pathname = '/workspace'
+    return NextResponse.redirect(dest)
   }
 
   // Pass user context to downstream handlers via response headers

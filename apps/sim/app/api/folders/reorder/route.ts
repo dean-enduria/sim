@@ -6,7 +6,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { generateRequestId } from '@/lib/core/utils/request'
-import { getUserEntityPermissions } from '@/lib/workspaces/permissions/utils'
+import { getUserEntityPermissions, verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('FolderReorderAPI')
 
@@ -33,6 +33,12 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json()
     const { workspaceId, updates } = ReorderSchema.parse(body)
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+    }
 
     const permission = await getUserEntityPermissions(session.user.id, 'workspace', workspaceId)
     if (!permission || permission === 'read') {

@@ -8,7 +8,7 @@ import { AuditAction, AuditResourceType, recordAudit } from '@/lib/audit/log'
 import { getSession } from '@/lib/auth'
 import { generateRequestId } from '@/lib/core/utils/request'
 import { duplicateWorkflow } from '@/lib/workflows/persistence/duplicate'
-import { getUserEntityPermissions } from '@/lib/workspaces/permissions/utils'
+import { getUserEntityPermissions, verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('FolderDuplicateAPI')
 
@@ -45,6 +45,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (!sourceFolder) {
       throw new Error('Source folder not found')
+    }
+
+    // Org-scoping: verify source folder's workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(sourceFolder.workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
     }
 
     const userPermission = await getUserEntityPermissions(

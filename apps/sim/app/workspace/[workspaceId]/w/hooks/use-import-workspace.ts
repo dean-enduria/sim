@@ -7,6 +7,7 @@ import {
   parseWorkflowJson,
   sanitizePathSegment,
 } from '@/lib/workflows/operations/import-export'
+import { apiUrl } from '@/lib/api/fetcher'
 import { useCreateFolder } from '@/hooks/queries/folders'
 import { useWorkflowDiffStore } from '@/stores/workflow-diff/store'
 
@@ -57,7 +58,7 @@ export function useImportWorkspace({ onSuccess }: UseImportWorkspaceProps = {}) 
         }
 
         const workspaceName = metadata?.workspaceName || zipFile.name.replace(/\.zip$/i, '')
-        const createResponse = await fetch('/api/workspaces', {
+        const createResponse = await fetch(apiUrl('/api/workspaces'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: workspaceName, skipDefaultWorkflow: true }),
@@ -163,7 +164,7 @@ export function useImportWorkspace({ onSuccess }: UseImportWorkspaceProps = {}) 
             const workflowColor =
               (workflowData.metadata as { color?: string } | undefined)?.color || '#3972F6'
 
-            const createWorkflowResponse = await fetch('/api/workflows', {
+            const createWorkflowResponse = await fetch(apiUrl('/api/workflows'), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -182,7 +183,7 @@ export function useImportWorkspace({ onSuccess }: UseImportWorkspaceProps = {}) 
 
             const newWorkflow = await createWorkflowResponse.json()
 
-            const stateResponse = await fetch(`/api/workflows/${newWorkflow.id}/state`, {
+            const stateResponse = await fetch(apiUrl(`/api/workflows/${newWorkflow.id}/state`), {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(workflowData),
@@ -215,8 +216,7 @@ export function useImportWorkspace({ onSuccess }: UseImportWorkspaceProps = {}) 
                   }
                 }
 
-                const variablesResponse = await fetch(
-                  `/api/workflows/${newWorkflow.id}/variables`,
+                const variablesResponse = await fetch(apiUrl(`/api/workflows/${newWorkflow.id}/variables`),
                   {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

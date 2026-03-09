@@ -4,6 +4,7 @@ import {
   type ExportWorkflowState,
   sanitizeForExport,
 } from '@/lib/workflows/sanitization/json-sanitizer'
+import { apiUrl } from '@/lib/api/fetcher'
 import { regenerateWorkflowIds } from '@/stores/workflows/utils'
 import type { Variable, WorkflowState } from '@/stores/workflows/workflow/types'
 
@@ -77,7 +78,7 @@ export async function fetchWorkflowForExport(
   workflowMeta: { name: string; description?: string; color?: string; folderId?: string | null }
 ): Promise<WorkflowExportData | null> {
   try {
-    const workflowResponse = await fetch(`/api/workflows/${workflowId}`)
+    const workflowResponse = await fetch(apiUrl(`/api/workflows/${workflowId}`))
     if (!workflowResponse.ok) {
       logger.error(`Failed to fetch workflow ${workflowId}`)
       return null
@@ -89,7 +90,7 @@ export async function fetchWorkflowForExport(
       return null
     }
 
-    const variablesResponse = await fetch(`/api/workflows/${workflowId}/variables`)
+    const variablesResponse = await fetch(apiUrl(`/api/workflows/${workflowId}/variables`))
     let workflowVariables: Record<string, Variable> | undefined
     if (variablesResponse.ok) {
       const variablesData = await variablesResponse.json()

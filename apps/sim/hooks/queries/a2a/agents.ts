@@ -7,6 +7,7 @@
 import type { AgentCapabilities, AgentSkill } from '@a2a-js/sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { AgentAuthentication } from '@/lib/a2a/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 /**
  * A2A Agent as returned from the API
@@ -44,7 +45,7 @@ export const a2aAgentKeys = {
  * Fetch A2A agents for a workspace
  */
 async function fetchA2AAgents(workspaceId: string): Promise<A2AAgent[]> {
-  const response = await fetch(`/api/a2a/agents?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/a2a/agents?workspaceId=${workspaceId}`))
   if (!response.ok) {
     throw new Error('Failed to fetch A2A agents')
   }
@@ -88,7 +89,7 @@ export interface A2AAgentCard {
  * Fetch a single A2A agent card (discovery document)
  */
 async function fetchA2AAgentCard(agentId: string): Promise<A2AAgentCard> {
-  const response = await fetch(`/api/a2a/agents/${agentId}`)
+  const response = await fetch(apiUrl(`/api/a2a/agents/${agentId}`))
   if (!response.ok) {
     throw new Error('Failed to fetch A2A agent')
   }
@@ -123,7 +124,7 @@ export interface CreateA2AAgentParams {
  * Create a new A2A agent
  */
 async function createA2AAgent(params: CreateA2AAgentParams): Promise<A2AAgent> {
-  const response = await fetch('/api/a2a/agents', {
+  const response = await fetch(apiUrl('/api/a2a/agents'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
@@ -173,7 +174,7 @@ export interface UpdateA2AAgentParams {
  */
 async function updateA2AAgent(params: UpdateA2AAgentParams): Promise<A2AAgent> {
   const { agentId, ...body } = params
-  const response = await fetch(`/api/a2a/agents/${agentId}`, {
+  const response = await fetch(apiUrl(`/api/a2a/agents/${agentId}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -207,7 +208,7 @@ export function useUpdateA2AAgent() {
  * Delete an A2A agent
  */
 async function deleteA2AAgent(params: { agentId: string; workspaceId: string }): Promise<void> {
-  const response = await fetch(`/api/a2a/agents/${params.agentId}`, {
+  const response = await fetch(apiUrl(`/api/a2a/agents/${params.agentId}`), {
     method: 'DELETE',
   })
   if (!response.ok) {
@@ -249,7 +250,7 @@ async function publishA2AAgent(params: PublishA2AAgentParams): Promise<{
   isPublished?: boolean
   skills?: AgentSkill[]
 }> {
-  const response = await fetch(`/api/a2a/agents/${params.agentId}`, {
+  const response = await fetch(apiUrl(`/api/a2a/agents/${params.agentId}`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: params.action }),
@@ -285,7 +286,7 @@ async function fetchA2AAgentByWorkflow(
   workspaceId: string,
   workflowId: string
 ): Promise<A2AAgent | null> {
-  const response = await fetch(`/api/a2a/agents?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/a2a/agents?workspaceId=${workspaceId}`))
   if (!response.ok) {
     throw new Error('Failed to fetch A2A agents')
   }

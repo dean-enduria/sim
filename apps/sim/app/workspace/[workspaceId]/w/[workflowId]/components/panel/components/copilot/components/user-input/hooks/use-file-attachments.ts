@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useFileAttachments')
 
@@ -139,7 +140,7 @@ export function useFileAttachments(props: UseFileAttachmentsProps) {
           formData.append('file', file)
           formData.append('context', 'copilot')
 
-          const uploadResponse = await fetch('/api/files/upload', {
+          const uploadResponse = await fetch(apiUrl('/api/files/upload'), {
             method: 'POST',
             body: formData,
           })

@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiUrl } from '@/lib/api/fetcher'
 
 /**
  * Query key factory for workspace-related queries.
@@ -27,7 +28,7 @@ export interface Workspace {
 }
 
 async function fetchWorkspaces(): Promise<Workspace[]> {
-  const response = await fetch('/api/workspaces')
+  const response = await fetch(apiUrl('/api/workspaces'))
 
   if (!response.ok) {
     throw new Error('Failed to fetch workspaces')
@@ -64,7 +65,7 @@ export function useCreateWorkspace() {
 
   return useMutation({
     mutationFn: async ({ name }: CreateWorkspaceParams) => {
-      const response = await fetch('/api/workspaces', {
+      const response = await fetch(apiUrl('/api/workspaces'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
@@ -98,7 +99,7 @@ export function useDeleteWorkspace() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, deleteTemplates = false }: DeleteWorkspaceParams) => {
-      const response = await fetch(`/api/workspaces/${workspaceId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}`), {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ deleteTemplates }),
@@ -131,7 +132,7 @@ export function useUpdateWorkspaceName() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, name }: UpdateWorkspaceNameParams) => {
-      const response = await fetch(`/api/workspaces/${workspaceId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name.trim() }),
@@ -167,7 +168,7 @@ export interface WorkspacePermissions {
 }
 
 async function fetchWorkspacePermissions(workspaceId: string): Promise<WorkspacePermissions> {
-  const response = await fetch(`/api/workspaces/${workspaceId}/permissions`)
+  const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/permissions`))
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -198,8 +199,8 @@ export function useWorkspacePermissionsQuery(workspaceId: string | null | undefi
 
 async function fetchWorkspaceSettings(workspaceId: string) {
   const [settingsResponse, permissionsResponse] = await Promise.all([
-    fetch(`/api/workspaces/${workspaceId}`),
-    fetch(`/api/workspaces/${workspaceId}/permissions`),
+    fetch(apiUrl(`/api/workspaces/${workspaceId}`)),
+    fetch(apiUrl(`/api/workspaces/${workspaceId}/permissions`)),
   ])
 
   if (!settingsResponse.ok || !permissionsResponse.ok) {
@@ -246,7 +247,7 @@ export function useUpdateWorkspaceSettings() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, ...updates }: UpdateWorkspaceSettingsParams) => {
-      const response = await fetch(`/api/workspaces/${workspaceId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
@@ -281,7 +282,7 @@ async function fetchAdminWorkspaces(userId: string | undefined): Promise<AdminWo
     return []
   }
 
-  const workspacesResponse = await fetch('/api/workspaces')
+  const workspacesResponse = await fetch(apiUrl('/api/workspaces'))
   if (!workspacesResponse.ok) {
     throw new Error('Failed to fetch workspaces')
   }
@@ -292,7 +293,7 @@ async function fetchAdminWorkspaces(userId: string | undefined): Promise<AdminWo
   const permissionPromises = allUserWorkspaces.map(
     async (workspace: { id: string; name: string; isOwner?: boolean; ownerId?: string }) => {
       try {
-        const permissionResponse = await fetch(`/api/workspaces/${workspace.id}/permissions`)
+        const permissionResponse = await fetch(apiUrl(`/api/workspaces/${workspace.id}/permissions`))
         if (!permissionResponse.ok) {
           return null
         }

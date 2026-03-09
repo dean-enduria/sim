@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { sanitizeForHttp, sanitizeHeaders } from '@/lib/mcp/shared'
 import type { McpTransport } from '@/lib/mcp/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useMcpServerTest')
 
@@ -73,7 +74,7 @@ export function useMcpServerTest() {
           headers: sanitizeHeaders(config.headers) || {},
         }
 
-        const response = await fetch('/api/mcp/servers/test-connection', {
+        const response = await fetch(apiUrl('/api/mcp/servers/test-connection'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

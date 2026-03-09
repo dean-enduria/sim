@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
   Tooltip,
 } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 import { Trash } from '@/components/emcn/icons/trash'
 import { filterButtonClass } from '@/app/workspace/[workspaceId]/knowledge/components/constants'
 import { useUpdateKnowledgeBase } from '@/hooks/queries/knowledge'
@@ -67,7 +68,7 @@ export function KnowledgeHeader({ breadcrumbs, options }: KnowledgeHeaderProps) 
       try {
         setIsLoadingWorkspaces(true)
 
-        const response = await fetch('/api/workspaces')
+        const response = await fetch(apiUrl('/api/workspaces'))
         if (!response.ok) {
           throw new Error('Failed to fetch workspaces')
         }

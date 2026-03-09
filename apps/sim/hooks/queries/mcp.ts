@@ -4,6 +4,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import { sanitizeForHttp, sanitizeHeaders } from '@/lib/mcp/shared'
 import type { McpServerStatusConfig, McpTool, StoredMcpTool } from '@/lib/mcp/types'
 import { workflowMcpServerKeys } from '@/hooks/queries/workflow-mcp-servers'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('McpQueries')
 
@@ -49,7 +50,7 @@ export interface McpServerInput {
 }
 
 async function fetchMcpServers(workspaceId: string): Promise<McpServer[]> {
-  const response = await fetch(`/api/mcp/servers?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/mcp/servers?workspaceId=${workspaceId}`))
 
   if (response.status === 404) {
     return []
@@ -81,7 +82,7 @@ async function fetchMcpTools(workspaceId: string, forceRefresh = false): Promise
     params.set('refresh', 'true')
   }
 
-  const response = await fetch(`/api/mcp/tools/discover?${params.toString()}`)
+  const response = await fetch(apiUrl(`/api/mcp/tools/discover?${params.toString()}`))
 
   if (response.status === 404) {
     return []
@@ -134,7 +135,7 @@ export function useCreateMcpServer() {
         workspaceId,
       }
 
-      const response = await fetch('/api/mcp/servers', {
+      const response = await fetch(apiUrl('/api/mcp/servers'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(serverData),
@@ -209,8 +210,7 @@ export function useDeleteMcpServer() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, serverId }: DeleteMcpServerParams) => {
-      const response = await fetch(
-        `/api/mcp/servers?serverId=${serverId}&workspaceId=${workspaceId}`,
+      const response = await fetch(apiUrl(`/api/mcp/servers?serverId=${serverId}&workspaceId=${workspaceId}`),
         {
           method: 'DELETE',
         }
@@ -249,7 +249,7 @@ export function useUpdateMcpServer() {
         headers: updates.headers ? sanitizeHeaders(updates.headers) : updates.headers,
       }
 
-      const response = await fetch(`/api/mcp/servers/${serverId}?workspaceId=${workspaceId}`, {
+      const response = await fetch(apiUrl(`/api/mcp/servers/${serverId}?workspaceId=${workspaceId}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sanitizedUpdates),
@@ -316,8 +316,7 @@ export function useRefreshMcpServer() {
       workspaceId,
       serverId,
     }: RefreshMcpServerParams): Promise<RefreshMcpServerResult> => {
-      const response = await fetch(
-        `/api/mcp/servers/${serverId}/refresh?workspaceId=${workspaceId}`,
+      const response = await fetch(apiUrl(`/api/mcp/servers/${serverId}/refresh?workspaceId=${workspaceId}`),
         {
           method: 'POST',
         }
@@ -342,7 +341,7 @@ export function useRefreshMcpServer() {
 }
 
 async function fetchStoredMcpTools(workspaceId: string): Promise<StoredMcpTool[]> {
-  const response = await fetch(`/api/mcp/tools/stored?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/mcp/tools/stored?workspaceId=${workspaceId}`))
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}))

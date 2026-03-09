@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import type { WorkflowState } from '@/stores/workflows/workflow/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useDeployedState')
 
@@ -45,7 +46,7 @@ export function useDeployedState({
     try {
       setIsLoadingDeployedState(true)
 
-      const response = await fetch(`/api/workflows/${requestWorkflowId}/deployed`)
+      const response = await fetch(apiUrl(`/api/workflows/${requestWorkflowId}/deployed`))
 
       if (requestWorkflowId !== useWorkflowRegistry.getState().activeWorkflowId) {
         logger.debug('Workflow changed during deployed state fetch, ignoring response')

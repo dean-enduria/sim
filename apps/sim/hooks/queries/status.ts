@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import type { StatusResponse } from '@/app/api/status/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 /**
  * Query key factories for status-related queries
@@ -15,7 +16,7 @@ export const statusKeys = {
  * The API proxies incident.io and caches for 2 minutes server-side
  */
 async function fetchStatus(): Promise<StatusResponse> {
-  const response = await fetch('/api/status')
+  const response = await fetch(apiUrl('/api/status'))
 
   if (!response.ok) {
     throw new Error('Failed to fetch status')

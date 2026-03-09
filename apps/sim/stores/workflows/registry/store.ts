@@ -12,6 +12,7 @@ import type {
   WorkflowMetadata,
   WorkflowRegistry,
 } from '@/stores/workflows/registry/types'
+import { apiUrl } from '@/lib/api/fetcher'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
 import { getUniqueBlockName, regenerateBlockIds } from '@/stores/workflows/utils'
 import { useWorkflowStore } from '@/stores/workflows/workflow/store'
@@ -273,7 +274,7 @@ export const useWorkflowRegistry = create<WorkflowRegistry>()(
         }))
 
         try {
-          const response = await fetch(`/api/workflows/${workflowId}`, { method: 'GET' })
+          const response = await fetch(apiUrl(`/api/workflows/${workflowId}`), { method: 'GET' })
           if (!response.ok) {
             throw new Error(`Failed to load workflow ${workflowId}`)
           }
@@ -428,7 +429,7 @@ export const useWorkflowRegistry = create<WorkflowRegistry>()(
         // Call the server to duplicate the workflow - server generates all IDs
         let duplicatedWorkflow
         try {
-          const response = await fetch(`/api/workflows/${sourceId}/duplicate`, {
+          const response = await fetch(apiUrl(`/api/workflows/${sourceId}/duplicate`), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -617,7 +618,7 @@ export const useWorkflowRegistry = create<WorkflowRegistry>()(
             logger.info(`Removed workflow ${id} from local state (optimistic)`)
           },
           apiCall: async () => {
-            const response = await fetch(`/api/workflows/${id}`, {
+            const response = await fetch(apiUrl(`/api/workflows/${id}`), {
               method: 'DELETE',
             })
 
@@ -672,7 +673,7 @@ export const useWorkflowRegistry = create<WorkflowRegistry>()(
             }))
           },
           apiCall: async () => {
-            const response = await fetch(`/api/workflows/${id}`, {
+            const response = await fetch(apiUrl(`/api/workflows/${id}`), {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(metadata),

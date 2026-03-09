@@ -7,6 +7,7 @@ import { useOperationQueueStore } from '@/stores/operation-queue/store'
 import type { Variable, VariablesStore } from '@/stores/panel/variables/types'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('VariablesStore')
 
@@ -82,7 +83,7 @@ export const useVariablesStore = create<VariablesStore>()(
     async loadForWorkflow(workflowId) {
       try {
         set({ isLoading: true, error: null })
-        const res = await fetch(`/api/workflows/${workflowId}/variables`, { method: 'GET' })
+        const res = await fetch(apiUrl(`/api/workflows/${workflowId}/variables`), { method: 'GET' })
         if (!res.ok) {
           const text = await res.text().catch(() => '')
           throw new Error(text || `Failed to load variables: ${res.statusText}`)

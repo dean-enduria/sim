@@ -1,6 +1,7 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { OAUTH_PROVIDERS, type OAuthServiceConfig } from '@/lib/oauth'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('OAuthConnectionsQuery')
 
@@ -52,7 +53,7 @@ async function fetchOAuthConnections(): Promise<ServiceInfo[]> {
   try {
     const serviceDefinitions = defineServices()
 
-    const response = await fetch('/api/auth/oauth/connections')
+    const response = await fetch(apiUrl('/api/auth/oauth/connections'))
 
     if (response.status === 404) {
       return serviceDefinitions
@@ -140,13 +141,13 @@ export function useConnectOAuthService() {
   return useMutation({
     mutationFn: async ({ providerId, callbackURL }: ConnectServiceParams) => {
       if (providerId === 'trello') {
-        window.location.href = '/api/auth/trello/authorize'
+        window.location.href = apiUrl('/api/auth/trello/authorize')
         return { success: true }
       }
 
       if (providerId === 'shopify') {
         const returnUrl = encodeURIComponent(callbackURL)
-        window.location.href = `/api/auth/shopify/authorize?returnUrl=${returnUrl}`
+        window.location.href = apiUrl(`/api/auth/shopify/authorize?returnUrl=${returnUrl}`)
         return { success: true }
       }
 
@@ -179,7 +180,7 @@ export function useDisconnectOAuthService() {
 
   return useMutation({
     mutationFn: async ({ provider, providerId, accountId }: DisconnectServiceParams) => {
-      const response = await fetch('/api/auth/oauth/disconnect', {
+      const response = await fetch(apiUrl('/api/auth/oauth/disconnect'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -245,7 +246,7 @@ export interface ConnectedAccount {
 }
 
 async function fetchConnectedAccounts(provider: string): Promise<ConnectedAccount[]> {
-  const response = await fetch(`/api/auth/accounts?provider=${provider}`)
+  const response = await fetch(apiUrl(`/api/auth/accounts?provider=${provider}`))
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}))

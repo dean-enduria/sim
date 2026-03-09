@@ -7,6 +7,7 @@ import type {
   DocumentsPagination,
   KnowledgeBaseData,
 } from '@/lib/knowledge/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('KnowledgeQueries')
 
@@ -28,7 +29,7 @@ export const knowledgeKeys = {
 }
 
 export async function fetchKnowledgeBases(workspaceId?: string): Promise<KnowledgeBaseData[]> {
-  const url = workspaceId ? `/api/knowledge?workspaceId=${workspaceId}` : '/api/knowledge'
+  const url = workspaceId ? apiUrl(`/api/knowledge?workspaceId=${workspaceId}`) : apiUrl('/api/knowledge')
   const response = await fetch(url)
 
   if (!response.ok) {
@@ -44,7 +45,7 @@ export async function fetchKnowledgeBases(workspaceId?: string): Promise<Knowled
 }
 
 export async function fetchKnowledgeBase(knowledgeBaseId: string): Promise<KnowledgeBaseData> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}`)
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}`))
 
   if (!response.ok) {
     throw new Error(`Failed to fetch knowledge base: ${response.status} ${response.statusText}`)
@@ -62,7 +63,7 @@ export async function fetchDocument(
   knowledgeBaseId: string,
   documentId: string
 ): Promise<DocumentData> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}`)
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}`))
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -111,7 +112,7 @@ export async function fetchKnowledgeDocuments({
   params.set('offset', offset.toString())
   if (enabledFilter) params.set('enabledFilter', enabledFilter)
 
-  const url = `/api/knowledge/${knowledgeBaseId}/documents${params.toString() ? `?${params.toString()}` : ''}`
+  const url = apiUrl(`/api/knowledge/${knowledgeBaseId}/documents${params.toString() ? `?${params.toString()}` : ''}`)
   const response = await fetch(url)
 
   if (!response.ok) {
@@ -168,9 +169,8 @@ export async function fetchKnowledgeChunks({
   if (limit) params.set('limit', limit.toString())
   if (offset) params.set('offset', offset.toString())
 
-  const response = await fetch(
-    `/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks${params.toString() ? `?${params.toString()}` : ''}`
-  )
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks${params.toString() ? `?${params.toString()}` : ''}`))
+
 
   if (!response.ok) {
     throw new Error(`Failed to fetch chunks: ${response.status} ${response.statusText}`)
@@ -367,8 +367,7 @@ export async function updateChunk({
   if (content !== undefined) body.content = content
   if (enabled !== undefined) body.enabled = enabled
 
-  const response = await fetch(
-    `/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks/${chunkId}`,
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks/${chunkId}`),
     {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -416,8 +415,7 @@ export async function deleteChunk({
   documentId,
   chunkId,
 }: DeleteChunkParams): Promise<void> {
-  const response = await fetch(
-    `/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks/${chunkId}`,
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks/${chunkId}`),
     { method: 'DELETE' }
   )
 
@@ -461,7 +459,7 @@ export async function createChunk({
   content,
   enabled = true,
 }: CreateChunkParams): Promise<ChunkData> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content, enabled }),
@@ -512,7 +510,7 @@ export async function updateDocument({
   documentId,
   updates,
 }: UpdateDocumentParams): Promise<DocumentData> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
@@ -556,7 +554,7 @@ export async function deleteDocument({
   knowledgeBaseId,
   documentId,
 }: DeleteDocumentParams): Promise<void> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}`), {
     method: 'DELETE',
   })
 
@@ -613,7 +611,7 @@ export async function bulkDocumentOperation({
     body.documentIds = documentIds
   }
 
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/documents`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents`), {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -659,7 +657,7 @@ export interface CreateKnowledgeBaseParams {
 export async function createKnowledgeBase(
   params: CreateKnowledgeBaseParams
 ): Promise<KnowledgeBaseData> {
-  const response = await fetch('/api/knowledge', {
+  const response = await fetch(apiUrl('/api/knowledge'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
@@ -704,7 +702,7 @@ export async function updateKnowledgeBase({
   knowledgeBaseId,
   updates,
 }: UpdateKnowledgeBaseParams): Promise<KnowledgeBaseData> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
@@ -746,7 +744,7 @@ export interface DeleteKnowledgeBaseParams {
 export async function deleteKnowledgeBase({
   knowledgeBaseId,
 }: DeleteKnowledgeBaseParams): Promise<void> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}`), {
     method: 'DELETE',
   })
 
@@ -795,7 +793,7 @@ export async function bulkChunkOperation({
   operation,
   chunkIds,
 }: BulkChunkOperationParams): Promise<BulkChunkOperationResult> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/chunks`), {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ operation, chunkIds }),
@@ -841,7 +839,7 @@ export async function updateDocumentTags({
   documentId,
   tags,
 }: UpdateDocumentTagsParams): Promise<DocumentData> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(tags),
@@ -886,7 +884,7 @@ export interface TagDefinitionData {
 }
 
 export async function fetchTagDefinitions(knowledgeBaseId: string): Promise<TagDefinitionData[]> {
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/tag-definitions`)
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/tag-definitions`))
 
   if (!response.ok) {
     throw new Error(`Failed to fetch tag definitions: ${response.status} ${response.statusText}`)
@@ -917,8 +915,7 @@ export interface CreateTagDefinitionParams {
 }
 
 async function fetchNextAvailableSlot(knowledgeBaseId: string, fieldType: string): Promise<string> {
-  const response = await fetch(
-    `/api/knowledge/${knowledgeBaseId}/next-available-slot?fieldType=${fieldType}`
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/next-available-slot?fieldType=${fieldType}`)
   )
 
   if (!response.ok) {
@@ -940,7 +937,7 @@ export async function createTagDefinition({
 }: CreateTagDefinitionParams): Promise<TagDefinitionData> {
   const tagSlot = await fetchNextAvailableSlot(knowledgeBaseId, fieldType)
 
-  const response = await fetch(`/api/knowledge/${knowledgeBaseId}/tag-definitions`, {
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/tag-definitions`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ tagSlot, displayName, fieldType }),
@@ -981,8 +978,7 @@ export async function deleteTagDefinition({
   knowledgeBaseId,
   tagDefinitionId,
 }: DeleteTagDefinitionParams): Promise<void> {
-  const response = await fetch(
-    `/api/knowledge/${knowledgeBaseId}/tag-definitions/${tagDefinitionId}`,
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/tag-definitions/${tagDefinitionId}`),
     { method: 'DELETE' }
   )
 
@@ -1023,8 +1019,7 @@ export async function fetchDocumentTagDefinitions(
   knowledgeBaseId: string,
   documentId: string
 ): Promise<DocumentTagDefinitionData[]> {
-  const response = await fetch(
-    `/api/knowledge/${knowledgeBaseId}/documents/${documentId}/tag-definitions`
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/tag-definitions`)
   )
 
   if (!response.ok) {
@@ -1075,8 +1070,7 @@ export async function saveDocumentTagDefinitions({
     (def) => def?.tagSlot && def.displayName && def.displayName.trim()
   )
 
-  const response = await fetch(
-    `/api/knowledge/${knowledgeBaseId}/documents/${documentId}/tag-definitions`,
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/tag-definitions`),
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1122,8 +1116,7 @@ export async function deleteDocumentTagDefinitions({
   knowledgeBaseId,
   documentId,
 }: DeleteDocumentTagDefinitionsParams): Promise<void> {
-  const response = await fetch(
-    `/api/knowledge/${knowledgeBaseId}/documents/${documentId}/tag-definitions`,
+  const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/documents/${documentId}/tag-definitions`),
     { method: 'DELETE' }
   )
 

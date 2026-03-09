@@ -1,5 +1,6 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('WorkflowMcpServerQueries')
 
@@ -59,7 +60,7 @@ export interface WorkflowMcpTool {
  * Fetch workflow MCP servers for a workspace
  */
 async function fetchWorkflowMcpServers(workspaceId: string): Promise<WorkflowMcpServer[]> {
-  const response = await fetch(`/api/mcp/workflow-servers?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/mcp/workflow-servers?workspaceId=${workspaceId}`))
 
   if (response.status === 404) {
     return []
@@ -95,7 +96,7 @@ async function fetchWorkflowMcpServer(
   workspaceId: string,
   serverId: string
 ): Promise<{ server: WorkflowMcpServer; tools: WorkflowMcpTool[] }> {
-  const response = await fetch(`/api/mcp/workflow-servers/${serverId}?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/mcp/workflow-servers/${serverId}?workspaceId=${workspaceId}`))
 
   const data = await response.json()
 
@@ -129,8 +130,7 @@ async function fetchWorkflowMcpTools(
   workspaceId: string,
   serverId: string
 ): Promise<WorkflowMcpTool[]> {
-  const response = await fetch(
-    `/api/mcp/workflow-servers/${serverId}/tools?workspaceId=${workspaceId}`
+  const response = await fetch(apiUrl(`/api/mcp/workflow-servers/${serverId}/tools?workspaceId=${workspaceId}`)
   )
 
   if (response.status === 404) {
@@ -182,7 +182,7 @@ export function useCreateWorkflowMcpServer() {
       isPublic,
       workflowIds,
     }: CreateWorkflowMcpServerParams) => {
-      const response = await fetch('/api/mcp/workflow-servers', {
+      const response = await fetch(apiUrl('/api/mcp/workflow-servers'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId, name, description, isPublic, workflowIds }),
@@ -227,8 +227,7 @@ export function useUpdateWorkflowMcpServer() {
       description,
       isPublic,
     }: UpdateWorkflowMcpServerParams) => {
-      const response = await fetch(
-        `/api/mcp/workflow-servers/${serverId}?workspaceId=${workspaceId}`,
+      const response = await fetch(apiUrl(`/api/mcp/workflow-servers/${serverId}?workspaceId=${workspaceId}`),
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -269,8 +268,7 @@ export function useDeleteWorkflowMcpServer() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, serverId }: DeleteWorkflowMcpServerParams) => {
-      const response = await fetch(
-        `/api/mcp/workflow-servers/${serverId}?workspaceId=${workspaceId}`,
+      const response = await fetch(apiUrl(`/api/mcp/workflow-servers/${serverId}?workspaceId=${workspaceId}`),
         {
           method: 'DELETE',
         }
@@ -317,8 +315,7 @@ export function useAddWorkflowMcpTool() {
       toolDescription,
       parameterSchema,
     }: AddWorkflowMcpToolParams) => {
-      const response = await fetch(
-        `/api/mcp/workflow-servers/${serverId}/tools?workspaceId=${workspaceId}`,
+      const response = await fetch(apiUrl(`/api/mcp/workflow-servers/${serverId}/tools?workspaceId=${workspaceId}`),
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -371,8 +368,7 @@ export function useUpdateWorkflowMcpTool() {
       toolId,
       ...updates
     }: UpdateWorkflowMcpToolParams) => {
-      const response = await fetch(
-        `/api/mcp/workflow-servers/${serverId}/tools/${toolId}?workspaceId=${workspaceId}`,
+      const response = await fetch(apiUrl(`/api/mcp/workflow-servers/${serverId}/tools/${toolId}?workspaceId=${workspaceId}`),
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -411,8 +407,7 @@ export function useDeleteWorkflowMcpTool() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, serverId, toolId }: DeleteWorkflowMcpToolParams) => {
-      const response = await fetch(
-        `/api/mcp/workflow-servers/${serverId}/tools/${toolId}?workspaceId=${workspaceId}`,
+      const response = await fetch(apiUrl(`/api/mcp/workflow-servers/${serverId}/tools/${toolId}?workspaceId=${workspaceId}`),
         {
           method: 'DELETE',
         }
@@ -445,7 +440,7 @@ export function useDeleteWorkflowMcpTool() {
  * Fetch deployed workflows for a workspace
  */
 async function fetchDeployedWorkflows(workspaceId: string): Promise<DeployedWorkflow[]> {
-  const response = await fetch(`/api/workflows?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/workflows?workspaceId=${workspaceId}`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch workflows')

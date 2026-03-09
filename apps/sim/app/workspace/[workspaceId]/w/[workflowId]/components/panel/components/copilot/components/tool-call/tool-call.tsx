@@ -10,6 +10,7 @@ import {
   CLIENT_EXECUTABLE_RUN_TOOLS,
   executeRunToolOnClient,
 } from '@/lib/copilot/client-sse/run-tool-execution'
+import { apiUrl } from '@/lib/api/fetcher'
 import {
   ClientToolCallState,
   TOOL_DISPLAY_REGISTRY,
@@ -1270,7 +1271,7 @@ async function sendToolDecision(
   status: 'accepted' | 'rejected' | 'background'
 ) {
   try {
-    await fetch('/api/copilot/confirm', {
+    await fetch(apiUrl('/api/copilot/confirm'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ toolCallId, status }),

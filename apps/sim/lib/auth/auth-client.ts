@@ -10,6 +10,7 @@
 
 import { useContext } from 'react'
 import { SessionContext, type SessionHookResult } from '@/app/_shell/providers/session-provider'
+import { apiUrl } from '@/lib/api/fetcher'
 
 // ---------------------------------------------------------------------------
 // Stub client – provides the shape expected by consumers
@@ -19,7 +20,7 @@ export const client = {
   getSession: async (_opts?: Record<string, unknown>) => {
     // Client-side session fetch – delegate to the /api/session endpoint
     try {
-      const res = await fetch('/api/session')
+      const res = await fetch(apiUrl('/api/session'))
       if (!res.ok) return { data: null }
       const data = await res.json()
       return { data }

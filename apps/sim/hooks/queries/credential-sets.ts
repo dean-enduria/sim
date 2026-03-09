@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchJson } from '@/hooks/selectors/helpers'
+import { apiUrl } from '@/lib/api/fetcher'
 
 export interface CredentialSet {
   id: string
@@ -126,7 +127,7 @@ export function useAcceptCredentialSetInvitation() {
 
   return useMutation({
     mutationFn: async (token: string) => {
-      const response = await fetch(`/api/credential-sets/invite/${token}`, {
+      const response = await fetch(apiUrl(`/api/credential-sets/invite/${token}`), {
         method: 'POST',
       })
       if (!response.ok) {
@@ -154,7 +155,7 @@ export function useCreateCredentialSet() {
 
   return useMutation({
     mutationFn: async (data: CreateCredentialSetData) => {
-      const response = await fetch('/api/credential-sets', {
+      const response = await fetch(apiUrl('/api/credential-sets'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -176,7 +177,7 @@ export function useCreateCredentialSetInvitation() {
 
   return useMutation({
     mutationFn: async (data: { credentialSetId: string; email?: string }) => {
-      const response = await fetch(`/api/credential-sets/${data.credentialSetId}/invite`, {
+      const response = await fetch(apiUrl(`/api/credential-sets/${data.credentialSetId}/invite`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: data.email }),
@@ -228,8 +229,7 @@ export function useRemoveCredentialSetMember() {
 
   return useMutation({
     mutationFn: async (data: { credentialSetId: string; memberId: string }) => {
-      const response = await fetch(
-        `/api/credential-sets/${data.credentialSetId}/members?memberId=${data.memberId}`,
+      const response = await fetch(apiUrl(`/api/credential-sets/${data.credentialSetId}/members?memberId=${data.memberId}`),
         { method: 'DELETE' }
       )
       if (!response.ok) {
@@ -252,8 +252,7 @@ export function useLeaveCredentialSet() {
 
   return useMutation({
     mutationFn: async (credentialSetId: string) => {
-      const response = await fetch(
-        `/api/credential-sets/memberships?credentialSetId=${credentialSetId}`,
+      const response = await fetch(apiUrl(`/api/credential-sets/memberships?credentialSetId=${credentialSetId}`),
         { method: 'DELETE' }
       )
       if (!response.ok) {
@@ -278,7 +277,7 @@ export function useDeleteCredentialSet() {
 
   return useMutation({
     mutationFn: async ({ credentialSetId }: DeleteCredentialSetParams) => {
-      const response = await fetch(`/api/credential-sets/${credentialSetId}`, {
+      const response = await fetch(apiUrl(`/api/credential-sets/${credentialSetId}`), {
         method: 'DELETE',
       })
       if (!response.ok) {
@@ -330,8 +329,7 @@ export function useCancelCredentialSetInvitation() {
 
   return useMutation({
     mutationFn: async (data: { credentialSetId: string; invitationId: string }) => {
-      const response = await fetch(
-        `/api/credential-sets/${data.credentialSetId}/invite?invitationId=${data.invitationId}`,
+      const response = await fetch(apiUrl(`/api/credential-sets/${data.credentialSetId}/invite?invitationId=${data.invitationId}`),
         { method: 'DELETE' }
       )
       if (!response.ok) {
@@ -353,8 +351,7 @@ export function useResendCredentialSetInvitation() {
 
   return useMutation({
     mutationFn: async (data: { credentialSetId: string; invitationId: string; email: string }) => {
-      const response = await fetch(
-        `/api/credential-sets/${data.credentialSetId}/invite/${data.invitationId}`,
+      const response = await fetch(apiUrl(`/api/credential-sets/${data.credentialSetId}/invite/${data.invitationId}`),
         { method: 'POST' }
       )
       if (!response.ok) {

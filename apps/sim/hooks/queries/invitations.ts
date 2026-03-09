@@ -1,5 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { workspaceKeys } from './workspace'
+import { apiUrl } from '@/lib/api/fetcher'
 
 /**
  * Query key factory for invitation-related queries.
@@ -30,7 +31,7 @@ export interface WorkspaceInvitation {
 }
 
 async function fetchPendingInvitations(workspaceId: string): Promise<WorkspaceInvitation[]> {
-  const response = await fetch('/api/workspaces/invitations')
+  const response = await fetch(apiUrl('/api/workspaces/invitations'))
 
   if (!response.ok) {
     throw new Error('Failed to fetch pending invitations')
@@ -90,7 +91,7 @@ export function useBatchSendWorkspaceInvitations() {
     }: BatchSendInvitationsParams): Promise<BatchInvitationResult> => {
       const results = await Promise.allSettled(
         invitations.map(async ({ email, permission }) => {
-          const response = await fetch('/api/workspaces/invitations', {
+          const response = await fetch(apiUrl('/api/workspaces/invitations'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -146,7 +147,7 @@ export function useCancelWorkspaceInvitation() {
 
   return useMutation({
     mutationFn: async ({ invitationId }: CancelInvitationParams) => {
-      const response = await fetch(`/api/workspaces/invitations/${invitationId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/invitations/${invitationId}`), {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -180,7 +181,7 @@ export function useResendWorkspaceInvitation() {
 
   return useMutation({
     mutationFn: async ({ invitationId }: ResendInvitationParams) => {
-      const response = await fetch(`/api/workspaces/invitations/${invitationId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/invitations/${invitationId}`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -214,7 +215,7 @@ export function useRemoveWorkspaceMember() {
 
   return useMutation({
     mutationFn: async ({ userId, workspaceId }: RemoveMemberParams) => {
-      const response = await fetch(`/api/workspaces/members/${userId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/members/${userId}`), {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId }),
@@ -249,7 +250,7 @@ export function useLeaveWorkspace() {
 
   return useMutation({
     mutationFn: async ({ userId, workspaceId }: LeaveWorkspaceParams) => {
-      const response = await fetch(`/api/workspaces/members/${userId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/members/${userId}`), {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId }),
@@ -287,7 +288,7 @@ export function useUpdateWorkspacePermissions() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, updates }: UpdatePermissionsParams) => {
-      const response = await fetch(`/api/workspaces/${workspaceId}/permissions`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/permissions`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ updates }),

@@ -4,6 +4,7 @@
 
 import type { Workspace } from '@/lib/workspaces/organization/types'
 import type { WorkflowFolder } from '@/stores/folders/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 export interface NameableEntity {
   name: string
@@ -47,7 +48,7 @@ export function generateIncrementalName<T extends NameableEntity>(
  * Generates the next workspace name
  */
 export async function generateWorkspaceName(): Promise<string> {
-  const response = await fetch('/api/workspaces')
+  const response = await fetch(apiUrl('/api/workspaces'))
   const data = (await response.json()) as WorkspacesApiResponse
   const workspaces = data.workspaces || []
 
@@ -58,7 +59,7 @@ export async function generateWorkspaceName(): Promise<string> {
  * Generates the next folder name for a workspace
  */
 export async function generateFolderName(workspaceId: string): Promise<string> {
-  const response = await fetch(`/api/folders?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/folders?workspaceId=${workspaceId}`))
   const data = (await response.json()) as FoldersApiResponse
   const folders = data.folders || []
 
@@ -75,7 +76,7 @@ export async function generateSubfolderName(
   workspaceId: string,
   parentFolderId: string
 ): Promise<string> {
-  const response = await fetch(`/api/folders?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/folders?workspaceId=${workspaceId}`))
   const data = (await response.json()) as FoldersApiResponse
   const folders = data.folders || []
 

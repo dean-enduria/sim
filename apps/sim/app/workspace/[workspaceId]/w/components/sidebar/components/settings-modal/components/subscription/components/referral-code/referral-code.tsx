@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { Button, Input, Label } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('ReferralCode')
 
@@ -28,7 +29,7 @@ export function ReferralCode({ onRedeemComplete }: ReferralCodeProps) {
     setError(null)
 
     try {
-      const response = await fetch('/api/referral-code/redeem', {
+      const response = await fetch(apiUrl('/api/referral-code/redeem'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: trimmed }),

@@ -1,6 +1,7 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { CreatorProfileDetails } from '@/app/_types/creator-profile'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('CreatorProfileQuery')
 
@@ -59,7 +60,7 @@ export function useOrganizations() {
  * Fetch all creator profiles for the current user
  */
 async function fetchCreatorProfiles(): Promise<CreatorProfile[]> {
-  const response = await fetch('/api/creators')
+  const response = await fetch(apiUrl('/api/creators'))
 
   if (!response.ok) {
     throw new Error('Failed to fetch creator profiles')
@@ -85,7 +86,7 @@ export function useCreatorProfiles() {
  * Fetch creator profile for a user
  */
 async function fetchCreatorProfile(userId: string): Promise<CreatorProfile | null> {
-  const response = await fetch(`/api/creators?userId=${userId}`)
+  const response = await fetch(apiUrl(`/api/creators?userId=${userId}`))
 
   // Treat 404 as "no profile"
   if (response.status === 404) {

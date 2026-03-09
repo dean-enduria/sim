@@ -20,6 +20,7 @@ import {
   ModalHeader,
   Textarea,
 } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 import { cn } from '@/lib/core/utils/cn'
 
 const logger = createLogger('HelpModal')
@@ -386,7 +387,7 @@ export function HelpModal({ open, onOpenChange, workflowId, workspaceId }: HelpM
           formData.append(`image_${index}`, image)
         })
 
-        const response = await fetch('/api/help', {
+        const response = await fetch(apiUrl('/api/help'), {
           method: 'POST',
           body: formData,
         })

@@ -8,6 +8,7 @@ import {
   createOptimisticMutationHandlers,
   generateTempId,
 } from '@/hooks/queries/utils/optimistic-mutation'
+import { apiUrl } from '@/lib/api/fetcher'
 import { getTopInsertionSortOrder } from '@/hooks/queries/utils/top-insertion-sort-order'
 import { useFolderStore } from '@/stores/folders/store'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
@@ -36,7 +37,7 @@ export const workflowKeys = {
  * Used as the base query for both state preview and input fields extraction.
  */
 async function fetchWorkflowState(workflowId: string): Promise<WorkflowState | null> {
-  const response = await fetch(`/api/workflows/${workflowId}`)
+  const response = await fetch(apiUrl(`/api/workflows/${workflowId}`))
   if (!response.ok) throw new Error('Failed to fetch workflow')
   const { data } = await response.json()
   return data?.state ?? null
@@ -74,7 +75,7 @@ function mapWorkflow(workflow: any): WorkflowMetadata {
 }
 
 async function fetchWorkflows(workspaceId: string): Promise<WorkflowMetadata[]> {
-  const response = await fetch(`/api/workflows?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/workflows?workspaceId=${workspaceId}`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch workflows')
@@ -254,7 +255,7 @@ export function useCreateWorkflow() {
 
       logger.info(`Creating new workflow in workspace: ${workspaceId}`)
 
-      const createResponse = await fetch('/api/workflows', {
+      const createResponse = await fetch(apiUrl('/api/workflows'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -281,7 +282,7 @@ export function useCreateWorkflow() {
 
       const { workflowState } = buildDefaultWorkflowArtifacts()
 
-      const stateResponse = await fetch(`/api/workflows/${workflowId}/state`, {
+      const stateResponse = await fetch(apiUrl(`/api/workflows/${workflowId}/state`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workflowState),
@@ -355,7 +356,7 @@ export function useDuplicateWorkflowMutation() {
 
       logger.info(`Duplicating workflow ${sourceId} in workspace: ${workspaceId}`)
 
-      const response = await fetch(`/api/workflows/${sourceId}/duplicate`, {
+      const response = await fetch(apiUrl(`/api/workflows/${sourceId}/duplicate`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -425,7 +426,7 @@ export async function fetchDeploymentVersionState(
   workflowId: string,
   version: number
 ): Promise<WorkflowState> {
-  const response = await fetch(`/api/workflows/${workflowId}/deployments/${version}`)
+  const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deployments/${version}`))
 
   if (!response.ok) {
     throw new Error(`Failed to fetch deployment version: ${response.statusText}`)
@@ -463,7 +464,7 @@ interface RevertToVersionVariables {
 export function useRevertToVersion() {
   return useMutation({
     mutationFn: async ({ workflowId, version }: RevertToVersionVariables): Promise<void> => {
-      const response = await fetch(`/api/workflows/${workflowId}/deployments/${version}/revert`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deployments/${version}/revert`), {
         method: 'POST',
       })
 
@@ -488,7 +489,7 @@ export function useReorderWorkflows() {
 
   return useMutation({
     mutationFn: async (variables: ReorderWorkflowsVariables): Promise<void> => {
-      const response = await fetch('/api/workflows/reorder', {
+      const response = await fetch(apiUrl('/api/workflows/reorder'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(variables),
@@ -552,8 +553,8 @@ async function fetchChildDeploymentStatus(workflowId: string): Promise<ChildDepl
   }
 
   const [statusRes, deploymentsRes] = await Promise.all([
-    fetch(`/api/workflows/${workflowId}/status`, fetchOptions),
-    fetch(`/api/workflows/${workflowId}/deployments`, fetchOptions),
+    fetch(apiUrl(`/api/workflows/${workflowId}/status`), fetchOptions),
+    fetch(apiUrl(`/api/workflows/${workflowId}/deployments`), fetchOptions),
   ])
 
   if (!statusRes.ok) {
@@ -618,7 +619,7 @@ export function useDeployChildWorkflow() {
     mutationFn: async ({
       workflowId,
     }: DeployChildWorkflowVariables): Promise<DeployChildWorkflowResult> => {
-      const response = await fetch(`/api/workflows/${workflowId}/deploy`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deploy`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

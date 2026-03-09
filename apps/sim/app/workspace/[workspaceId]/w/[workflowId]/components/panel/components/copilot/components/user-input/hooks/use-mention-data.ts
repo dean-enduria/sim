@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { usePermissionConfig } from '@/hooks/use-permission-config'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import { useWorkflowStore } from '@/stores/workflows/workflow/store'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useMentionData')
 
@@ -224,7 +225,7 @@ export function useMentionData(props: UseMentionDataProps): MentionDataReturn {
     if (isLoadingPastChats || pastChats.length > 0) return
     try {
       setIsLoadingPastChats(true)
-      const resp = await fetch('/api/copilot/chats')
+      const resp = await fetch(apiUrl('/api/copilot/chats'))
       if (!resp.ok) throw new Error(`Failed to load chats: ${resp.status}`)
       const data = await resp.json()
       const items = Array.isArray(data?.chats) ? data.chats : []
@@ -252,7 +253,7 @@ export function useMentionData(props: UseMentionDataProps): MentionDataReturn {
     if (isLoadingKnowledge || knowledgeBases.length > 0) return
     try {
       setIsLoadingKnowledge(true)
-      const resp = await fetch(`/api/knowledge?workspaceId=${workspaceId}`)
+      const resp = await fetch(apiUrl(`/api/knowledge?workspaceId=${workspaceId}`))
       if (!resp.ok) throw new Error(`Failed to load knowledge bases: ${resp.status}`)
       const data = await resp.json()
       const items = Array.isArray(data?.data) ? data.data : []
@@ -323,7 +324,7 @@ export function useMentionData(props: UseMentionDataProps): MentionDataReturn {
     if (isLoadingTemplates || templatesList.length > 0) return
     try {
       setIsLoadingTemplates(true)
-      const resp = await fetch('/api/templates?limit=50&offset=0')
+      const resp = await fetch(apiUrl('/api/templates?limit=50&offset=0'))
       if (!resp.ok) throw new Error(`Failed to load templates: ${resp.status}`)
       const data = await resp.json()
       const items = Array.isArray(data?.data) ? data.data : []
@@ -344,7 +345,7 @@ export function useMentionData(props: UseMentionDataProps): MentionDataReturn {
     if (isLoadingLogs || logsList.length > 0) return
     try {
       setIsLoadingLogs(true)
-      const resp = await fetch(`/api/logs?workspaceId=${workspaceId}&limit=50&details=full`)
+      const resp = await fetch(apiUrl(`/api/logs?workspaceId=${workspaceId}&limit=50&details=full`))
       if (!resp.ok) throw new Error(`Failed to load logs: ${resp.status}`)
       const data = await resp.json()
       const items = Array.isArray(data?.data) ? data.data : []

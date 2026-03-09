@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { environmentKeys } from '@/hooks/queries/environment'
 import { fetchJson } from '@/hooks/selectors/helpers'
+import { apiUrl } from '@/lib/api/fetcher'
 
 export type WorkspaceCredentialType = 'oauth' | 'env_workspace' | 'env_personal'
 export type WorkspaceCredentialRole = 'admin' | 'member'
@@ -114,7 +115,7 @@ export function useCreateWorkspaceCredential() {
       envKey?: string
       envOwnerUserId?: string
     }) => {
-      const response = await fetch('/api/credentials', {
+      const response = await fetch(apiUrl('/api/credentials'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -148,7 +149,7 @@ export function useUpdateWorkspaceCredential() {
       description?: string | null
       accountId?: string
     }) => {
-      const response = await fetch(`/api/credentials/${payload.credentialId}`, {
+      const response = await fetch(apiUrl(`/api/credentials/${payload.credentialId}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -179,7 +180,7 @@ export function useDeleteWorkspaceCredential() {
 
   return useMutation({
     mutationFn: async (credentialId: string) => {
-      const response = await fetch(`/api/credentials/${credentialId}`, {
+      const response = await fetch(apiUrl(`/api/credentials/${credentialId}`), {
         method: 'DELETE',
       })
       if (!response.ok) {
@@ -218,7 +219,7 @@ export function useUpsertWorkspaceCredentialMember() {
       userId: string
       role: WorkspaceCredentialRole
     }) => {
-      const response = await fetch(`/api/credentials/${payload.credentialId}/members`, {
+      const response = await fetch(apiUrl(`/api/credentials/${payload.credentialId}/members`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -249,8 +250,7 @@ export function useRemoveWorkspaceCredentialMember() {
 
   return useMutation({
     mutationFn: async (payload: { credentialId: string; userId: string }) => {
-      const response = await fetch(
-        `/api/credentials/${payload.credentialId}/members?userId=${encodeURIComponent(payload.userId)}`,
+      const response = await fetch(apiUrl(`/api/credentials/${payload.credentialId}/members?userId=${encodeURIComponent(payload.userId)}`),
         { method: 'DELETE' }
       )
       if (!response.ok) {

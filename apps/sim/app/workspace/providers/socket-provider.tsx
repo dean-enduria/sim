@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { apiUrl } from '@/lib/api/fetcher'
 import { createLogger } from '@sim/logger'
 import { useParams } from 'next/navigation'
 import { io, type Socket } from 'socket.io-client'
@@ -163,7 +164,7 @@ export function SocketProvider({ children, user }: SocketProviderProps) {
   const pendingPositionUpdates = useRef<Map<string, any>>(new Map())
 
   const generateSocketToken = async (): Promise<string> => {
-    const res = await fetch('/api/auth/socket-token', {
+    const res = await fetch(apiUrl('/api/auth/socket-token'), {
       method: 'POST',
       credentials: 'include',
       headers: { 'cache-control': 'no-store' },

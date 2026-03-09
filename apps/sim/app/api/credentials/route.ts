@@ -9,7 +9,7 @@ import { generateRequestId } from '@/lib/core/utils/request'
 import { getWorkspaceMemberUserIds } from '@/lib/credentials/environment'
 import { syncWorkspaceOAuthCredentialsForUser } from '@/lib/credentials/oauth'
 import { getServiceConfigByProviderId } from '@/lib/oauth'
-import { checkWorkspaceAccess } from '@/lib/workspaces/permissions/utils'
+import { checkWorkspaceAccess, verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 import { isValidEnvVarName } from '@/executor/constants'
 
 const logger = createLogger('CredentialsAPI')
@@ -177,6 +177,13 @@ export async function GET(request: NextRequest) {
     }
 
     const { workspaceId, type, providerId, credentialId: lookupCredentialId } = parseResult.data
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+    }
+
     const workspaceAccess = await checkWorkspaceAccess(workspaceId, session.user.id)
 
     if (!workspaceAccess.hasAccess) {
@@ -289,6 +296,12 @@ export async function POST(request: NextRequest) {
       envKey,
       envOwnerUserId,
     } = parseResult.data
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+    }
 
     const workspaceAccess = await checkWorkspaceAccess(workspaceId, session.user.id)
     if (!workspaceAccess.canWrite) {

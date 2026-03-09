@@ -17,6 +17,7 @@ import {
   VARIABLE_OPERATIONS,
   WORKFLOW_OPERATIONS,
 } from '@/socket/constants'
+import { apiUrl } from '@/lib/api/fetcher'
 import { useNotificationStore } from '@/stores/notifications'
 import { registerEmitFunctions, useOperationQueue } from '@/stores/operation-queue/store'
 import { usePanelEditorStore, useVariablesStore } from '@/stores/panel'
@@ -544,7 +545,7 @@ export function useCollaborativeWorkflow() {
 
         try {
           // Fetch the updated workflow state from the server (which loads from normalized tables)
-          const response = await fetch(`/api/workflows/${workflowId}`)
+          const response = await fetch(apiUrl(`/api/workflows/${workflowId}`))
           if (response.ok) {
             const responseData = await response.json()
             const workflowData = responseData.data

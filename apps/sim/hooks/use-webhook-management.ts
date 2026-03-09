@@ -7,6 +7,7 @@ import { populateTriggerFieldsFromConfig } from '@/hooks/use-trigger-config-aggr
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
 import { useWorkflowStore } from '@/stores/workflows/workflow/store'
 import { isTriggerValid } from '@/triggers'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useWebhookManagement')
 
@@ -137,7 +138,7 @@ export function useWebhookManagement({
       }))
 
       try {
-        const response = await fetch(`/api/webhooks?workflowId=${workflowId}&blockId=${blockId}`)
+        const response = await fetch(apiUrl(`/api/webhooks?workflowId=${workflowId}&blockId=${blockId}`))
 
         if (response.ok) {
           const data = await response.json()

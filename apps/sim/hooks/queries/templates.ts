@@ -1,5 +1,6 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('TemplateQueries')
 
@@ -111,7 +112,7 @@ async function fetchTemplates(filters?: TemplateListFilters): Promise<TemplatesR
   params.set('limit', (filters?.limit ?? 50).toString())
   params.set('offset', (filters?.offset ?? 0).toString())
 
-  const response = await fetch(`/api/templates?${params.toString()}`)
+  const response = await fetch(apiUrl(`/api/templates?${params.toString()}`))
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
@@ -122,7 +123,7 @@ async function fetchTemplates(filters?: TemplateListFilters): Promise<TemplatesR
 }
 
 async function fetchTemplate(templateId: string): Promise<TemplateDetailResponse> {
-  const response = await fetch(`/api/templates/${templateId}`)
+  const response = await fetch(apiUrl(`/api/templates/${templateId}`))
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
@@ -133,7 +134,7 @@ async function fetchTemplate(templateId: string): Promise<TemplateDetailResponse
 }
 
 async function fetchTemplateByWorkflow(workflowId: string): Promise<Template | null> {
-  const response = await fetch(`/api/templates?workflowId=${workflowId}&limit=1`)
+  const response = await fetch(apiUrl(`/api/templates?workflowId=${workflowId}&limit=1`))
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
@@ -193,7 +194,7 @@ export function useCreateTemplate() {
 
   return useMutation({
     mutationFn: async (data: CreateTemplateInput) => {
-      const response = await fetch('/api/templates', {
+      const response = await fetch(apiUrl('/api/templates'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -222,7 +223,7 @@ export function useUpdateTemplate() {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateTemplateInput }) => {
-      const response = await fetch(`/api/templates/${id}`, {
+      const response = await fetch(apiUrl(`/api/templates/${id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -282,7 +283,7 @@ export function useDeleteTemplate() {
 
   return useMutation({
     mutationFn: async (templateId: string) => {
-      const response = await fetch(`/api/templates/${templateId}`, {
+      const response = await fetch(apiUrl(`/api/templates/${templateId}`), {
         method: 'DELETE',
       })
 
@@ -323,7 +324,7 @@ export function useStarTemplate() {
       action: 'add' | 'remove'
     }) => {
       const method = action === 'add' ? 'POST' : 'DELETE'
-      const response = await fetch(`/api/templates/${templateId}/star`, { method })
+      const response = await fetch(apiUrl(`/api/templates/${templateId}/star`), { method })
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))

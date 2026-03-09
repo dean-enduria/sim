@@ -1,6 +1,7 @@
 import { createLogger } from '@sim/logger'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { CoreTriggerType } from '@/stores/logs/filters/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('NotificationQueries')
 
@@ -77,7 +78,7 @@ export interface NotificationSubscription {
  * Fetch notifications for a workspace
  */
 async function fetchNotifications(workspaceId: string): Promise<NotificationSubscription[]> {
-  const response = await fetch(`/api/workspaces/${workspaceId}/notifications`)
+  const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/notifications`))
   if (!response.ok) {
     throw new Error('Failed to fetch notifications')
   }
@@ -124,7 +125,7 @@ export function useCreateNotification() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, data }: CreateNotificationParams) => {
-      const response = await fetch(`/api/workspaces/${workspaceId}/notifications`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/notifications`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -158,8 +159,7 @@ export function useUpdateNotification() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, notificationId, data }: UpdateNotificationParams) => {
-      const response = await fetch(
-        `/api/workspaces/${workspaceId}/notifications/${notificationId}`,
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/notifications/${notificationId}`),
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -194,8 +194,7 @@ export function useDeleteNotification() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, notificationId }: DeleteNotificationParams) => {
-      const response = await fetch(
-        `/api/workspaces/${workspaceId}/notifications/${notificationId}`,
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/notifications/${notificationId}`),
         {
           method: 'DELETE',
         }
@@ -225,8 +224,7 @@ interface TestNotificationParams {
 export function useTestNotification() {
   return useMutation({
     mutationFn: async ({ workspaceId, notificationId }: TestNotificationParams) => {
-      const response = await fetch(
-        `/api/workspaces/${workspaceId}/notifications/${notificationId}/test`,
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/notifications/${notificationId}/test`),
         { method: 'POST' }
       )
       if (!response.ok) {

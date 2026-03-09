@@ -13,6 +13,7 @@ import {
   getUniqueBlockName,
   mergeSubblockState,
 } from '@/stores/workflows/utils'
+import { apiUrl } from '@/lib/api/fetcher'
 import type {
   Position,
   SubBlockState,
@@ -1098,8 +1099,7 @@ export const useWorkflowStore = create<WorkflowStore>()(
 
         // Call API to persist the revert to normalized tables
         try {
-          const response = await fetch(
-            `/api/workflows/${activeWorkflowId}/deployments/active/revert`,
+          const response = await fetch(apiUrl(`/api/workflows/${activeWorkflowId}/deployments/active/revert`),
             {
               method: 'POST',
               headers: {

@@ -9,6 +9,7 @@ import {
   parseWorkflowJson,
   sanitizePathSegment,
 } from '@/lib/workflows/operations/import-export'
+import { apiUrl } from '@/lib/api/fetcher'
 import { folderKeys, useCreateFolder } from '@/hooks/queries/folders'
 import { useCreateWorkflow, workflowKeys } from '@/hooks/queries/workflows'
 import { useWorkflowDiffStore } from '@/stores/workflow-diff/store'
@@ -65,7 +66,7 @@ export function useImportWorkflow({ workspaceId }: UseImportWorkflowProps) {
       })
       const newWorkflowId = result.id
 
-      const stateResponse = await fetch(`/api/workflows/${newWorkflowId}/state`, {
+      const stateResponse = await fetch(apiUrl(`/api/workflows/${newWorkflowId}/state`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workflowData),
@@ -97,7 +98,7 @@ export function useImportWorkflow({ workspaceId }: UseImportWorkflowProps) {
             }
           }
 
-          const variablesResponse = await fetch(`/api/workflows/${newWorkflowId}/variables`, {
+          const variablesResponse = await fetch(apiUrl(`/api/workflows/${newWorkflowId}/variables`), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ variables: variablesRecord }),

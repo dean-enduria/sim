@@ -1,14 +1,15 @@
 import { createLogger } from '@sim/logger'
 import { useQuery } from '@tanstack/react-query'
+import { apiUrl } from '@/lib/api/fetcher'
 import type { OpenRouterModelInfo, ProviderName } from '@/stores/providers'
 
 const logger = createLogger('ProviderModelsQuery')
 
 const providerEndpoints: Record<ProviderName, string> = {
-  base: '/api/providers/base/models',
-  ollama: '/api/providers/ollama/models',
-  vllm: '/api/providers/vllm/models',
-  openrouter: '/api/providers/openrouter/models',
+  base: apiUrl('/api/providers/base/models'),
+  ollama: apiUrl('/api/providers/ollama/models'),
+  vllm: apiUrl('/api/providers/vllm/models'),
+  openrouter: apiUrl('/api/providers/openrouter/models'),
 }
 
 interface ProviderModelsResponse {

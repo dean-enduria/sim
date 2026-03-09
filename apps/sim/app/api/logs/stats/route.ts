@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { generateRequestId } from '@/lib/core/utils/request'
 import { buildFilterConditions, LogFilterParamsSchema } from '@/lib/logs/filters'
+import { verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('LogsStatsAPI')
 
@@ -60,6 +61,12 @@ export async function GET(request: NextRequest) {
     try {
       const { searchParams } = new URL(request.url)
       const params = StatsQueryParamsSchema.parse(Object.fromEntries(searchParams.entries()))
+
+      // Org-scoping: verify workspace belongs to user's org
+      const orgCheck = await verifyWorkspaceOrg(params.workspaceId)
+      if (!orgCheck.ok) {
+        return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+      }
 
       const workspaceFilter = eq(workflowExecutionLogs.workspaceId, params.workspaceId)
 

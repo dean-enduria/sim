@@ -5,6 +5,7 @@ import {
   createOptimisticMutationHandlers,
   generateTempId,
 } from '@/hooks/queries/utils/optimistic-mutation'
+import { apiUrl } from '@/lib/api/fetcher'
 import { getTopInsertionSortOrder } from '@/hooks/queries/utils/top-insertion-sort-order'
 import { workflowKeys } from '@/hooks/queries/workflows'
 import { useFolderStore } from '@/stores/folders/store'
@@ -35,7 +36,7 @@ function mapFolder(folder: any): WorkflowFolder {
 }
 
 async function fetchFolders(workspaceId: string): Promise<WorkflowFolder[]> {
-  const response = await fetch(`/api/folders?workspaceId=${workspaceId}`)
+  const response = await fetch(apiUrl(`/api/folders?workspaceId=${workspaceId}`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch folders')
@@ -168,7 +169,7 @@ export function useCreateFolder() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, sortOrder, ...payload }: CreateFolderVariables) => {
-      const response = await fetch('/api/folders', {
+      const response = await fetch(apiUrl('/api/folders'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...payload, workspaceId, sortOrder }),
@@ -191,7 +192,7 @@ export function useUpdateFolder() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, id, updates }: UpdateFolderVariables) => {
-      const response = await fetch(`/api/folders/${id}`, {
+      const response = await fetch(apiUrl(`/api/folders/${id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
@@ -216,7 +217,7 @@ export function useDeleteFolderMutation() {
 
   return useMutation({
     mutationFn: async ({ workspaceId: _workspaceId, id }: DeleteFolderVariables) => {
-      const response = await fetch(`/api/folders/${id}`, { method: 'DELETE' })
+      const response = await fetch(apiUrl(`/api/folders/${id}`), { method: 'DELETE' })
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}))
@@ -272,7 +273,7 @@ export function useDuplicateFolderMutation() {
       parentId,
       color,
     }: DuplicateFolderVariables): Promise<WorkflowFolder> => {
-      const response = await fetch(`/api/folders/${id}/duplicate`, {
+      const response = await fetch(apiUrl(`/api/folders/${id}/duplicate`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -313,7 +314,7 @@ export function useReorderFolders() {
 
   return useMutation({
     mutationFn: async (variables: ReorderFoldersVariables): Promise<void> => {
-      const response = await fetch('/api/folders/reorder', {
+      const response = await fetch(apiUrl('/api/folders/reorder'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(variables),

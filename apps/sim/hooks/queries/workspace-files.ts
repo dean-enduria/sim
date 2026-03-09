@@ -1,6 +1,7 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { WorkspaceFileRecord } from '@/lib/uploads/contexts/workspace'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('WorkspaceFilesQuery')
 
@@ -29,7 +30,7 @@ export interface StorageInfo {
  * Fetch workspace files from API
  */
 async function fetchWorkspaceFiles(workspaceId: string): Promise<WorkspaceFileRecord[]> {
-  const response = await fetch(`/api/workspaces/${workspaceId}/files`)
+  const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/files`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch workspace files')
@@ -57,7 +58,7 @@ export function useWorkspaceFiles(workspaceId: string) {
  * Fetch storage info from API
  */
 async function fetchStorageInfo(): Promise<StorageInfo | null> {
-  const response = await fetch('/api/users/me/usage-limits')
+  const response = await fetch(apiUrl('/api/users/me/usage-limits'))
 
   if (response.status === 404) {
     return null
@@ -111,7 +112,7 @@ export function useUploadWorkspaceFile() {
       const formData = new FormData()
       formData.append('file', file)
 
-      const response = await fetch(`/api/workspaces/${workspaceId}/files`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/files`), {
         method: 'POST',
         body: formData,
       })
@@ -150,7 +151,7 @@ export function useDeleteWorkspaceFile() {
 
   return useMutation({
     mutationFn: async ({ workspaceId, fileId }: DeleteFileParams) => {
-      const response = await fetch(`/api/workspaces/${workspaceId}/files/${fileId}`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/files/${fileId}`), {
         method: 'DELETE',
       })
 

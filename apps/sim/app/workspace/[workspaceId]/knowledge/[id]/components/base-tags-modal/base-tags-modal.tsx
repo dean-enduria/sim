@@ -15,6 +15,7 @@ import {
   ModalHeader,
   Trash,
 } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 import { cn } from '@/lib/core/utils/cn'
 import { SUPPORTED_FIELD_TYPES, TAG_SLOT_CONFIG } from '@/lib/knowledge/constants'
 import { getDocumentIcon } from '@/app/workspace/[workspaceId]/knowledge/components'
@@ -111,7 +112,7 @@ export function BaseTagsModal({ open, onOpenChange, knowledgeBaseId }: BaseTagsM
     if (!knowledgeBaseId) return
 
     try {
-      const response = await fetch(`/api/knowledge/${knowledgeBaseId}/tag-usage`)
+      const response = await fetch(apiUrl(`/api/knowledge/${knowledgeBaseId}/tag-usage`))
       if (!response.ok) {
         throw new Error('Failed to fetch tag usage')
       }

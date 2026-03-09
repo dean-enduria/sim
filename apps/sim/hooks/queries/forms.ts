@@ -1,6 +1,7 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { deploymentKeys } from './deployments'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('FormMutations')
 
@@ -71,7 +72,7 @@ interface FormStatusResponse {
  * Fetches form status for a workflow
  */
 async function fetchFormStatus(workflowId: string): Promise<FormStatusResponse> {
-  const response = await fetch(`/api/workflows/${workflowId}/form/status`)
+  const response = await fetch(apiUrl(`/api/workflows/${workflowId}/form/status`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch form status')
@@ -84,7 +85,7 @@ async function fetchFormStatus(workflowId: string): Promise<FormStatusResponse> 
  * Fetches form detail by ID
  */
 async function fetchFormDetail(formId: string): Promise<ExistingForm> {
-  const response = await fetch(`/api/form/manage/${formId}`)
+  const response = await fetch(apiUrl(`/api/form/manage/${formId}`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch form details')
@@ -180,7 +181,7 @@ export function useCreateForm() {
 
   return useMutation({
     mutationFn: async (params: CreateFormVariables): Promise<CreateFormResult> => {
-      const response = await fetch('/api/form', {
+      const response = await fetch(apiUrl('/api/form'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
@@ -228,7 +229,7 @@ export function useUpdateForm() {
 
   return useMutation({
     mutationFn: async ({ formId, data }: UpdateFormVariables): Promise<void> => {
-      const response = await fetch(`/api/form/manage/${formId}`, {
+      const response = await fetch(apiUrl(`/api/form/manage/${formId}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -268,7 +269,7 @@ export function useDeleteForm() {
 
   return useMutation({
     mutationFn: async ({ formId }: DeleteFormVariables): Promise<void> => {
-      const response = await fetch(`/api/form/manage/${formId}`, {
+      const response = await fetch(apiUrl(`/api/form/manage/${formId}`), {
         method: 'DELETE',
       })
 

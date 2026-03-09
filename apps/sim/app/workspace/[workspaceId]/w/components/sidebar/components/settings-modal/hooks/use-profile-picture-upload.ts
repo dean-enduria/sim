@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('ProfilePictureUpload')
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
@@ -56,7 +57,7 @@ export function useProfilePictureUpload({
       formData.append('file', file)
       formData.append('context', 'profile-pictures')
 
-      const response = await fetch('/api/files/upload', {
+      const response = await fetch(apiUrl('/api/files/upload'), {
         method: 'POST',
         body: formData,
       })

@@ -12,6 +12,7 @@ import {
   type OAuthService,
   parseProvider,
 } from '@/lib/oauth'
+import { apiUrl } from '@/lib/api/fetcher'
 import { OAuthRequiredModal } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/panel/components/editor/components/sub-block/components/credential-selector/components/oauth-required-modal'
 import { useOAuthCredentials } from '@/hooks/queries/oauth-credentials'
 import { useCredentialRefreshTriggers } from '@/hooks/use-credential-refresh-triggers'
@@ -108,8 +109,7 @@ export function ToolCredentialSelector({
     let cancelled = false
     ;(async () => {
       try {
-        const response = await fetch(
-          `/api/credentials?workspaceId=${encodeURIComponent(workspaceId)}&credentialId=${encodeURIComponent(selectedId)}`
+        const response = await fetch(apiUrl(`/api/credentials?workspaceId=${encodeURIComponent(workspaceId)}&credentialId=${encodeURIComponent(selectedId)}`)
         )
         if (!response.ok || cancelled) return
         const data = await response.json()

@@ -1,8 +1,9 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('SkillsQueries')
-const API_ENDPOINT = '/api/skills'
+const API_ENDPOINT = apiUrl('/api/skills')
 
 export interface SkillDefinition {
   id: string

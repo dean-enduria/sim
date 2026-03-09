@@ -4,6 +4,7 @@ import {
   useInfiniteQuery,
   useQuery,
 } from '@tanstack/react-query'
+import { apiUrl } from '@/lib/api/fetcher'
 import { getEndDateFromTimeRange, getStartDateFromTimeRange } from '@/lib/logs/filters'
 import { parseQuery, queryToApiParams } from '@/lib/logs/query-parser'
 import type {
@@ -100,7 +101,7 @@ async function fetchLogsPage(
   page: number
 ): Promise<{ logs: WorkflowLog[]; hasMore: boolean; nextPage: number | undefined }> {
   const queryParams = buildQueryParams(workspaceId, filters, page)
-  const response = await fetch(`/api/logs?${queryParams}`)
+  const response = await fetch(apiUrl(`/api/logs?${queryParams}`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch logs')
@@ -117,7 +118,7 @@ async function fetchLogsPage(
 }
 
 async function fetchLogDetail(logId: string): Promise<WorkflowLog> {
-  const response = await fetch(`/api/logs/${logId}`)
+  const response = await fetch(apiUrl(`/api/logs/${logId}`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch log details')
@@ -192,7 +193,7 @@ async function fetchDashboardStats(
 
   applyFilterParams(params, filters)
 
-  const response = await fetch(`/api/logs/stats?${params.toString()}`)
+  const response = await fetch(apiUrl(`/api/logs/stats?${params.toString()}`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch dashboard stats')
@@ -245,7 +246,7 @@ export interface ExecutionSnapshotData {
 }
 
 async function fetchExecutionSnapshot(executionId: string): Promise<ExecutionSnapshotData> {
-  const response = await fetch(`/api/logs/execution/${executionId}`)
+  const response = await fetch(apiUrl(`/api/logs/execution/${executionId}`))
 
   if (!response.ok) {
     throw new Error(`Failed to fetch execution snapshot: ${response.statusText}`)

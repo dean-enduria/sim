@@ -1,5 +1,6 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('UserProfileQuery')
 
@@ -28,7 +29,7 @@ export interface UserProfile {
  * Fetch user profile from API
  */
 async function fetchUserProfile(): Promise<UserProfile> {
-  const response = await fetch('/api/users/me/profile')
+  const response = await fetch(apiUrl('/api/users/me/profile'))
 
   if (!response.ok) {
     throw new Error('Failed to fetch user profile')
@@ -71,7 +72,7 @@ export function useUpdateUserProfile() {
 
   return useMutation({
     mutationFn: async (updates: UpdateProfileParams) => {
-      const response = await fetch('/api/users/me/profile', {
+      const response = await fetch(apiUrl('/api/users/me/profile'), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),

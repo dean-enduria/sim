@@ -1,10 +1,12 @@
+import { apiUrl } from '@/lib/api/fetcher'
+
 export const API_ENDPOINTS = {
-  ENVIRONMENT: '/api/environment',
-  SETTINGS: '/api/settings',
-  WORKFLOWS: '/api/workflows',
-  WORKSPACE_PERMISSIONS: (id: string) => `/api/workspaces/${id}/permissions`,
-  WORKSPACE_ENVIRONMENT: (id: string) => `/api/workspaces/${id}/environment`,
-  WORKSPACE_BYOK_KEYS: (id: string) => `/api/workspaces/${id}/byok-keys`,
+  ENVIRONMENT: apiUrl('/api/environment'),
+  SETTINGS: apiUrl('/api/settings'),
+  WORKFLOWS: apiUrl('/api/workflows'),
+  WORKSPACE_PERMISSIONS: (id: string) => apiUrl(`/api/workspaces/${id}/permissions`),
+  WORKSPACE_ENVIRONMENT: (id: string) => apiUrl(`/api/workspaces/${id}/environment`),
+  WORKSPACE_BYOK_KEYS: (id: string) => apiUrl(`/api/workspaces/${id}/byok-keys`),
 }
 
 /**

@@ -4,6 +4,7 @@ import { useExecutionStore } from '@/stores/execution'
 import { useTerminalConsoleStore } from '@/stores/terminal'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import { useWorkflowStore } from '@/stores/workflows/workflow/store'
+import { apiUrl } from '@/lib/api/fetcher'
 
 /**
  * Updates the active blocks set and ref counts for a single block.
@@ -82,7 +83,7 @@ export async function executeWorkflowWithFullLogging(
       : {}),
   }
 
-  const response = await fetch(`/api/workflows/${activeWorkflowId}/execute`, {
+  const response = await fetch(apiUrl(`/api/workflows/${activeWorkflowId}/execute`), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

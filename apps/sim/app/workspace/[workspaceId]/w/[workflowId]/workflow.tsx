@@ -2,6 +2,7 @@
 
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { apiUrl } from '@/lib/api/fetcher'
 import ReactFlow, {
   applyNodeChanges,
   ConnectionLineType,
@@ -291,8 +292,7 @@ const WorkflowContent = React.memo(() => {
           return
         }
 
-        const response = await fetch(
-          `/api/credentials?workspaceId=${encodeURIComponent(wsId)}&type=oauth`
+        const response = await fetch(apiUrl(`/api/credentials?workspaceId=${encodeURIComponent(wsId)}&type=oauth`)
         )
         const data = response.ok ? await response.json() : { credentials: [] }
         const oauthCredentials = (data.credentials ?? []) as Array<{

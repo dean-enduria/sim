@@ -1,6 +1,7 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { isHosted } from '@/lib/core/config/feature-flags'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('CopilotKeysQuery')
 
@@ -38,7 +39,7 @@ export interface GenerateKeyResponse {
  * Fetch Copilot API keys
  */
 async function fetchCopilotKeys(): Promise<CopilotKey[]> {
-  const response = await fetch('/api/copilot/api-keys')
+  const response = await fetch(apiUrl('/api/copilot/api-keys'))
 
   if (!response.ok) {
     throw new Error('Failed to fetch Copilot API keys')
@@ -76,7 +77,7 @@ export function useGenerateCopilotKey() {
 
   return useMutation({
     mutationFn: async ({ name }: GenerateKeyParams): Promise<GenerateKeyResponse> => {
-      const response = await fetch('/api/copilot/api-keys/generate', {
+      const response = await fetch(apiUrl('/api/copilot/api-keys/generate'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ export function useDeleteCopilotKey() {
 
   return useMutation({
     mutationFn: async ({ keyId }: DeleteKeyParams) => {
-      const response = await fetch(`/api/copilot/api-keys?id=${keyId}`, {
+      const response = await fetch(apiUrl(`/api/copilot/api-keys?id=${keyId}`), {
         method: 'DELETE',
       })
 

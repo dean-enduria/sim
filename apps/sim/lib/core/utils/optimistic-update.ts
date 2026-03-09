@@ -1,4 +1,5 @@
 import { createLogger } from '@sim/logger'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('OptimisticUpdate')
 
@@ -53,7 +54,7 @@ export interface OptimisticUpdateOptions<T> {
  *     folders: { ...state.folders, [id]: { ...folder, name: newName } }
  *   })),
  *   apiCall: async () => {
- *     await fetch(`/api/folders/${id}`, {
+ *     await fetch(apiUrl(`/api/folders/${id}`), {
  *       method: 'PUT',
  *       body: JSON.stringify({ name: newName })
  *     })

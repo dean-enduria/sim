@@ -17,6 +17,7 @@ import {
   Users,
   Wrench,
 } from 'lucide-react'
+import { apiUrl } from '@/lib/api/fetcher'
 import {
   Card,
   HexSimple,
@@ -365,7 +366,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     queryClient.prefetchQuery({
       queryKey: generalSettingsKeys.settings(),
       queryFn: async () => {
-        const response = await fetch('/api/users/me/settings')
+        const response = await fetch(apiUrl('/api/users/me/settings'))
         if (!response.ok) {
           throw new Error('Failed to fetch general settings')
         }

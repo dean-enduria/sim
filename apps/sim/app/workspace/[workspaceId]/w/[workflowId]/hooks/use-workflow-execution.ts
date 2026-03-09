@@ -9,6 +9,7 @@ import type {
   BlockErrorData,
   BlockStartedData,
 } from '@/lib/workflows/executor/execution-events'
+import { apiUrl } from '@/lib/api/fetcher'
 import {
   extractTriggerMockPayload,
   selectBestTrigger,
@@ -690,7 +691,7 @@ export function useWorkflowExecution() {
         }
       }
 
-      const response = await fetch(`/api/workflows/${activeWorkflowId}/log`, {
+      const response = await fetch(apiUrl(`/api/workflows/${activeWorkflowId}/log`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -780,7 +781,7 @@ export function useWorkflowExecution() {
                   formData.append('workspaceId', workspaceId)
 
                   // Upload the file
-                  const response = await fetch('/api/files/upload', {
+                  const response = await fetch(apiUrl('/api/files/upload'), {
                     method: 'POST',
                     body: formData,
                   })
@@ -1807,7 +1808,7 @@ export function useWorkflowExecution() {
 
     if (storedExecutionId) {
       setCurrentExecutionId(activeWorkflowId, null)
-      fetch(`/api/workflows/${activeWorkflowId}/executions/${storedExecutionId}/cancel`, {
+      fetch(apiUrl(`/api/workflows/${activeWorkflowId}/executions/${storedExecutionId}/cancel`), {
         method: 'POST',
       }).catch(() => {})
       handleExecutionCancelledConsole({

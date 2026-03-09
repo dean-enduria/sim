@@ -6,6 +6,7 @@ import { mergeSubblockState } from '../workflows/utils'
 import { useWorkflowStore } from '../workflows/workflow/store'
 import type { WorkflowState } from '../workflows/workflow/types'
 import type { WorkflowDiffState } from './types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('WorkflowDiffStore')
 
@@ -77,7 +78,7 @@ export async function persistWorkflowStateToServer(
 ): Promise<boolean> {
   try {
     const cleanState = stripWorkflowDiffMarkers(cloneWorkflowState(workflowState))
-    const response = await fetch(`/api/workflows/${workflowId}/state`, {
+    const response = await fetch(apiUrl(`/api/workflows/${workflowId}/state`), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

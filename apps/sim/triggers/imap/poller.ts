@@ -2,6 +2,7 @@ import { createLogger } from '@sim/logger'
 import { MailServerIcon } from '@/components/icons'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
 import type { TriggerConfig } from '@/triggers/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('ImapPollingTrigger')
 
@@ -97,7 +98,7 @@ export const imapPollingTrigger: TriggerConfig = {
         }
 
         try {
-          const response = await fetch('/api/tools/imap/mailboxes', {
+          const response = await fetch(apiUrl('/api/tools/imap/mailboxes'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

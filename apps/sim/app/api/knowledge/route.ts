@@ -6,6 +6,7 @@ import { getSession } from '@/lib/auth'
 import { PlatformEvents } from '@/lib/core/telemetry'
 import { generateRequestId } from '@/lib/core/utils/request'
 import { createKnowledgeBase, getKnowledgeBases } from '@/lib/knowledge/service'
+import { verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('KnowledgeBaseAPI')
 
@@ -62,6 +63,14 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const workspaceId = searchParams.get('workspaceId')
 
+    // Org-scoping: verify workspace belongs to user's org
+    if (workspaceId) {
+      const orgCheck = await verifyWorkspaceOrg(workspaceId)
+      if (!orgCheck.ok) {
+        return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+      }
+    }
+
     const knowledgeBasesWithCounts = await getKnowledgeBases(session.user.id, workspaceId)
 
     return NextResponse.json({
@@ -88,6 +97,12 @@ export async function POST(req: NextRequest) {
 
     try {
       const validatedData = CreateKnowledgeBaseSchema.parse(body)
+
+      // Org-scoping: verify workspace belongs to user's org
+      const orgCheck = await verifyWorkspaceOrg(validatedData.workspaceId)
+      if (!orgCheck.ok) {
+        return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+      }
 
       const createData = {
         ...validatedData,

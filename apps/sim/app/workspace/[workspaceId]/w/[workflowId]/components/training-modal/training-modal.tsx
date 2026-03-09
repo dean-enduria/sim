@@ -14,6 +14,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react'
+import { apiUrl } from '@/lib/api/fetcher'
 import {
   Button,
   Checkbox,
@@ -122,7 +123,7 @@ export function TrainingModal() {
       const sanitizedOutput = sanitizeForCopilot(dataset.endState)
 
       // Send to the indexer with sanitized JSON workflow states
-      const response = await fetch('/api/copilot/training', {
+      const response = await fetch(apiUrl('/api/copilot/training'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -311,7 +312,7 @@ export function TrainingModal() {
     try {
       const sanitizedWorkflow = sanitizeForCopilot(currentWorkflow.workflowState)
 
-      const response = await fetch('/api/copilot/training/examples', {
+      const response = await fetch(apiUrl('/api/copilot/training/examples'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

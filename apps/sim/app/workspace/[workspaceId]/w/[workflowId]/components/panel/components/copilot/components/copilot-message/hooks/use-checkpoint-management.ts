@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import type { CopilotMessage } from '@/stores/panel'
 import { useCopilotStore } from '@/stores/panel'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useCheckpointManagement')
 
@@ -67,7 +68,7 @@ export function useCheckpointManagement(
 
           if (currentChat?.id) {
             try {
-              await fetch('/api/copilot/chat/update-messages', {
+              await fetch(apiUrl('/api/copilot/chat/update-messages'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

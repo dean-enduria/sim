@@ -12,6 +12,7 @@ import { getExtensionFromMimeType } from '@/lib/uploads/utils/file-utils'
 import { useSubBlockValue } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/panel/components/editor/components/sub-block/hooks/use-sub-block-value'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import { useWorkflowStore } from '@/stores/workflows/workflow/store'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('FileUpload')
 
@@ -170,7 +171,7 @@ export function FileUpload({
 
     try {
       setLoadingWorkspaceFiles(true)
-      const response = await fetch(`/api/workspaces/${workspaceId}/files`)
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/files`))
       const data = await response.json()
 
       if (data.success) {
@@ -338,7 +339,7 @@ export function FileUpload({
             formData.append('workspaceId', workspaceId)
           }
 
-          const response = await fetch('/api/files/upload', {
+          const response = await fetch(apiUrl('/api/files/upload'), {
             method: 'POST',
             body: formData,
           })
@@ -508,7 +509,7 @@ export function FileUpload({
         (decodedPath.includes(`/${workspaceId}/`) || decodedPath.includes(`${workspaceId}/`))
 
       if (!isWorkspaceFile) {
-        const response = await fetch('/api/files/delete', {
+        const response = await fetch(apiUrl('/api/files/delete'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -5,6 +5,7 @@ import { useNotificationStore } from '@/stores/notifications'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import { mergeSubblockState } from '@/stores/workflows/utils'
 import { useWorkflowStore } from '@/stores/workflows/workflow/store'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useDeployment')
 
@@ -58,7 +59,7 @@ export function useDeployment({
 
     setIsDeploying(true)
     try {
-      const response = await fetch(`/api/workflows/${workflowId}/deploy`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deploy`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

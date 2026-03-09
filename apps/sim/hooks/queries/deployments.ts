@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { WorkflowDeploymentVersionResponse } from '@/lib/workflows/persistence/utils'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import { fetchDeploymentVersionState } from './workflows'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('DeploymentQueries')
 
@@ -40,7 +41,7 @@ export interface WorkflowDeploymentInfo {
  * Fetches deployment info for a workflow
  */
 async function fetchDeploymentInfo(workflowId: string): Promise<WorkflowDeploymentInfo> {
-  const response = await fetch(`/api/workflows/${workflowId}/deploy`)
+  const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deploy`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch deployment information')
@@ -80,7 +81,7 @@ export interface DeploymentVersionsResponse {
  * Fetches all deployment versions for a workflow
  */
 async function fetchDeploymentVersions(workflowId: string): Promise<DeploymentVersionsResponse> {
-  const response = await fetch(`/api/workflows/${workflowId}/deployments`)
+  const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deployments`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch deployment versions')
@@ -120,7 +121,7 @@ export interface ChatDeploymentStatus {
  * Fetches chat deployment status for a workflow
  */
 async function fetchChatDeploymentStatus(workflowId: string): Promise<ChatDeploymentStatus> {
-  const response = await fetch(`/api/workflows/${workflowId}/chat/status`)
+  const response = await fetch(apiUrl(`/api/workflows/${workflowId}/chat/status`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch chat deployment status')
@@ -174,7 +175,7 @@ export interface ChatDetail {
  * Fetches chat detail by chat ID
  */
 async function fetchChatDetail(chatId: string): Promise<ChatDetail> {
-  const response = await fetch(`/api/chat/manage/${chatId}`)
+  const response = await fetch(apiUrl(`/api/chat/manage/${chatId}`))
 
   if (!response.ok) {
     throw new Error('Failed to fetch chat detail')
@@ -259,7 +260,7 @@ export function useDeployWorkflow() {
       workflowId,
       deployChatEnabled = false,
     }: DeployWorkflowVariables): Promise<DeployWorkflowResult> => {
-      const response = await fetch(`/api/workflows/${workflowId}/deploy`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deploy`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -324,7 +325,7 @@ export function useUndeployWorkflow() {
 
   return useMutation({
     mutationFn: async ({ workflowId }: UndeployWorkflowVariables): Promise<void> => {
-      const response = await fetch(`/api/workflows/${workflowId}/deploy`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deploy`), {
         method: 'DELETE',
       })
 
@@ -386,7 +387,7 @@ export function useUpdateDeploymentVersion() {
       name,
       description,
     }: UpdateDeploymentVersionVariables): Promise<UpdateDeploymentVersionResult> => {
-      const response = await fetch(`/api/workflows/${workflowId}/deployments/${version}`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deployments/${version}`), {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -480,7 +481,7 @@ export function useGenerateVersionDescription() {
         workflowId
       )
 
-      const wandResponse = await fetch('/api/wand', {
+      const wandResponse = await fetch(apiUrl('/api/wand'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -554,7 +555,7 @@ export function useActivateDeploymentVersion() {
       workflowId,
       version,
     }: ActivateVersionVariables): Promise<ActivateVersionResult> => {
-      const response = await fetch(`/api/workflows/${workflowId}/deployments/${version}`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deployments/${version}`), {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -637,7 +638,7 @@ export function useUpdatePublicApi() {
 
   return useMutation({
     mutationFn: async ({ workflowId, isPublicApi }: UpdatePublicApiVariables) => {
-      const response = await fetch(`/api/workflows/${workflowId}/deploy`, {
+      const response = await fetch(apiUrl(`/api/workflows/${workflowId}/deploy`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isPublicApi }),

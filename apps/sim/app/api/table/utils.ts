@@ -2,7 +2,7 @@ import { createLogger } from '@sim/logger'
 import { NextResponse } from 'next/server'
 import type { ColumnDefinition, TableDefinition } from '@/lib/table'
 import { getTableById } from '@/lib/table'
-import { getUserEntityPermissions } from '@/lib/workspaces/permissions/utils'
+import { getUserEntityPermissions, verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('TableUtils')
 
@@ -80,6 +80,12 @@ export async function checkAccess(
 
   if (!table) {
     return { ok: false, status: 404 }
+  }
+
+  // Org-scoping: verify table's workspace belongs to user's org
+  const orgCheck = await verifyWorkspaceOrg(table.workspaceId)
+  if (!orgCheck.ok) {
+    return { ok: false, status: 403 }
   }
 
   const permission = await getUserEntityPermissions(userId, 'workspace', table.workspaceId)

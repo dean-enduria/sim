@@ -2,6 +2,7 @@ import { createLogger } from '@sim/logger'
 import { WebflowIcon } from '@/components/icons'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
 import type { TriggerConfig } from '../types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('webflow-form-submission-trigger')
 
@@ -50,7 +51,7 @@ export const webflowFormSubmissionTrigger: TriggerConfig = {
           throw new Error('No Webflow credential selected')
         }
         try {
-          const response = await fetch('/api/tools/webflow/sites', {
+          const response = await fetch(apiUrl('/api/tools/webflow/sites'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ credential: credentialId }),
@@ -77,7 +78,7 @@ export const webflowFormSubmissionTrigger: TriggerConfig = {
           | null
         if (!credentialId) return null
         try {
-          const response = await fetch('/api/tools/webflow/sites', {
+          const response = await fetch(apiUrl('/api/tools/webflow/sites'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ credential: credentialId, siteId: optionId }),

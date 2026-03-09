@@ -3,6 +3,7 @@ import { GmailIcon } from '@/components/icons'
 import { isCredentialSetValue } from '@/executor/constants'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
 import type { TriggerConfig } from '@/triggers/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('GmailPollingTrigger')
 
@@ -65,7 +66,7 @@ export const gmailPollingTrigger: TriggerConfig = {
           return GMAIL_SYSTEM_LABELS
         }
         try {
-          const response = await fetch(`/api/tools/gmail/labels?credentialId=${credentialId}`)
+          const response = await fetch(apiUrl(`/api/tools/gmail/labels?credentialId=${credentialId}`))
           if (!response.ok) {
             throw new Error('Failed to fetch Gmail labels')
           }

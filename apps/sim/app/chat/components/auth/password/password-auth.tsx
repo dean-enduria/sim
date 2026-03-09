@@ -12,6 +12,7 @@ import AuthBackground from '@/components/shared/auth-background'
 import { BrandedButton } from '@/components/shared/branded-button'
 import { SupportFooter } from '@/components/shared/support-footer'
 import Nav from '@/components/shared/nav/nav'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('PasswordAuth')
 
@@ -53,7 +54,7 @@ export default function PasswordAuth({ identifier, onAuthSuccess }: PasswordAuth
     try {
       const payload = { password }
 
-      const response = await fetch(`/api/chat/${identifier}`, {
+      const response = await fetch(apiUrl(`/api/chat/${identifier}`), {
         method: 'POST',
         credentials: 'same-origin',
         headers: {

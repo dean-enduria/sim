@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { useWorkflowRegistry } from '@/stores/workflows/registry/store'
 import { useSubBlockStore } from '@/stores/workflows/subblock/store'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useWebhookInfo')
 
@@ -86,7 +87,7 @@ export function useWebhookInfo(blockId: string, workflowId: string): UseWebhookI
         blockId,
       })
 
-      const response = await fetch(`/api/webhooks?${params}`, {
+      const response = await fetch(apiUrl(`/api/webhooks?${params}`), {
         cache: 'no-store',
         headers: { 'Cache-Control': 'no-cache' },
       })
@@ -121,7 +122,7 @@ export function useWebhookInfo(blockId: string, workflowId: string): UseWebhookI
   const reactivateWebhook = useCallback(
     async (webhookId: string) => {
       try {
-        const response = await fetch(`/api/webhooks/${webhookId}`, {
+        const response = await fetch(apiUrl(`/api/webhooks/${webhookId}`), {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

@@ -4,6 +4,7 @@
 
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Filter, Sort, TableDefinition, TableRow } from '@/lib/table'
+import { apiUrl } from '@/lib/api/fetcher'
 
 export const tableKeys = {
   all: ['tables'] as const,
@@ -59,7 +60,7 @@ function createRowsParamsKey({
 }
 
 async function fetchTable(workspaceId: string, tableId: string): Promise<TableDefinition> {
-  const res = await fetch(`/api/table/${tableId}?workspaceId=${encodeURIComponent(workspaceId)}`)
+  const res = await fetch(apiUrl(`/api/table/${tableId}?workspaceId=${encodeURIComponent(workspaceId)}`))
   if (!res.ok) {
     const error = await res.json().catch(() => ({}))
     throw new Error(error.error || 'Failed to fetch table')
@@ -92,7 +93,7 @@ async function fetchTableRows({
     searchParams.set('sort', JSON.stringify(sort))
   }
 
-  const res = await fetch(`/api/table/${tableId}/rows?${searchParams}`)
+  const res = await fetch(apiUrl(`/api/table/${tableId}/rows?${searchParams}`))
   if (!res.ok) {
     const error = await res.json().catch(() => ({}))
     throw new Error(error.error || 'Failed to fetch rows')
@@ -130,7 +131,7 @@ export function useTablesList(workspaceId?: string) {
     queryFn: async () => {
       if (!workspaceId) throw new Error('Workspace ID required')
 
-      const res = await fetch(`/api/table?workspaceId=${encodeURIComponent(workspaceId)}`)
+      const res = await fetch(apiUrl(`/api/table?workspaceId=${encodeURIComponent(workspaceId)}`))
 
       if (!res.ok) {
         const error = await res.json()
@@ -199,7 +200,7 @@ export function useCreateTable(workspaceId: string) {
       description?: string
       schema: { columns: Array<{ name: string; type: string; required?: boolean }> }
     }) => {
-      const res = await fetch('/api/table', {
+      const res = await fetch(apiUrl('/api/table'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...params, workspaceId }),
@@ -226,8 +227,7 @@ export function useDeleteTable(workspaceId: string) {
 
   return useMutation({
     mutationFn: async (tableId: string) => {
-      const res = await fetch(
-        `/api/table/${tableId}?workspaceId=${encodeURIComponent(workspaceId)}`,
+      const res = await fetch(apiUrl(`/api/table/${tableId}?workspaceId=${encodeURIComponent(workspaceId)}`),
         {
           method: 'DELETE',
         }
@@ -254,7 +254,7 @@ export function useCreateTableRow({ workspaceId, tableId }: RowMutationContext) 
 
   return useMutation({
     mutationFn: async (data: Record<string, unknown>) => {
-      const res = await fetch(`/api/table/${tableId}/rows`, {
+      const res = await fetch(apiUrl(`/api/table/${tableId}/rows`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId, data }),
@@ -281,7 +281,7 @@ export function useUpdateTableRow({ workspaceId, tableId }: RowMutationContext) 
 
   return useMutation({
     mutationFn: async ({ rowId, data }: UpdateTableRowParams) => {
-      const res = await fetch(`/api/table/${tableId}/rows/${rowId}`, {
+      const res = await fetch(apiUrl(`/api/table/${tableId}/rows/${rowId}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId, data }),
@@ -308,7 +308,7 @@ export function useDeleteTableRow({ workspaceId, tableId }: RowMutationContext) 
 
   return useMutation({
     mutationFn: async (rowId: string) => {
-      const res = await fetch(`/api/table/${tableId}/rows/${rowId}`, {
+      const res = await fetch(apiUrl(`/api/table/${tableId}/rows/${rowId}`), {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId }),
@@ -338,7 +338,7 @@ export function useDeleteTableRows({ workspaceId, tableId }: RowMutationContext)
     mutationFn: async (rowIds: string[]): Promise<TableRowsDeleteResult> => {
       const uniqueRowIds = Array.from(new Set(rowIds))
 
-      const res = await fetch(`/api/table/${tableId}/rows`, {
+      const res = await fetch(apiUrl(`/api/table/${tableId}/rows`), {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId, rowIds: uniqueRowIds }),

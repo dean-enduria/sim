@@ -5,6 +5,7 @@ import { and, desc, eq, sql } from 'drizzle-orm'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { buildFilterConditions, LogFilterParamsSchema } from '@/lib/logs/filters'
+import { verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('LogsExportAPI')
 
@@ -29,6 +30,12 @@ export async function GET(request: NextRequest) {
     const userId = session.user.id
     const { searchParams } = new URL(request.url)
     const params = LogFilterParamsSchema.parse(Object.fromEntries(searchParams.entries()))
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(params.workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+    }
 
     const selectColumns = {
       id: workflowExecutionLogs.id,

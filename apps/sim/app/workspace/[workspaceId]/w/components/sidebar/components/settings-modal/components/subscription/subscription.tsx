@@ -19,6 +19,7 @@ import {
   PlanCard,
   ReferralCode,
 } from '@/app/workspace/[workspaceId]/w/components/sidebar/components/settings-modal/components/subscription/components'
+import { apiUrl } from '@/lib/api/fetcher'
 import {
   ENTERPRISE_PLAN_FEATURES,
   PRO_PLAN_FEATURES,
@@ -345,7 +346,7 @@ export function Subscription() {
     if (isBlocked) {
       try {
         const context = subscription.isTeam || subscription.isEnterprise ? 'organization' : 'user'
-        const res = await fetch('/api/billing/portal', {
+        const res = await fetch(apiUrl('/api/billing/portal'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

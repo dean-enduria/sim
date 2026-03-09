@@ -1,4 +1,5 @@
 import { createLogger } from '@sim/logger'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('SelectorHelpers')
 
@@ -8,7 +9,7 @@ interface FetchJsonOptions extends RequestInit {
 
 export async function fetchJson<T>(url: string, options: FetchJsonOptions = {}): Promise<T> {
   const { searchParams, headers, ...rest } = options
-  let finalUrl = url
+  let finalUrl = apiUrl(url)
   if (searchParams) {
     const params = new URLSearchParams()
     Object.entries(searchParams).forEach(([key, value]) => {

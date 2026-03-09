@@ -17,6 +17,7 @@ import {
   Textarea,
   Tooltip,
 } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 import {
   Select,
   SelectContent,
@@ -488,8 +489,7 @@ export default function ResumeExecutionPage({
     const loadDetail = async () => {
       setLoadingDetail(true)
       try {
-        const response = await fetch(
-          `/api/resume/${workflowId}/${executionId}/${selectedContextId}`,
+        const response = await fetch(apiUrl(`/api/resume/${workflowId}/${executionId}/${selectedContextId}`),
           {
             method: 'GET',
             credentials: 'include',
@@ -570,7 +570,7 @@ export default function ResumeExecutionPage({
   const refreshExecutionDetail = useCallback(async () => {
     setRefreshingExecution(true)
     try {
-      const response = await fetch(`/api/resume/${workflowId}/${executionId}`, {
+      const response = await fetch(apiUrl(`/api/resume/${workflowId}/${executionId}`), {
         method: 'GET',
         credentials: 'include',
         cache: 'no-store',
@@ -595,7 +595,7 @@ export default function ResumeExecutionPage({
     async (contextId: string, showLoader = true) => {
       try {
         if (showLoader) setLoadingDetail(true)
-        const response = await fetch(`/api/resume/${workflowId}/${executionId}/${contextId}`, {
+        const response = await fetch(apiUrl(`/api/resume/${workflowId}/${executionId}/${contextId}`), {
           method: 'GET',
           credentials: 'include',
           cache: 'no-store',
@@ -705,8 +705,7 @@ export default function ResumeExecutionPage({
       resumePayload = parsedInput
     }
     try {
-      const response = await fetch(
-        `/api/resume/${workflowId}/${executionId}/${selectedContextId}`,
+      const response = await fetch(apiUrl(`/api/resume/${workflowId}/${executionId}/${selectedContextId}`),
         {
           method: 'POST',
           credentials: 'include',

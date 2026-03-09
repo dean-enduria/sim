@@ -6,6 +6,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { generateRequestId } from '@/lib/core/utils/request'
+import { verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 
 const logger = createLogger('TriggersAPI')
 
@@ -36,6 +37,12 @@ export async function GET(request: NextRequest) {
     try {
       const { searchParams } = new URL(request.url)
       const params = QueryParamsSchema.parse(Object.fromEntries(searchParams.entries()))
+
+      // Org-scoping: verify workspace belongs to user's org
+      const orgCheck = await verifyWorkspaceOrg(params.workspaceId)
+      if (!orgCheck.ok) {
+        return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+      }
 
       const triggers = await db
         .selectDistinct({

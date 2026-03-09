@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { Check } from 'lucide-react'
+import { apiUrl } from '@/lib/api/fetcher'
 import {
   Badge,
   Button,
@@ -409,14 +410,14 @@ export function OAuthRequiredModal({
 
       if (providerId === 'trello') {
         onClose()
-        window.location.href = '/api/auth/trello/authorize'
+        window.location.href = apiUrl('/api/auth/trello/authorize')
         return
       }
 
       if (providerId === 'shopify') {
         onClose()
         const returnUrl = encodeURIComponent(window.location.href)
-        window.location.href = `/api/auth/shopify/authorize?returnUrl=${returnUrl}`
+        window.location.href = apiUrl(`/api/auth/shopify/authorize?returnUrl=${returnUrl}`)
         return
       }
 

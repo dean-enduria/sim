@@ -11,6 +11,7 @@ import type { CreatorProfileDetails } from '@/app/_types/creator-profile'
 import { TemplateCard, TemplateCardSkeleton } from '@/app/templates/components/template-card'
 import { useDebounce } from '@/hooks/use-debounce'
 import type { WorkflowState } from '@/stores/workflows/workflow/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('TemplatesPage')
 
@@ -66,7 +67,7 @@ export default function Templates({
     if (currentUserId) {
       const redirectToWorkspace = async () => {
         try {
-          const response = await fetch('/api/workspaces')
+          const response = await fetch(apiUrl('/api/workspaces'))
           if (response.ok) {
             const data = await response.json()
             const defaultWorkspace = data.workspaces?.[0]

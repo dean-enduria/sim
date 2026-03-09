@@ -482,7 +482,7 @@ export const Sidebar = memo(function Sidebar() {
     <>
       {isCollapsed ? (
         /* Floating collapsed header - minimal pill showing workspace name and expand toggle */
-        <div className='fixed top-[calc(64px+14px)] left-[10px] z-10 w-fit bg-card rounded-lg border border-border/40 shadow-sm py-[4px] pr-[10px] pl-[6px]'>
+        <div className='fixed top-[calc(64px+14px)] left-[10px] z-10 w-fit bg-card rounded-lg border border-border/20 shadow-sm py-[4px] pr-[10px] pl-[6px]'>
           <WorkspaceHeader
             activeWorkspace={activeWorkspace}
             workspaceId={workspaceId}
@@ -515,7 +515,7 @@ export const Sidebar = memo(function Sidebar() {
             aria-label='Workspace sidebar'
             onClick={handleSidebarClick}
           >
-            <div className='flex h-full flex-col border-r border-border/40 pt-[12px]'>
+            <div className='flex h-full flex-col border-r border-border/20 pt-[12px]'>
               {/* Header */}
               <div className='flex-shrink-0 px-[14px]'>
                 <WorkspaceHeader
@@ -544,7 +544,7 @@ export const Sidebar = memo(function Sidebar() {
 
               {/* Search */}
               <div
-                className='mx-2 mt-2.5 flex flex-shrink-0 cursor-pointer items-center justify-between rounded-lg border border-border/40 bg-transparent px-2 py-1.5 transition-colors duration-100 hover:bg-accent'
+                className='mx-2 mt-2.5 flex flex-shrink-0 cursor-pointer items-center justify-between rounded-lg border border-border/20 bg-transparent px-2 py-1.5 transition-colors duration-100 hover:bg-accent'
                 onClick={() => setIsSearchModalOpen(true)}
               >
                 <div className='flex items-center gap-[6px]'>
@@ -644,7 +644,7 @@ export const Sidebar = memo(function Sidebar() {
               </div>
 
               {/* Footer Navigation */}
-              <div className='flex flex-shrink-0 flex-col gap-[2px] border-t border-border/40 px-[7.75px] pt-[8px] pb-[8px]'>
+              <div className='flex flex-shrink-0 flex-col gap-[2px] border-t border-border/20 px-[7.75px] pt-[8px] pb-[8px]'>
                 {footerNavigationItems.map((item) => {
                   const Icon = item.icon
                   const active = item.href ? pathname?.startsWith(item.href) : false

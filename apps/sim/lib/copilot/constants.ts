@@ -105,38 +105,40 @@ export const OPTIMISTIC_TITLE_MAX_LENGTH = 50
 // Copilot API paths (client-side fetch targets)
 // ---------------------------------------------------------------------------
 
+import { apiUrl } from '@/lib/api/fetcher'
+
 /** POST — send a chat message to the copilot. */
-export const COPILOT_CHAT_API_PATH = '/api/copilot/chat'
+export const COPILOT_CHAT_API_PATH = apiUrl('/api/copilot/chat')
 
 /** GET — resume/replay a copilot SSE stream. */
-export const COPILOT_CHAT_STREAM_API_PATH = '/api/copilot/chat/stream'
+export const COPILOT_CHAT_STREAM_API_PATH = apiUrl('/api/copilot/chat/stream')
 
 /** POST — persist chat messages / plan artifact / config. */
-export const COPILOT_UPDATE_MESSAGES_API_PATH = '/api/copilot/chat/update-messages'
+export const COPILOT_UPDATE_MESSAGES_API_PATH = apiUrl('/api/copilot/chat/update-messages')
 
 /** DELETE — delete a copilot chat. */
-export const COPILOT_DELETE_CHAT_API_PATH = '/api/copilot/chat/delete'
+export const COPILOT_DELETE_CHAT_API_PATH = apiUrl('/api/copilot/chat/delete')
 
 /** POST — confirm or reject a tool call. */
-export const COPILOT_CONFIRM_API_PATH = '/api/copilot/confirm'
+export const COPILOT_CONFIRM_API_PATH = apiUrl('/api/copilot/confirm')
 
 /** POST — forward diff-accepted/rejected stats to the copilot backend. */
-export const COPILOT_STATS_API_PATH = '/api/copilot/stats'
+export const COPILOT_STATS_API_PATH = apiUrl('/api/copilot/stats')
 
 /** GET — load checkpoints for a chat. */
-export const COPILOT_CHECKPOINTS_API_PATH = '/api/copilot/checkpoints'
+export const COPILOT_CHECKPOINTS_API_PATH = apiUrl('/api/copilot/checkpoints')
 
 /** POST — revert to a checkpoint. */
-export const COPILOT_CHECKPOINTS_REVERT_API_PATH = '/api/copilot/checkpoints/revert'
+export const COPILOT_CHECKPOINTS_REVERT_API_PATH = apiUrl('/api/copilot/checkpoints/revert')
 
 /** GET/POST/DELETE — manage auto-allowed tools. */
-export const COPILOT_AUTO_ALLOWED_TOOLS_API_PATH = '/api/copilot/auto-allowed-tools'
+export const COPILOT_AUTO_ALLOWED_TOOLS_API_PATH = apiUrl('/api/copilot/auto-allowed-tools')
 
 /** GET — fetch dynamically available copilot models. */
-export const COPILOT_MODELS_API_PATH = '/api/copilot/models'
+export const COPILOT_MODELS_API_PATH = apiUrl('/api/copilot/models')
 
 /** GET — fetch user credentials for masking. */
-export const COPILOT_CREDENTIALS_API_PATH = '/api/copilot/credentials'
+export const COPILOT_CREDENTIALS_API_PATH = apiUrl('/api/copilot/credentials')
 
 // ---------------------------------------------------------------------------
 // Dedup limits

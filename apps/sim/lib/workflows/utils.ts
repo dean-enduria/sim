@@ -5,6 +5,7 @@ import { and, asc, eq, inArray } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import type { PermissionType } from '@/lib/workspaces/permissions/utils'
+import { verifyWorkspaceOrg } from '@/lib/workspaces/permissions/utils'
 import { getWorkspaceBilledAccountUserId } from '@/lib/workspaces/utils'
 import type { ExecutionResult } from '@/executor/types'
 
@@ -263,6 +264,18 @@ export async function authorizeWorkflowByWorkspacePermission(params: {
       status: 403,
       message:
         'This workflow is not attached to a workspace. Personal workflows are deprecated and cannot be accessed.',
+      workflow,
+      workspacePermission: null,
+    }
+  }
+
+  // Org-scoping: verify workflow's workspace belongs to user's org
+  const orgCheck = await verifyWorkspaceOrg(workflow.workspaceId)
+  if (!orgCheck.ok) {
+    return {
+      allowed: false,
+      status: orgCheck.status,
+      message: 'Forbidden',
       workflow,
       workspacePermission: null,
     }

@@ -55,7 +55,7 @@ export async function authenticateSocket(socket: AuthenticatedSocket, next: (err
         origin,
       })
 
-      const enduriaUser = validateEnduriaJWT(token)
+      const enduriaUser = await validateEnduriaJWT(token)
 
       if (!enduriaUser?.userId) {
         logger.warn(`Socket ${socket.id} rejected: Invalid token - no user found`)

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { Hash, Lock } from 'lucide-react'
 import { Combobox, type ComboboxOption } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('SlackChannelSelector')
 
@@ -45,7 +46,7 @@ export function SlackChannelSelector({
     setFetchError(null)
 
     try {
-      const response = await fetch('/api/tools/slack/channels', {
+      const response = await fetch(apiUrl('/api/tools/slack/channels'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ credential: accountId }),

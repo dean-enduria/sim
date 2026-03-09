@@ -15,6 +15,7 @@ import {
   PoweredBySim,
   ThankYouScreen,
 } from '@/app/form/[identifier]/components'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('Form')
 
@@ -70,7 +71,7 @@ export default function Form({ identifier }: { identifier: string }) {
         setIsLoading(true)
         setError(null)
 
-        const response = await fetch(`/api/form/${identifier}`, { signal })
+        const response = await fetch(apiUrl(`/api/form/${identifier}`), { signal })
         if (signal?.aborted) return
 
         const data = await response.json()
@@ -164,7 +165,7 @@ export default function Form({ identifier }: { identifier: string }) {
         setIsSubmitting(true)
         setError(null)
 
-        const response = await fetch(`/api/form/${identifier}`, {
+        const response = await fetch(apiUrl(`/api/form/${identifier}`), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ formData }),
@@ -200,7 +201,7 @@ export default function Form({ identifier }: { identifier: string }) {
         setIsLoading(true)
         setError(null)
 
-        const response = await fetch(`/api/form/${identifier}`, {
+        const response = await fetch(apiUrl(`/api/form/${identifier}`), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password }),

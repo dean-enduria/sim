@@ -7,7 +7,11 @@ import { z } from 'zod'
 import { AuditAction, AuditResourceType, recordAudit } from '@/lib/audit/log'
 import { checkSessionOrInternalAuth } from '@/lib/auth/hybrid'
 import { generateRequestId } from '@/lib/core/utils/request'
-import { getUserEntityPermissions, workspaceExists } from '@/lib/workspaces/permissions/utils'
+import {
+  getUserEntityPermissions,
+  verifyWorkspaceOrg,
+  workspaceExists,
+} from '@/lib/workspaces/permissions/utils'
 import { verifyWorkspaceMembership } from '@/app/api/workflows/utils'
 
 const logger = createLogger('WorkflowAPI')
@@ -37,6 +41,12 @@ export async function GET(request: NextRequest) {
     const userId = auth.userId
 
     if (workspaceId) {
+      // Org-scoping: verify workspace belongs to user's org
+      const orgCheck = await verifyWorkspaceOrg(workspaceId)
+      if (!orgCheck.ok) {
+        return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
+      }
+
       const wsExists = await workspaceExists(workspaceId)
 
       if (!wsExists) {
@@ -126,6 +136,12 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 }
       )
+    }
+
+    // Org-scoping: verify workspace belongs to user's org
+    const orgCheck = await verifyWorkspaceOrg(workspaceId)
+    if (!orgCheck.ok) {
+      return NextResponse.json({ error: orgCheck.error }, { status: orgCheck.status })
     }
 
     const workspacePermission = await getUserEntityPermissions(userId, 'workspace', workspaceId)

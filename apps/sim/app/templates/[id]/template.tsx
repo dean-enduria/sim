@@ -13,6 +13,7 @@ import {
   Star,
   User,
 } from 'lucide-react'
+import { apiUrl } from '@/lib/api/fetcher'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 import {
@@ -179,7 +180,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
     const fetchWorkspaces = async () => {
       try {
         setIsLoadingWorkspaces(true)
-        const response = await fetch('/api/workspaces')
+        const response = await fetch(apiUrl('/api/workspaces'))
         if (response.ok) {
           const data = await response.json()
           const availableWorkspaces = data.workspaces
@@ -245,7 +246,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
       }
 
       try {
-        const checkResponse = await fetch(`/api/workflows/${template.workflowId}`)
+        const checkResponse = await fetch(apiUrl(`/api/workflows/${template.workflowId}`))
         if (checkResponse.status === 403) {
           setHasWorkspaceAccess(false)
         } else if (checkResponse.ok) {
@@ -374,7 +375,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
     if (isWorkspaceContext && workspaceId && template.workflowId) {
       setIsEditing(true)
       try {
-        const checkResponse = await fetch(`/api/workflows/${template.workflowId}`)
+        const checkResponse = await fetch(apiUrl(`/api/workflows/${template.workflowId}`))
 
         if (checkResponse.ok) {
           router.push(`/workspace/${workspaceId}/w/${template.workflowId}`)
@@ -390,7 +391,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
     if (template.workflowId && !isWorkspaceContext) {
       setIsEditing(true)
       try {
-        const checkResponse = await fetch(`/api/workflows/${template.workflowId}`)
+        const checkResponse = await fetch(apiUrl(`/api/workflows/${template.workflowId}`))
 
         if (checkResponse.status === 403) {
           alert("You don't have access to the workspace containing this template")
@@ -424,7 +425,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
 
     setIsUsing(true)
     try {
-      const response = await fetch(`/api/templates/${template.id}/use`, {
+      const response = await fetch(apiUrl(`/api/templates/${template.id}/use`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId }),
@@ -450,7 +451,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
     setIsUsing(true)
     setShowWorkspaceSelectorForEdit(false)
     try {
-      const response = await fetch(`/api/templates/${template.id}/use`, {
+      const response = await fetch(apiUrl(`/api/templates/${template.id}/use`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId, connectToTemplate: true }),
@@ -475,7 +476,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
 
     setIsApproving(true)
     try {
-      const response = await fetch(`/api/templates/${template.id}`, {
+      const response = await fetch(apiUrl(`/api/templates/${template.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'approved' }),
@@ -500,7 +501,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
 
     setIsRejecting(true)
     try {
-      const response = await fetch(`/api/templates/${template.id}`, {
+      const response = await fetch(apiUrl(`/api/templates/${template.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'rejected' }),
@@ -525,7 +526,7 @@ export default function TemplateDetails({ isWorkspaceContext = false }: Template
 
     setIsVerifying(true)
     try {
-      const response = await fetch(`/api/creators/${template.creator.id}`, {
+      const response = await fetch(apiUrl(`/api/creators/${template.creator.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ verified: !template.creator.verified }),

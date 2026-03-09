@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { useRouter } from 'next/navigation'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('useDuplicateWorkspace')
 
@@ -36,7 +37,7 @@ export function useDuplicateWorkspace({ workspaceId, onSuccess }: UseDuplicateWo
 
       setIsDuplicating(true)
       try {
-        const response = await fetch(`/api/workspaces/${workspaceId}/duplicate`, {
+        const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/duplicate`), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

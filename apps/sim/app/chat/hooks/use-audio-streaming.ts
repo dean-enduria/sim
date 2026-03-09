@@ -2,6 +2,7 @@
 
 import { type RefObject, useCallback, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('UseAudioStreaming')
 
@@ -92,7 +93,7 @@ export function useAudioStreaming(sharedAudioContextRef?: RefObject<AudioContext
       if (audioContext.state === 'suspended') {
         await audioContext.resume()
       }
-      const response = await fetch('/api/proxy/tts/stream', {
+      const response = await fetch(apiUrl('/api/proxy/tts/stream'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

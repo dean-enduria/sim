@@ -1,12 +1,13 @@
 import { createLogger } from '@sim/logger'
 import { useOperationQueueStore } from '@/stores/operation-queue/store'
 import type { WorkflowState } from '@/stores/workflows/workflow/types'
+import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('WorkflowSocketOperations')
 
 async function resolveUserId(): Promise<string> {
   try {
-    const res = await fetch('/api/session')
+    const res = await fetch(apiUrl('/api/session'))
     if (res.ok) {
       const session = await res.json()
       const userId = session?.user?.id

@@ -1,6 +1,7 @@
 import { db } from '@sim/db'
 import { permissions, type permissionTypeEnum, user, workspace } from '@sim/db/schema'
 import { and, eq } from 'drizzle-orm'
+import { getEnduriaUser } from '@/lib/auth/enduria-jwt'
 
 export type PermissionType = (typeof permissionTypeEnum.enumValues)[number]
 export interface WorkspaceBasic {
@@ -84,6 +85,12 @@ export async function checkWorkspaceAccess(
     return { exists: false, hasAccess: false, canWrite: false, workspace: null }
   }
 
+  // Org-scoping: verify workspace belongs to user's org
+  const orgCheck = await verifyWorkspaceOrg(workspaceId)
+  if (!orgCheck.ok) {
+    return { exists: true, hasAccess: false, canWrite: false, workspace: ws }
+  }
+
   if (ws.ownerId === userId) {
     return { exists: true, hasAccess: true, canWrite: true, workspace: ws }
   }
@@ -123,6 +130,14 @@ export async function getUserEntityPermissions(
   entityType: string,
   entityId: string
 ): Promise<PermissionType | null> {
+  // For workspaces, also check ownership — owners have implicit admin access
+  if (entityType === 'workspace') {
+    const ws = await getWorkspaceWithOwner(entityId)
+    if (ws && ws.ownerId === userId) {
+      return 'admin'
+    }
+  }
+
   const result = await db
     .select({ permissionType: permissions.permissionType })
     .from(permissions)
@@ -283,4 +298,45 @@ export async function getManageableWorkspaces(userId: string): Promise<
   ]
 
   return combined
+}
+
+/**
+ * Verify that a workspace belongs to the authenticated Enduria user's org.
+ *
+ * Returns `{ ok: true, orgId }` when the workspace's orgId matches the
+ * JWT-derived orgId.  Returns `{ ok: false, status, error }` otherwise,
+ * ready to be turned into a NextResponse.
+ *
+ * When there is no Enduria JWT present (e.g. local dev without proxy),
+ * the check is silently skipped (`ok: true`) so that internal / session
+ * auth still works.
+ */
+export async function verifyWorkspaceOrg(
+  workspaceId: string
+): Promise<
+  | { ok: true; orgId: string | null }
+  | { ok: false; status: 401 | 403; error: string }
+> {
+  const enduriaUser = await getEnduriaUser()
+
+  // No Enduria JWT present — skip org-scoping (local dev / internal call)
+  if (!enduriaUser) {
+    return { ok: true, orgId: null }
+  }
+
+  const [ws] = await db
+    .select({ id: workspace.id, orgId: workspace.orgId })
+    .from(workspace)
+    .where(eq(workspace.id, workspaceId))
+    .limit(1)
+
+  if (!ws) {
+    return { ok: false, status: 403, error: 'Forbidden' }
+  }
+
+  if (ws.orgId !== enduriaUser.orgId) {
+    return { ok: false, status: 403, error: 'Forbidden' }
+  }
+
+  return { ok: true, orgId: enduriaUser.orgId }
 }

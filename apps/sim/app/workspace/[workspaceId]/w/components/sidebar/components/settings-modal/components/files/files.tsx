@@ -15,6 +15,7 @@ import {
   Tooltip,
   Trash,
 } from '@/components/emcn'
+import { apiUrl } from '@/lib/api/fetcher'
 import { Input, Skeleton } from '@/components/ui'
 import { getEnv, isTruthy } from '@/lib/core/config/env'
 import { cn } from '@/lib/core/utils/cn'
@@ -149,7 +150,7 @@ export function Files() {
 
     setDownloadingFileId(file.id)
     try {
-      const response = await fetch(`/api/workspaces/${workspaceId}/files/${file.id}/download`, {
+      const response = await fetch(apiUrl(`/api/workspaces/${workspaceId}/files/${file.id}/download`), {
         method: 'POST',
       })
 
