@@ -11,7 +11,6 @@ import { useRegisterGlobalCommands } from '@/app/workspace/[workspaceId]/provide
 import { useUserPermissionsContext } from '@/app/workspace/[workspaceId]/providers/workspace-permissions-provider'
 import { createCommands } from '@/app/workspace/[workspaceId]/utils/commands-utils'
 import {
-  HelpModal,
   NavItemContextMenu,
   SearchModal,
   SettingsModal,
@@ -98,19 +97,11 @@ export const Sidebar = memo(function Sidebar() {
   const { handleExportWorkspace: exportWorkspace } = useExportWorkspace()
 
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false)
-  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const {
     isOpen: isSettingsModalOpen,
     openModal: openSettingsModal,
     closeModal: closeSettingsModal,
   } = useSettingsModalStore()
-
-  /** Listens for external events to open help modal */
-  useEffect(() => {
-    const handleOpenHelpModal = () => setIsHelpModalOpen(true)
-    window.addEventListener('open-help-modal', handleOpenHelpModal)
-    return () => window.removeEventListener('open-help-modal', handleOpenHelpModal)
-  }, [])
 
   /** Listens for scroll events and scrolls items into view if off-screen */
   useEffect(() => {
@@ -277,7 +268,7 @@ export const Sidebar = memo(function Sidebar() {
           id: 'help',
           label: 'Help',
           icon: HelpCircle,
-          onClick: () => setIsHelpModalOpen(true),
+          onClick: () => window.open('/docs/workflows', '_blank'),
         },
         {
           id: 'settings',
@@ -738,12 +729,6 @@ export const Sidebar = memo(function Sidebar() {
       />
 
       {/* Footer Navigation Modals */}
-      <HelpModal
-        open={isHelpModalOpen}
-        onOpenChange={setIsHelpModalOpen}
-        workflowId={workflowId}
-        workspaceId={workspaceId}
-      />
       <SettingsModal
         open={isSettingsModalOpen}
         onOpenChange={(open) => (open ? openSettingsModal() : closeSettingsModal())}
