@@ -159,7 +159,7 @@ const ModalContent = React.forwardRef<
         className={cn(
           ANIMATION_CLASSES,
           CONTENT_ANIMATION_CLASSES,
-          'fixed top-[50%] left-[50%] z-[500] flex max-h-[84vh] translate-x-[-50%] translate-y-[-50%] flex-col overflow-hidden rounded-[8px] border bg-[var(--bg)] shadow-sm duration-200',
+          'fixed top-[50%] left-[50%] z-[500] flex max-h-[84vh] translate-x-[-50%] translate-y-[-50%] flex-col overflow-hidden rounded-lg border border-border/40 bg-card shadow-sm duration-200',
           MODAL_SIZES[size],
           className
         )}
@@ -200,7 +200,7 @@ const ModalHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
       )}
       {...props}
     >
-      <DialogPrimitive.Title className='min-w-0 font-medium text-[16px] text-[var(--text-primary)] leading-snug'>
+      <DialogPrimitive.Title className='min-w-0 text-sm font-semibold text-foreground leading-snug'>
         {children}
       </DialogPrimitive.Title>
       <DialogPrimitive.Close asChild>
@@ -307,7 +307,7 @@ const ModalTabsList = React.forwardRef<
       </div>
       <span
         className={cn(
-          'pointer-events-none absolute bottom-0 h-[1px] rounded-full bg-[var(--text-primary)]',
+          'pointer-events-none absolute bottom-0 h-[1px] rounded-full bg-foreground',
           ready && 'transition-all duration-200 ease-out'
         )}
         style={{ left: indicator.left, width: indicator.width }}
@@ -328,8 +328,8 @@ const ModalTabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'px-1 pb-[8px] font-medium text-[13px] text-[var(--text-secondary)] transition-colors',
-      'hover:text-[var(--text-primary)] data-[state=active]:text-[var(--text-primary)]',
+      'px-1 pb-[8px] font-medium text-[13px] text-muted-foreground transition-colors',
+      'hover:text-foreground data-[state=active]:text-foreground',
       className
     )}
     {...props}
@@ -359,7 +359,7 @@ const ModalBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
     <div
       ref={ref}
       className={cn(
-        'flex-1 overflow-y-auto border-t bg-[var(--surface-2)] px-[14px] py-[10px]',
+        'flex-1 overflow-y-auto border-t border-border/40 bg-accent px-[14px] py-[10px]',
         className
       )}
       {...props}
@@ -377,7 +377,7 @@ const ModalFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
     <div
       ref={ref}
       className={cn(
-        'flex justify-end gap-[8px] border-t bg-[var(--surface-2)] px-[16px] py-[10px]',
+        'flex justify-end gap-[8px] border-t border-border/40 bg-accent px-[16px] py-[10px]',
         className
       )}
       {...props}

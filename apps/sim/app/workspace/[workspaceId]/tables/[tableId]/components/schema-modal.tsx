@@ -33,7 +33,7 @@ export function SchemaModal({ isOpen, onClose, columns, tableName }: SchemaModal
         <ModalBody className='max-h-[60vh] overflow-y-auto'>
           <div className='mb-[10px] flex items-center justify-between gap-[8px]'>
             {tableName ? (
-              <span className='truncate font-medium text-[13px] text-[var(--text-primary)]'>
+              <span className='truncate font-medium text-[13px] text-foreground'>
                 {tableName}
               </span>
             ) : (
@@ -74,7 +74,7 @@ export function SchemaModal({ isOpen, onClose, columns, tableName }: SchemaModal
                         </Badge>
                       )}
                       {!column.required && !column.unique && (
-                        <span className='text-[var(--text-muted)]'>None</span>
+                        <span className='text-muted-foreground'>None</span>
                       )}
                     </div>
                   </TableCell>

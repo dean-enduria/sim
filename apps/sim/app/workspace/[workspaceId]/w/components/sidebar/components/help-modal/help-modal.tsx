@@ -438,7 +438,7 @@ export function HelpModal({ open, onOpenChange, workflowId, workspaceId }: HelpM
                     placeholder='Select a request type'
                     editable={false}
                     filterOptions={false}
-                    className={cn(errors.type && 'border-[var(--text-error)]')}
+                    className={cn(errors.type && 'border-destructive')}
                   />
                 </div>
 
@@ -448,7 +448,7 @@ export function HelpModal({ open, onOpenChange, workflowId, workspaceId }: HelpM
                     id='subject'
                     placeholder='Brief description of your request'
                     {...register('subject')}
-                    className={cn(errors.subject && 'border-[var(--text-error)]')}
+                    className={cn(errors.subject && 'border-destructive')}
                   />
                 </div>
 
@@ -459,7 +459,7 @@ export function HelpModal({ open, onOpenChange, workflowId, workspaceId }: HelpM
                     placeholder='Please provide details about your request...'
                     rows={6}
                     {...register('message')}
-                    className={cn(errors.message && 'border-[var(--text-error)]')}
+                    className={cn(errors.message && 'border-destructive')}
                   />
                 </div>
 
@@ -474,9 +474,9 @@ export function HelpModal({ open, onOpenChange, workflowId, workspaceId }: HelpM
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     className={cn(
-                      '!bg-[var(--surface-1)] hover:!bg-[var(--surface-4)] w-full justify-center border border-[var(--border-1)] border-dashed py-[10px]',
+                      '!bg-card hover:!bg-accent w-full justify-center border border-border/40 border-dashed py-[10px]',
                       {
-                        'border-[var(--surface-7)]': isDragging,
+                        'border-foreground': isDragging,
                       }
                     )}
                   >
@@ -489,10 +489,10 @@ export function HelpModal({ open, onOpenChange, workflowId, workspaceId }: HelpM
                       multiple
                     />
                     <div className='flex flex-col gap-[2px] text-center'>
-                      <span className='text-[var(--text-primary)]'>
+                      <span className='text-foreground'>
                         {isDragging ? 'Drop images here' : 'Drop images here or click to browse'}
                       </span>
-                      <span className='text-[11px] text-[var(--text-tertiary)]'>
+                      <span className='text-[11px] text-muted-foreground/70'>
                         PNG, JPEG, WebP, GIF (max 20MB each)
                       </span>
                     </div>

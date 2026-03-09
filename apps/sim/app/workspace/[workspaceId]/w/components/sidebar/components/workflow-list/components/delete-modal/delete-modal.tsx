@@ -68,7 +68,7 @@ export function DeleteModal({
         return (
           <>
             Are you sure you want to delete{' '}
-            <span className='font-medium text-[var(--text-primary)]'>
+            <span className='font-medium text-foreground'>
               {displayNames.join(', ')}
             </span>
             ? This will permanently remove all associated blocks, executions, and configuration.
@@ -79,7 +79,7 @@ export function DeleteModal({
         return (
           <>
             Are you sure you want to delete{' '}
-            <span className='font-medium text-[var(--text-primary)]'>{displayNames[0]}</span>? This
+            <span className='font-medium text-foreground'>{displayNames[0]}</span>? This
             will permanently remove all associated blocks, executions, and configuration.
           </>
         )
@@ -92,7 +92,7 @@ export function DeleteModal({
         return (
           <>
             Are you sure you want to delete{' '}
-            <span className='font-medium text-[var(--text-primary)]'>
+            <span className='font-medium text-foreground'>
               {displayNames.join(', ')}
             </span>
             ? This will permanently remove all workflows, logs, and knowledge bases within these
@@ -104,7 +104,7 @@ export function DeleteModal({
         return (
           <>
             Are you sure you want to delete{' '}
-            <span className='font-medium text-[var(--text-primary)]'>{displayNames[0]}</span>? This
+            <span className='font-medium text-foreground'>{displayNames[0]}</span>? This
             will permanently remove all associated workflows, logs, and knowledge bases.
           </>
         )
@@ -117,7 +117,7 @@ export function DeleteModal({
         return (
           <>
             Are you sure you want to delete{' '}
-            <span className='font-medium text-[var(--text-primary)]'>
+            <span className='font-medium text-foreground'>
               {displayNames.join(', ')}
             </span>
             ? This will permanently remove all selected workflows and folders, including their
@@ -133,7 +133,7 @@ export function DeleteModal({
       return (
         <>
           Are you sure you want to delete{' '}
-          <span className='font-medium text-[var(--text-primary)]'>{displayNames[0]}</span>? This
+          <span className='font-medium text-foreground'>{displayNames[0]}</span>? This
           will permanently remove all associated workflows, folders, logs, and knowledge bases.
         </>
       )
@@ -146,9 +146,9 @@ export function DeleteModal({
       <ModalContent size='sm'>
         <ModalHeader>{title}</ModalHeader>
         <ModalBody>
-          <p className='text-[12px] text-[var(--text-secondary)]'>
+          <p className='text-xs text-muted-foreground'>
             {renderDescription()}{' '}
-            <span className='text-[var(--text-error)]'>This action cannot be undone.</span>
+            <span className='text-destructive'>This action cannot be undone.</span>
           </p>
         </ModalBody>
         <ModalFooter>

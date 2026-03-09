@@ -75,7 +75,7 @@ const SModalContent = React.forwardRef<
         className={cn(
           ANIMATION_CLASSES,
           CONTENT_ANIMATION_CLASSES,
-          'fixed top-[50%] left-[50%] z-[500] flex h-[min(calc(100vh-8rem),900px)] min-h-[400px] w-[min(calc(100vw-8rem),1080px)] min-w-[520px] translate-x-[-50%] translate-y-[-50%] flex-row rounded-[8px] border bg-[var(--bg)] shadow-sm duration-200',
+          'fixed top-[50%] left-[50%] z-[500] flex h-[min(calc(100vh-8rem),900px)] min-h-[400px] w-[min(calc(100vw-8rem),1080px)] min-w-[520px] translate-x-[-50%] translate-y-[-50%] flex-row rounded-lg border border-border/40 bg-card shadow-sm duration-200',
           className
         )}
         style={style}
@@ -125,7 +125,7 @@ const SModalSidebarHeader = React.forwardRef<HTMLDivElement, React.HTMLAttribute
     <div
       ref={ref}
       className={cn(
-        'mb-[16px] px-[12px] font-medium text-[16px] text-[var(--text-primary)]',
+        'mb-[16px] px-[12px] text-sm font-semibold text-foreground',
         className
       )}
       {...props}
@@ -159,7 +159,7 @@ const SModalSidebarSectionTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('mb-[2px] font-medium text-[12px] text-[var(--text-muted)]', className)}
+    className={cn('mb-[2px] font-medium text-[12px] text-muted-foreground', className)}
     {...props}
   />
 ))
@@ -189,7 +189,7 @@ function SModalSidebarItem({
       className={cn(
         'w-full justify-start gap-[8px] rounded-[6px] border-0 text-[13px]',
         !active &&
-          'text-[var(--text-tertiary)] hover:bg-[var(--surface-6)] hover:text-[var(--text-primary)] dark:hover:bg-[var(--border)]',
+          'text-muted-foreground/70 hover:bg-accent hover:text-foreground',
         className
       )}
       {...props}
@@ -212,7 +212,7 @@ const SModalMain = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
     <div
       ref={ref}
       className={cn(
-        'flex min-w-0 flex-1 flex-col gap-[16px] overflow-hidden rounded-[8px] border-l bg-[var(--surface-2)] p-[14px]',
+        'flex min-w-0 flex-1 flex-col gap-[16px] overflow-hidden rounded-lg border-l border-border/40 bg-accent p-[14px]',
         className
       )}
       {...props}
@@ -228,7 +228,7 @@ SModalMain.displayName = 'SModalMain'
 const SModalMainHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => (
     <div ref={ref} className={cn('flex items-center justify-between', className)} {...props}>
-      <span className='font-base text-[14px] text-[var(--text-muted)]'>{children}</span>
+      <span className='text-xs text-muted-foreground'>{children}</span>
       <DialogPrimitive.Close asChild>
         <Button variant='ghost' className='h-[16px] w-[16px] p-0'>
           <X className='h-[16px] w-[16px]' />
@@ -324,7 +324,7 @@ const SModalTabsList = React.forwardRef<
       </div>
       <span
         className={cn(
-          'pointer-events-none absolute bottom-0 h-[1px] rounded-full bg-[var(--text-primary)]',
+          'pointer-events-none absolute bottom-0 h-[1px] rounded-full bg-foreground',
           ready && 'transition-all duration-200 ease-out'
         )}
         style={{ left: indicator.left, width: indicator.width }}
@@ -345,8 +345,8 @@ const SModalTabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'px-1 pb-[8px] font-medium text-[13px] text-[var(--text-secondary)] transition-colors',
-      'hover:text-[var(--text-primary)] data-[state=active]:text-[var(--text-primary)]',
+      'px-1 pb-[8px] font-medium text-[13px] text-muted-foreground transition-colors',
+      'hover:text-foreground data-[state=active]:text-foreground',
       className
     )}
     {...props}
@@ -376,7 +376,7 @@ const SModalTabsBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTM
     <div
       ref={ref}
       className={cn(
-        'min-h-0 flex-1 overflow-y-auto border-[var(--border)] border-t pt-[10px]',
+        'min-h-0 flex-1 overflow-y-auto border-border/40 border-t pt-[10px]',
         className
       )}
       {...props}
