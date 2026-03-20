@@ -474,6 +474,11 @@ export async function verifyProviderAuth(
   const rawProviderConfig = (foundWebhook.providerConfig as Record<string, any>) || {}
   const providerConfig = resolveProviderConfigEnvVars(rawProviderConfig, decryptedEnvVars)
 
+  if (foundWebhook.provider === 'enduria') {
+    // Auth validated at /api/webhooks/enduria receiver before fan-out
+    return null
+  }
+
   if (foundWebhook.provider === 'microsoft-teams') {
     if (providerConfig.hmacSecret) {
       const authHeader = request.headers.get('authorization')
@@ -971,6 +976,25 @@ export async function queueWebhookExecution(
         return NextResponse.json({
           message: 'Payload does not match trigger configuration. Ignoring.',
         })
+      }
+    }
+
+    if (foundWebhook.provider === 'enduria') {
+      const providerConfig = (foundWebhook.providerConfig as Record<string, any>) || {}
+      const triggerId = providerConfig.triggerId as string | undefined
+
+      if (triggerId && triggerId !== 'enduria_webhook') {
+        const { isEnduriaEventMatch } = await import('@/triggers/enduria/utils')
+        const incomingEvent = body.event as string
+
+        if (!isEnduriaEventMatch(triggerId, incomingEvent)) {
+          logger.debug(
+            `[${options.requestId}] Enduria event mismatch: ${incomingEvent} vs trigger ${triggerId}`
+          )
+          return NextResponse.json({
+            message: 'Event type does not match trigger configuration. Ignoring.',
+          })
+        }
       }
     }
 
