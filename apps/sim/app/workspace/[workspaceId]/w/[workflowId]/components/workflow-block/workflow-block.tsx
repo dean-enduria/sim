@@ -1209,7 +1209,7 @@ export const WorkflowBlock = memo(function WorkflowBlock({
         ref={contentRef}
         onClick={handleClick}
         className={cn(
-          'workflow-drag-handle relative z-[20] w-[250px] cursor-grab select-none rounded-[8px] border border-[var(--border-1)] bg-[var(--surface-2)] [&:active]:cursor-grabbing'
+          'workflow-drag-handle relative z-[20] w-[250px] cursor-grab select-none rounded-[var(--node-radius)] border border-[var(--node-border)] bg-[var(--node-bg)] backdrop-blur-sm transition-all duration-300 group-hover:[box-shadow:var(--node-hover-shadow)] [&:active]:cursor-grabbing'
         )}
       >
         {isPending && (
@@ -1241,132 +1241,149 @@ export const WorkflowBlock = memo(function WorkflowBlock({
           />
         )}
 
+        {/* Header with gradient color bleed */}
         <div
-          className={cn(
-            'flex items-center justify-between p-[8px]',
-            hasContentBelowHeader && 'border-[var(--border-1)] border-b'
-          )}
+          className='relative overflow-hidden rounded-t-[var(--node-radius)] p-[10px]'
+          style={{
+            background: isEnabled
+              ? `linear-gradient(135deg, ${config.bgColor}18 0%, transparent 60%)`
+              : undefined,
+          }}
         >
-          <div className='relative z-10 flex min-w-0 flex-1 items-center gap-[10px]'>
+          {/* Subtle top-edge highlight */}
+          <div className='pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.08)] to-transparent' />
+
+          <div className='relative z-10 flex min-w-0 items-center gap-[10px]'>
+            {/* Circular icon with color ring */}
             <div
-              className='flex h-[24px] w-[24px] flex-shrink-0 items-center justify-center rounded-[6px]'
+              className='flex h-[28px] w-[28px] flex-shrink-0 items-center justify-center rounded-full'
               style={{
                 background: isEnabled ? config.bgColor : 'gray',
+                boxShadow: isEnabled
+                  ? `0 0 14px ${config.bgColor}50, inset 0 1px 0 rgba(255,255,255,0.2)`
+                  : 'none',
               }}
             >
-              <config.icon className='h-[16px] w-[16px] text-white' />
+              <config.icon className='h-[14px] w-[14px] text-white' />
             </div>
+            {/* Name */}
             <span
               className={cn(
-                'truncate font-medium text-[16px]',
+                'min-w-0 flex-1 truncate text-[13px] font-medium',
                 !isEnabled && runPathStatus !== 'success' && 'text-[var(--text-muted)]'
               )}
               title={name}
             >
               {name}
             </span>
-          </div>
-          <div className='relative z-10 flex flex-shrink-0 items-center gap-1'>
-            {isWorkflowSelector &&
-              childWorkflowId &&
-              typeof childIsDeployed === 'boolean' &&
-              (!childIsDeployed || childNeedsRedeploy) && (
+            {/* Status badges */}
+            <div className='relative z-10 flex flex-shrink-0 items-center gap-1'>
+              {isWorkflowSelector &&
+                childWorkflowId &&
+                typeof childIsDeployed === 'boolean' &&
+                (!childIsDeployed || childNeedsRedeploy) && (
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <Badge
+                        variant={!childIsDeployed ? 'red' : 'amber'}
+                        className={
+                          userPermissions.canAdmin ? 'cursor-pointer' : 'cursor-not-allowed'
+                        }
+                        dot
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (childWorkflowId && !isDeploying && userPermissions.canAdmin) {
+                            deployChildWorkflow({ workflowId: childWorkflowId })
+                          }
+                        }}
+                      >
+                        {isDeploying
+                          ? 'Deploying...'
+                          : !childIsDeployed
+                            ? 'undeployed'
+                            : 'redeploy'}
+                      </Badge>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      <span className='text-sm'>
+                        {!userPermissions.canAdmin
+                          ? 'Admin permission required to deploy'
+                          : !childIsDeployed
+                            ? 'Click to deploy'
+                            : 'Click to redeploy'}
+                      </span>
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                )}
+              {!isEnabled && !isLocked && <Badge variant='gray-secondary'>disabled</Badge>}
+              {isLocked && <Badge variant='gray-secondary'>locked</Badge>}
+
+              {type === 'schedule' && shouldShowScheduleBadge && scheduleInfo?.isDisabled && (
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <Badge
-                      variant={!childIsDeployed ? 'red' : 'amber'}
-                      className={userPermissions.canAdmin ? 'cursor-pointer' : 'cursor-not-allowed'}
+                      variant='amber'
+                      className='cursor-pointer'
                       dot
                       onClick={(e) => {
                         e.stopPropagation()
-                        if (childWorkflowId && !isDeploying && userPermissions.canAdmin) {
-                          deployChildWorkflow({ workflowId: childWorkflowId })
+                        if (scheduleInfo?.id) {
+                          reactivateSchedule(scheduleInfo.id)
                         }
                       }}
                     >
-                      {isDeploying ? 'Deploying...' : !childIsDeployed ? 'undeployed' : 'redeploy'}
+                      disabled
                     </Badge>
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    <span className='text-sm'>
-                      {!userPermissions.canAdmin
-                        ? 'Admin permission required to deploy'
-                        : !childIsDeployed
-                          ? 'Click to deploy'
-                          : 'Click to redeploy'}
-                    </span>
+                    <span className='text-sm'>Click to reactivate</span>
                   </Tooltip.Content>
                 </Tooltip.Root>
               )}
-            {!isEnabled && !isLocked && <Badge variant='gray-secondary'>disabled</Badge>}
-            {isLocked && <Badge variant='gray-secondary'>locked</Badge>}
 
-            {type === 'schedule' && shouldShowScheduleBadge && scheduleInfo?.isDisabled && (
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <Badge
-                    variant='amber'
-                    className='cursor-pointer'
-                    dot
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      if (scheduleInfo?.id) {
-                        reactivateSchedule(scheduleInfo.id)
-                      }
-                    }}
-                  >
-                    disabled
-                  </Badge>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  <span className='text-sm'>Click to reactivate</span>
-                </Tooltip.Content>
-              </Tooltip.Root>
-            )}
+              {showWebhookIndicator && (
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <Badge variant='orange' dot>
+                      Webhook
+                    </Badge>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content side='top' className='max-w-[300px]'>
+                    {webhookProvider && webhookPath ? (
+                      <>
+                        <p className='text-sm'>{getProviderName(webhookProvider)} Webhook</p>
+                        <p className='mt-1 text-muted-foreground text-xs'>Path: {webhookPath}</p>
+                      </>
+                    ) : (
+                      <p className='text-muted-foreground text-sm'>
+                        This workflow is triggered by a webhook.
+                      </p>
+                    )}
+                  </Tooltip.Content>
+                </Tooltip.Root>
+              )}
 
-            {showWebhookIndicator && (
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <Badge variant='orange' dot>
-                    Webhook
-                  </Badge>
-                </Tooltip.Trigger>
-                <Tooltip.Content side='top' className='max-w-[300px]'>
-                  {webhookProvider && webhookPath ? (
-                    <>
-                      <p className='text-sm'>{getProviderName(webhookProvider)} Webhook</p>
-                      <p className='mt-1 text-muted-foreground text-xs'>Path: {webhookPath}</p>
-                    </>
-                  ) : (
-                    <p className='text-muted-foreground text-sm'>
-                      This workflow is triggered by a webhook.
-                    </p>
-                  )}
-                </Tooltip.Content>
-              </Tooltip.Root>
-            )}
-
-            {isWebhookConfigured && isWebhookDisabled && webhookId && (
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <Badge
-                    variant='amber'
-                    className='cursor-pointer'
-                    dot
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      reactivateWebhook(webhookId)
-                    }}
-                  >
-                    disabled
-                  </Badge>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  <span className='text-sm'>Click to reactivate</span>
-                </Tooltip.Content>
-              </Tooltip.Root>
-            )}
-            {/* {isActive && (
+              {isWebhookConfigured && isWebhookDisabled && webhookId && (
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <Badge
+                      variant='amber'
+                      className='cursor-pointer'
+                      dot
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        reactivateWebhook(webhookId)
+                      }}
+                    >
+                      disabled
+                    </Badge>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    <span className='text-sm'>Click to reactivate</span>
+                  </Tooltip.Content>
+                </Tooltip.Root>
+              )}
+              {/* {isActive && (
               <div className='mr-[2px] ml-2 flex h-[16px] w-[16px] items-center justify-center'>
                 <div
                   className='h-full w-full animate-spin-slow rounded-full border-[2.5px] border-[rgba(255,102,0,0.25)] border-t-[var(--warning)]'
@@ -1374,11 +1391,16 @@ export const WorkflowBlock = memo(function WorkflowBlock({
                 />
               </div>
             )} */}
+            </div>
           </div>
         </div>
 
         {hasContentBelowHeader && (
-          <div className='flex flex-col gap-[8px] p-[8px]'>
+          <div className='mx-[8px] h-[1px] bg-gradient-to-r from-transparent via-[var(--border)] to-transparent' />
+        )}
+
+        {hasContentBelowHeader && (
+          <div className='flex flex-col gap-[6px] px-[10px] py-[8px]'>
             {type === 'condition' ? (
               conditionRows.map((cond) => (
                 <SubBlockRow key={cond.id} title={cond.title} value={getDisplayValue(cond.value)} />
