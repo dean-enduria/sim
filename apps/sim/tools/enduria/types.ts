@@ -75,6 +75,8 @@ export interface EnduriaCreateIncidentParams extends EnduriaBaseParams {
   severity?: string
   affectedService?: string
   reportedBy?: string
+  impact?: string
+  urgency?: string
 }
 
 export interface EnduriaCreateIncidentResponse extends ToolResponse {
