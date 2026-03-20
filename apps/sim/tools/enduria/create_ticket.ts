@@ -70,7 +70,7 @@ export const createTicketTool: ToolConfig<
       if (!baseUrl) {
         throw new Error('Enduria API URL is required')
       }
-      return `${baseUrl}/api/tickets`
+      return `${baseUrl}/api/unified-tickets`
     },
     method: 'POST',
     headers: (params) => {
@@ -86,12 +86,13 @@ export const createTicketTool: ToolConfig<
     },
     body: (params) => {
       const body: Record<string, any> = {
+        type: 'ticket',
         title: params.title,
         description: params.description,
       }
       if (params.priority) body.priority = params.priority
       if (params.category) body.category = params.category
-      if (params.assignee) body.assignee = params.assignee
+      if (params.assignee) body.assignedTo = params.assignee
       return body
     },
   },

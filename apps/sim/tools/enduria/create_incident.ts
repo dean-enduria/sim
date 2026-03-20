@@ -65,6 +65,16 @@ export const createIncidentTool: ToolConfig<
       visibility: 'user-or-llm',
       description: 'User ID or email of the person reporting the incident',
     },
+    impact: {
+      type: 'string',
+      required: false,
+      description: 'Impact level (low, medium, high, critical)',
+    },
+    urgency: {
+      type: 'string',
+      required: false,
+      description: 'Urgency level (low, medium, high, critical)',
+    },
   },
 
   request: {
@@ -73,7 +83,7 @@ export const createIncidentTool: ToolConfig<
       if (!baseUrl) {
         throw new Error('Enduria API URL is required')
       }
-      return `${baseUrl}/api/incidents`
+      return `${baseUrl}/api/unified-tickets`
     },
     method: 'POST',
     headers: (params) => {
@@ -89,12 +99,15 @@ export const createIncidentTool: ToolConfig<
     },
     body: (params) => {
       const body: Record<string, any> = {
+        type: 'incident',
         title: params.title,
         description: params.description,
       }
       if (params.severity) body.severity = params.severity
-      if (params.affectedService) body.affectedService = params.affectedService
+      if (params.affectedService) body.affectedServices = [params.affectedService]
       if (params.reportedBy) body.reportedBy = params.reportedBy
+      body.impact = params.impact || 'medium'
+      body.urgency = params.urgency || 'medium'
       return body
     },
   },

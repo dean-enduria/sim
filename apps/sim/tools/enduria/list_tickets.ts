@@ -64,7 +64,8 @@ export const listTicketsTool: ToolConfig<
       if (!baseUrl) {
         throw new Error('Enduria API URL is required')
       }
-      const url = new URL(`${baseUrl}/api/tickets`)
+      const url = new URL(`${baseUrl}/api/unified-tickets`)
+      url.searchParams.set('type', 'ticket')
       if (params.status) url.searchParams.set('status', params.status)
       if (params.priority) url.searchParams.set('priority', params.priority)
       if (params.assignedTo) url.searchParams.set('assignedTo', params.assignedTo)

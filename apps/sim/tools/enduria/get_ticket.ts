@@ -46,7 +46,7 @@ export const getTicketTool: ToolConfig<EnduriaGetTicketParams, EnduriaGetTicketR
       if (!params.ticketId) {
         throw new Error('Ticket ID is required')
       }
-      return `${baseUrl}/api/tickets/${params.ticketId}`
+      return `${baseUrl}/api/unified-tickets/${params.ticketId}`
     },
     method: 'GET',
     headers: (params) => {
