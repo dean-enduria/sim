@@ -2,18 +2,40 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
-import { Database, HelpCircle, Layout, Plus, Search, Settings } from 'lucide-react'
+import {
+  Database,
+  Ellipsis,
+  HelpCircle,
+  Layout,
+  Plus,
+  Search,
+  Settings,
+  Workflow as WorkflowIcon,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { Button, Download, FolderPlus, Library, Loader, Tooltip } from '@/components/emcn'
+import {
+  Button,
+  Download,
+  FolderPlus,
+  Library,
+  Loader,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Tooltip,
+} from '@/components/emcn'
 import { useSession } from '@/lib/auth/auth-client'
+import { getEnv, isTruthy } from '@/lib/core/config/env'
 import { useRegisterGlobalCommands } from '@/app/workspace/[workspaceId]/providers/global-commands-provider'
 import { useUserPermissionsContext } from '@/app/workspace/[workspaceId]/providers/workspace-permissions-provider'
 import { createCommands } from '@/app/workspace/[workspaceId]/utils/commands-utils'
 import {
+  HelpModal,
   NavItemContextMenu,
   SearchModal,
   SettingsModal,
+  UsageIndicator,
   WorkflowList,
   WorkspaceHeader,
 } from '@/app/workspace/[workspaceId]/w/components/sidebar/components'
@@ -40,6 +62,7 @@ import { useSidebarStore } from '@/stores/sidebar/store'
 const logger = createLogger('Sidebar')
 
 /** Feature flag for billing usage indicator visibility */
+const isBillingEnabled = isTruthy(getEnv('NEXT_PUBLIC_BILLING_ENABLED'))
 
 /** Event name for sidebar scroll operations - centralized for consistency */
 export const SIDEBAR_SCROLL_EVENT = 'sidebar-scroll-to-item'
@@ -97,11 +120,19 @@ export const Sidebar = memo(function Sidebar() {
   const { handleExportWorkspace: exportWorkspace } = useExportWorkspace()
 
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false)
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const {
     isOpen: isSettingsModalOpen,
     openModal: openSettingsModal,
     closeModal: closeSettingsModal,
   } = useSettingsModalStore()
+
+  /** Listens for external events to open help modal */
+  useEffect(() => {
+    const handleOpenHelpModal = () => setIsHelpModalOpen(true)
+    window.addEventListener('open-help-modal', handleOpenHelpModal)
+    return () => window.removeEventListener('open-help-modal', handleOpenHelpModal)
+  }, [])
 
   /** Listens for scroll events and scrolls items into view if off-screen */
   useEffect(() => {
@@ -237,6 +268,12 @@ export const Sidebar = memo(function Sidebar() {
     () =>
       [
         {
+          id: 'flows',
+          label: 'Flows',
+          icon: WorkflowIcon,
+          href: `/workspace/${workspaceId}/w`,
+        },
+        {
           id: 'logs',
           label: 'Logs',
           icon: Library,
@@ -268,7 +305,7 @@ export const Sidebar = memo(function Sidebar() {
           id: 'help',
           label: 'Help',
           icon: HelpCircle,
-          onClick: () => window.open('/docs/workflows', '_blank'),
+          onClick: () => setIsHelpModalOpen(true),
         },
         {
           id: 'settings',
@@ -515,7 +552,7 @@ export const Sidebar = memo(function Sidebar() {
             aria-label='Workspace sidebar'
             onClick={handleSidebarClick}
           >
-            <div className='flex h-full flex-col border-r border-[var(--border-soft)] pt-[12px]'>
+            <div className='flex h-full flex-col border-[var(--glass-border)] border-r pt-[12px]'>
               {/* Header */}
               <div className='flex-shrink-0 px-[14px]'>
                 <WorkspaceHeader
@@ -542,18 +579,77 @@ export const Sidebar = memo(function Sidebar() {
                 />
               </div>
 
+              {/* Navigation: Flows tab + More dropdown */}
+              <div className='mx-[8px] mt-[10px] flex flex-shrink-0 items-center gap-[4px]'>
+                {/* Flows — primary tab */}
+                <Link
+                  href={`/workspace/${workspaceId}/w`}
+                  className={`flex flex-1 items-center justify-center gap-[5px] rounded-[10px] border px-[8px] py-[5px] text-[12px] font-medium transition-all duration-150 ${
+                    pathname?.includes('/w/')
+                      ? 'border-[var(--border-1)] bg-[var(--surface-5)] text-[var(--text-primary)]'
+                      : 'border-transparent text-[var(--text-muted)] hover:border-[var(--border)] hover:bg-[var(--surface-4)] hover:text-[var(--text-secondary)]'
+                  }`}
+                >
+                  <WorkflowIcon className='h-[13px] w-[13px] flex-shrink-0' />
+                  <span>Flows</span>
+                </Link>
+
+                {/* More — secondary destinations */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type='button'
+                      className={`flex h-[31px] w-[31px] flex-shrink-0 items-center justify-center rounded-[10px] border transition-all duration-150 ${
+                        pathname &&
+                        !pathname.includes('/w/') &&
+                        !pathname.endsWith('/w') &&
+                        (
+                          pathname.includes('/logs') ||
+                            pathname.includes('/templates') ||
+                            pathname.includes('/knowledge')
+                        )
+                          ? 'border-[var(--border-1)] bg-[var(--surface-5)] text-[var(--text-primary)]'
+                          : 'border-transparent text-[var(--text-muted)] hover:border-[var(--border)] hover:bg-[var(--surface-4)] hover:text-[var(--text-secondary)]'
+                      }`}
+                    >
+                      <Ellipsis className='h-[14px] w-[14px]' />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align='start' sideOffset={6} className='w-[180px] p-[4px]'>
+                    {footerNavigationItems
+                      .filter((item) => item.href && item.id !== 'flows')
+                      .map((item) => {
+                        const Icon = item.icon
+                        const active = item.href ? pathname?.startsWith(item.href) : false
+                        return (
+                          <Link
+                            key={item.id}
+                            href={item.href!}
+                            className={`flex items-center gap-[8px] rounded-[8px] px-[10px] py-[6px] text-[13px] font-medium transition-colors duration-100 ${
+                              active
+                                ? 'bg-[var(--surface-5)] text-[var(--text-primary)]'
+                                : 'text-[var(--text-secondary)] hover:bg-[var(--surface-4)] hover:text-[var(--text-primary)]'
+                            }`}
+                          >
+                            <Icon className='h-[14px] w-[14px] flex-shrink-0' />
+                            <span>{item.label}</span>
+                          </Link>
+                        )
+                      })}
+                  </PopoverContent>
+                </Popover>
+              </div>
+
               {/* Search */}
               <div
-                className='mx-2 mt-2.5 flex flex-shrink-0 cursor-pointer items-center justify-between rounded-lg border border-[var(--border-soft)] bg-transparent px-2 py-1.5 transition-colors duration-100 hover:bg-accent'
+                className='mx-[8px] mt-[8px] flex flex-shrink-0 cursor-pointer items-center justify-between rounded-[10px] border border-[var(--border)] px-[10px] py-[6px] transition-colors duration-150 hover:border-[var(--border-1)] hover:bg-[var(--surface-4)]'
                 onClick={() => setIsSearchModalOpen(true)}
               >
                 <div className='flex items-center gap-[6px]'>
-                  <Search className='h-[14px] w-[14px] text-muted-foreground' />
-                  <p className='translate-y-[0.25px] font-medium text-muted-foreground text-small'>
-                    Search
-                  </p>
+                  <Search className='h-[13px] w-[13px] text-[var(--text-subtle)]' />
+                  <p className='font-medium text-[var(--text-muted)] text-[12px]'>Search</p>
                 </div>
-                <p className='font-medium text-muted-foreground/70 text-small'>⌘K</p>
+                <p className='font-medium text-[var(--text-subtle)] text-[11px]'>⌘K</p>
               </div>
 
               {/* Workflows */}
@@ -643,55 +739,34 @@ export const Sidebar = memo(function Sidebar() {
                 </div>
               </div>
 
-              {/* Footer Navigation */}
-              <div className='flex flex-shrink-0 flex-col gap-[2px] border-t border-[var(--border-soft)] px-[7.75px] pt-[8px] pb-[8px]'>
-                {footerNavigationItems.map((item) => {
-                  const Icon = item.icon
-                  const active = item.href ? pathname?.startsWith(item.href) : false
-                  const baseClasses =
-                    'group flex h-[26px] items-center gap-[8px] rounded-[8px] px-[6px] text-xs hover:bg-accent hover:text-foreground'
-                  const activeClasses = active
-                    ? 'bg-primary/10'
-                    : ''
-                  const textClasses = active
-                    ? 'text-foreground'
-                    : 'text-muted-foreground group-hover:text-foreground'
+              {/* Usage Indicator */}
+              {isBillingEnabled && <UsageIndicator />}
 
-                  const content = (
-                    <>
-                      <Icon className={`h-[14px] w-[14px] flex-shrink-0 ${textClasses}`} />
-                      <span className={`truncate font-medium text-[13px] ${textClasses}`}>
-                        {item.label}
-                      </span>
-                    </>
-                  )
-
-                  if (item.onClick) {
-                    return (
-                      <button
-                        key={item.id}
-                        type='button'
-                        data-item-id={item.id}
-                        className={`${baseClasses} ${activeClasses}`}
-                        onClick={item.onClick}
-                      >
-                        {content}
-                      </button>
-                    )
-                  }
-
-                  return (
-                    <Link
-                      key={item.id}
-                      href={item.href!}
-                      data-item-id={item.id}
-                      className={`${baseClasses} ${activeClasses}`}
-                      onContextMenu={(e) => handleNavItemContextMenu(e, item.href!)}
-                    >
-                      {content}
-                    </Link>
-                  )
-                })}
+              {/* Footer — Help & Settings only */}
+              <div className='flex flex-shrink-0 items-center justify-between border-[var(--border)] border-t px-[12px] py-[8px]'>
+                <div className='flex items-center gap-[4px]'>
+                  {footerNavigationItems
+                    .filter((item) => item.onClick)
+                    .map((item) => {
+                      const Icon = item.icon
+                      return (
+                        <Tooltip.Root key={item.id}>
+                          <Tooltip.Trigger asChild>
+                            <button
+                              type='button'
+                              className='flex h-[28px] w-[28px] items-center justify-center rounded-[8px] text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-4)] hover:text-[var(--text-primary)]'
+                              onClick={item.onClick}
+                            >
+                              <Icon className='h-[14px] w-[14px]' />
+                            </button>
+                          </Tooltip.Trigger>
+                          <Tooltip.Content>
+                            <p>{item.label}</p>
+                          </Tooltip.Content>
+                        </Tooltip.Root>
+                      )
+                    })}
+                </div>
               </div>
 
               {/* Nav Item Context Menu */}
@@ -729,6 +804,12 @@ export const Sidebar = memo(function Sidebar() {
       />
 
       {/* Footer Navigation Modals */}
+      <HelpModal
+        open={isHelpModalOpen}
+        onOpenChange={setIsHelpModalOpen}
+        workflowId={workflowId}
+        workspaceId={workspaceId}
+      />
       <SettingsModal
         open={isSettingsModalOpen}
         onOpenChange={(open) => (open ? openSettingsModal() : closeSettingsModal())}
