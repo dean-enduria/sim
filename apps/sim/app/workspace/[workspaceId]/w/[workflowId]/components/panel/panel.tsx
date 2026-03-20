@@ -408,7 +408,7 @@ export const Panel = memo(function Panel() {
     <>
       <aside
         ref={panelRef}
-        className='panel-container fixed inset-y-0 right-0 z-10 overflow-hidden bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border-l border-[var(--glass-border)] shadow-[inset_1px_0_0_0_rgba(255,255,255,0.06),inset_0_1px_0_0_rgba(255,255,255,0.04)]'
+        className='panel-container fixed top-16 bottom-0 right-0 z-10 overflow-hidden bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border-l border-[var(--glass-border)] shadow-[inset_1px_0_0_0_rgba(255,255,255,0.06),inset_0_1px_0_0_rgba(255,255,255,0.04)]'
         aria-label='Workflow panel'
       >
         <div className='flex h-full flex-col'>
@@ -637,7 +637,7 @@ export const Panel = memo(function Panel() {
 
       {/* Resize Handle */}
       <div
-        className='fixed top-0 right-[calc(var(--panel-width)-4px)] bottom-0 z-20 w-[8px] cursor-ew-resize'
+        className='fixed top-16 right-[calc(var(--panel-width)-4px)] bottom-0 z-20 w-[8px] cursor-ew-resize'
         onMouseDown={handleMouseDown}
         role='separator'
         aria-orientation='vertical'

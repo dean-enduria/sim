@@ -30,9 +30,9 @@ import {
   Notifications,
   Panel,
   SubflowNodeComponent,
-  Terminal,
 } from '@/app/workspace/[workspaceId]/w/[workflowId]/components'
 import { BlockMenu } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/block-menu'
+import { CanvasDotPattern } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/canvas-dot-pattern'
 import { CanvasMenu } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/canvas-menu'
 import { Cursors } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/cursors/cursors'
 import { ErrorBoundary } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/error/index'
@@ -3722,7 +3722,7 @@ const WorkflowContent = React.memo(() => {
               noWheelClassName='allow-scroll'
               edgesFocusable={true}
               edgesUpdatable={effectivePermissions.canEdit}
-              className={`workflow-container h-full transition-opacity duration-150 ${reactFlowStyles} ${isCanvasReady ? 'opacity-100' : 'opacity-0'} ${isHandMode ? 'canvas-mode-hand' : 'canvas-mode-cursor'}`}
+              className={`workflow-container h-full bg-[var(--canvas-bg)] transition-opacity duration-150 ${reactFlowStyles} ${isCanvasReady ? 'opacity-100' : 'opacity-0'} ${isHandMode ? 'canvas-mode-hand' : 'canvas-mode-cursor'}`}
               onNodeDrag={effectivePermissions.canEdit ? onNodeDrag : undefined}
               onNodeDragStop={effectivePermissions.canEdit ? onNodeDragStop : undefined}
               onSelectionDragStart={effectivePermissions.canEdit ? onSelectionDragStart : undefined}
@@ -3737,7 +3737,9 @@ const WorkflowContent = React.memo(() => {
               elevateNodesOnSelect={true}
               autoPanOnConnect={effectivePermissions.canEdit}
               autoPanOnNodeDrag={effectivePermissions.canEdit}
-            />
+            >
+              <CanvasDotPattern />
+            </ReactFlow>
 
             <Cursors />
 
@@ -3821,8 +3823,6 @@ const WorkflowContent = React.memo(() => {
       </div>
 
       <DiffControls />
-
-      <Terminal />
 
       {oauthModal && (
         <Suspense fallback={null}>
