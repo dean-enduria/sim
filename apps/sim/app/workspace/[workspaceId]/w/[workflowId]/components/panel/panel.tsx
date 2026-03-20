@@ -2,7 +2,16 @@
 
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
-import { ArrowUp, Lock, Square, Unlock } from 'lucide-react'
+import {
+  ArrowUp,
+  Blocks,
+  Lock,
+  ScrollText,
+  SlidersHorizontal,
+  Sparkles,
+  Square,
+  Unlock,
+} from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useShallow } from 'zustand/react/shallow'
 import {
@@ -39,6 +48,7 @@ import {
   usePanelResize,
   useUsageLimits,
 } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/panel/hooks'
+import { Terminal } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/terminal/terminal'
 import { Variables } from '@/app/workspace/[workspaceId]/w/[workflowId]/components/variables/variables'
 import { useAutoLayout } from '@/app/workspace/[workspaceId]/w/[workflowId]/hooks/use-auto-layout'
 import { useCurrentWorkflow } from '@/app/workspace/[workspaceId]/w/[workflowId]/hooks/use-current-workflow'
@@ -398,21 +408,98 @@ export const Panel = memo(function Panel() {
     <>
       <aside
         ref={panelRef}
-        className='panel-container fixed top-16 bottom-0 right-0 z-10 overflow-hidden bg-card shadow-sm'
+        className='panel-container fixed inset-y-0 right-0 z-10 overflow-hidden bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border-l border-[var(--glass-border)] shadow-[inset_1px_0_0_0_rgba(255,255,255,0.06),inset_0_1px_0_0_rgba(255,255,255,0.04)]'
         aria-label='Workflow panel'
       >
-        <div className='flex h-full flex-col border-l border-[var(--border-soft)] pt-[14px]'>
-          {/* Header */}
-          <div className='flex flex-shrink-0 items-center justify-between px-[8px]'>
-            {/* More and Chat */}
-            <div className='flex gap-[6px]'>
+        <div className='flex h-full flex-col'>
+          {/* Icon Tab Bar */}
+          <div className='flex flex-shrink-0 items-center justify-between border-b border-[var(--border)] px-[6px] py-[5px]'>
+            {/* Tab Icons */}
+            <div className='flex items-center gap-[2px]'>
+              {!permissionConfig.hideCopilot && (
+                <button
+                  type='button'
+                  className={`relative flex h-[30px] items-center gap-[5px] rounded-[8px] px-[10px] text-[12px] font-medium transition-all duration-150 ${
+                    _hasHydrated && activeTab === 'copilot'
+                      ? 'bg-[var(--surface-5)] text-[var(--text-primary)]'
+                      : 'text-[var(--text-muted)] hover:bg-[var(--surface-4)] hover:text-[var(--text-secondary)]'
+                  }`}
+                  onClick={() => handleTabClick('copilot')}
+                  data-tab-button='copilot'
+                >
+                  <Sparkles className='h-[13px] w-[13px]' />
+                  <span>Copilot</span>
+                  {_hasHydrated && activeTab === 'copilot' && (
+                    <div className='absolute bottom-0 left-[10px] right-[10px] h-[2px] rounded-full bg-[var(--glow-primary)]' />
+                  )}
+                </button>
+              )}
+              <button
+                type='button'
+                className={`relative flex h-[30px] items-center gap-[5px] rounded-[8px] px-[10px] text-[12px] font-medium transition-all duration-150 ${
+                  _hasHydrated && activeTab === 'toolbar'
+                    ? 'bg-[var(--surface-5)] text-[var(--text-primary)]'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--surface-4)] hover:text-[var(--text-secondary)]'
+                }`}
+                onClick={() => handleTabClick('toolbar')}
+                data-tab-button='toolbar'
+              >
+                <Blocks className='h-[13px] w-[13px]' />
+                <span>Blocks</span>
+                {_hasHydrated && activeTab === 'toolbar' && (
+                  <div className='absolute bottom-0 left-[10px] right-[10px] h-[2px] rounded-full bg-[var(--glow-primary)]' />
+                )}
+              </button>
+              <button
+                type='button'
+                className={`relative flex h-[30px] items-center gap-[5px] rounded-[8px] px-[10px] text-[12px] font-medium transition-all duration-150 ${
+                  _hasHydrated && activeTab === 'editor'
+                    ? 'bg-[var(--surface-5)] text-[var(--text-primary)]'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--surface-4)] hover:text-[var(--text-secondary)]'
+                }`}
+                onClick={() => handleTabClick('editor')}
+                data-tab-button='editor'
+              >
+                <SlidersHorizontal className='h-[13px] w-[13px]' />
+                <span>Editor</span>
+                {_hasHydrated && activeTab === 'editor' && (
+                  <div className='absolute bottom-0 left-[10px] right-[10px] h-[2px] rounded-full bg-[var(--glow-primary)]' />
+                )}
+              </button>
+              <button
+                type='button'
+                className={`relative flex h-[30px] items-center gap-[5px] rounded-[8px] px-[10px] text-[12px] font-medium transition-all duration-150 ${
+                  _hasHydrated && activeTab === 'logs'
+                    ? 'bg-[var(--surface-5)] text-[var(--text-primary)]'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--surface-4)] hover:text-[var(--text-secondary)]'
+                }`}
+                onClick={() => handleTabClick('logs')}
+                data-tab-button='logs'
+              >
+                <ScrollText className='h-[13px] w-[13px]' />
+                <span>Logs</span>
+                {_hasHydrated && activeTab === 'logs' && (
+                  <div className='absolute bottom-0 left-[10px] right-[10px] h-[2px] rounded-full bg-[var(--glow-primary)]' />
+                )}
+              </button>
+            </div>
+
+            {/* Utility actions */}
+            <div className='flex items-center gap-[2px]'>
+              <Button
+                className='h-[28px] w-[28px] rounded-[8px] p-0'
+                variant={isChatOpen ? 'active' : 'ghost'}
+                onClick={() => setIsChatOpen(!isChatOpen)}
+              >
+                {isChatOpen ? <BubbleChatClose /> : <BubbleChatPreview />}
+              </Button>
               <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <PopoverTrigger asChild>
-                  <Button className='h-[30px] w-[30px] rounded-[5px]'>
+                  <Button className='h-[28px] w-[28px] rounded-[8px] p-0' variant='ghost'>
                     <MoreHorizontal />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent align='start' side='bottom' sideOffset={8}>
+                <PopoverContent align='end' side='bottom' sideOffset={8}>
                   <PopoverItem
                     onClick={handleAutoLayout}
                     disabled={
@@ -423,12 +510,10 @@ export const Panel = memo(function Panel() {
                     <Layout className='h-3 w-3' animate={isAutoLayouting} variant='clockwise' />
                     <span>Auto layout</span>
                   </PopoverItem>
-                  {
-                    <PopoverItem onClick={() => setVariablesOpen(!isVariablesOpen)}>
-                      <VariableIcon className='h-3 w-3' />
-                      <span>Variables</span>
-                    </PopoverItem>
-                  }
+                  <PopoverItem onClick={() => setVariablesOpen(!isVariablesOpen)}>
+                    <VariableIcon className='h-3 w-3' />
+                    <span>Variables</span>
+                  </PopoverItem>
                   {userPermissions.canAdmin && !isSnapshotView && (
                     <PopoverItem onClick={handleToggleWorkflowLock} disabled={!hasBlocks}>
                       {allBlocksLocked ? (
@@ -439,14 +524,6 @@ export const Panel = memo(function Panel() {
                       <span>{allBlocksLocked ? 'Unlock workflow' : 'Lock workflow'}</span>
                     </PopoverItem>
                   )}
-                  {/* <PopoverItem>
-                    <Bug className='h-3 w-3' />
-                    <span>Debug</span>
-                  </PopoverItem> */}
-                  {/* <PopoverItem onClick={() => setIsMenuOpen(false)}>
-                    <Webhook className='h-3 w-3' />
-                    <span>Log webhook</span>
-                  </PopoverItem> */}
                   <PopoverItem
                     onClick={handleExportJson}
                     disabled={!userPermissions.canEdit || isExporting || !currentWorkflow}
@@ -473,80 +550,11 @@ export const Panel = memo(function Panel() {
                   </PopoverItem>
                 </PopoverContent>
               </Popover>
-              <Button
-                className='h-[30px] w-[30px] rounded-[5px]'
-                variant={isChatOpen ? 'active' : 'default'}
-                onClick={() => setIsChatOpen(!isChatOpen)}
-              >
-                {isChatOpen ? <BubbleChatClose /> : <BubbleChatPreview />}
-              </Button>
-            </div>
-
-            {/* Deploy and Run */}
-            <div className='flex gap-[6px]'>
-              <Deploy activeWorkflowId={activeWorkflowId} userPermissions={userPermissions} />
-              <Button
-                className='h-[30px] gap-[8px] px-[10px]'
-                variant={isExecuting ? 'active' : 'tertiary'}
-                onClick={isExecuting ? cancelWorkflow : () => runWorkflow()}
-                disabled={!isExecuting && isButtonDisabled}
-              >
-                {isExecuting ? (
-                  <Square className='h-[11.5px] w-[11.5px] fill-current' />
-                ) : (
-                  <Play className='h-[11.5px] w-[11.5px]' />
-                )}
-                {isExecuting ? 'Stop' : 'Execute'}
-              </Button>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className='flex flex-shrink-0 items-center justify-between border-b border-[var(--border-soft)] px-[8px] pt-[14px]'>
-            <div className='flex gap-[4px]'>
-              {!permissionConfig.hideCopilot && (
-                <Button
-                  className={`h-[28px] truncate rounded-none border-b-2 px-[8px] py-[5px] text-xs font-medium ${
-                    _hasHydrated && activeTab === 'copilot'
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground'
-                  }`}
-                  variant='ghost'
-                  onClick={() => handleTabClick('copilot')}
-                  data-tab-button='copilot'
-                >
-                  Agent
-                </Button>
-              )}
-              <Button
-                className={`h-[28px] rounded-none border-b-2 px-[8px] py-[5px] text-xs font-medium ${
-                  _hasHydrated && activeTab === 'toolbar'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
-                variant='ghost'
-                onClick={() => handleTabClick('toolbar')}
-                data-tab-button='toolbar'
-              >
-                Tools
-              </Button>
-              <Button
-                className={`h-[28px] rounded-none border-b-2 px-[8px] py-[5px] text-xs font-medium ${
-                  _hasHydrated && activeTab === 'editor'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
-                variant='ghost'
-                onClick={() => handleTabClick('editor')}
-                data-tab-button='editor'
-              >
-                Editor
-              </Button>
             </div>
           </div>
 
           {/* Tab Content - Keep all tabs mounted but hidden to preserve state */}
-          <div className='flex-1 overflow-hidden pt-[12px]'>
+          <div className='flex-1 overflow-hidden'>
             {!permissionConfig.hideCopilot && (
               <div
                 className={
@@ -585,13 +593,51 @@ export const Panel = memo(function Panel() {
             >
               <Toolbar ref={toolbarRef} isActive={activeTab === 'toolbar'} />
             </div>
+            <div
+              className={
+                _hasHydrated && activeTab === 'logs'
+                  ? 'h-full [&_.terminal-container]:!static [&_.terminal-container]:!inset-auto [&_.terminal-container]:h-full [&_.terminal-container]:w-full [&_.terminal-container]:border-t-0'
+                  : _hasHydrated
+                    ? 'hidden'
+                    : 'h-full'
+              }
+              data-tab-content='logs'
+            >
+              <Terminal />
+            </div>
+          </div>
+
+          {/* Bottom Action Bar */}
+          <div className='flex flex-shrink-0 items-center justify-end gap-[6px] border-t border-[var(--border)] px-[8px] py-[6px]'>
+            <Deploy
+              activeWorkflowId={activeWorkflowId}
+              userPermissions={userPermissions}
+              className='h-[32px] rounded-[10px] border border-[var(--border-1)] px-[14px] text-[12px] font-medium'
+            />
+            <button
+              type='button'
+              className={`flex h-[32px] items-center gap-[6px] rounded-[10px] px-[14px] text-[12px] font-medium transition-all duration-150 ${
+                isExecuting
+                  ? 'bg-red-500/15 text-red-400 hover:bg-red-500/25'
+                  : 'bg-[var(--glow-primary)] text-white hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100'
+              }`}
+              onClick={isExecuting ? cancelWorkflow : () => runWorkflow()}
+              disabled={!isExecuting && isButtonDisabled}
+            >
+              {isExecuting ? (
+                <Square className='h-[10px] w-[10px] fill-current' />
+              ) : (
+                <Play className='h-[10px] w-[10px]' />
+              )}
+              {isExecuting ? 'Stop' : 'Run'}
+            </button>
           </div>
         </div>
       </aside>
 
       {/* Resize Handle */}
       <div
-        className='fixed top-16 right-[calc(var(--panel-width)-4px)] bottom-0 z-20 w-[8px] cursor-ew-resize'
+        className='fixed top-0 right-[calc(var(--panel-width)-4px)] bottom-0 z-20 w-[8px] cursor-ew-resize'
         onMouseDown={handleMouseDown}
         role='separator'
         aria-orientation='vertical'
