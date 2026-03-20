@@ -111,7 +111,7 @@ export default function WorkspacePage() {
 
     // Only run this logic when we're at the root /workspace path
     // If we're already in a specific workspace, the children components will handle it
-    if (typeof window !== 'undefined' && (window.location.pathname === '/workspace' || window.location.pathname === '/sim/workspace')) {
+    if (typeof window !== 'undefined' && window.location.pathname.endsWith('/workspace')) {
       redirectToFirstWorkspace()
     }
   }, [session, isPending, router])
