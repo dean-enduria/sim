@@ -38,20 +38,20 @@ export function CanvasDotPattern() {
             patternUnits='userSpaceOnUse'
           >
             <line
-              x1={scaledGap / 2 - 2}
+              x1={scaledGap / 2 - 3}
               y1={scaledGap / 2}
-              x2={scaledGap / 2 + 2}
+              x2={scaledGap / 2 + 3}
               y2={scaledGap / 2}
               stroke={dotColor}
-              strokeWidth={0.5}
+              strokeWidth={1}
             />
             <line
               x1={scaledGap / 2}
-              y1={scaledGap / 2 - 2}
+              y1={scaledGap / 2 - 3}
               x2={scaledGap / 2}
-              y2={scaledGap / 2 + 2}
+              y2={scaledGap / 2 + 3}
               stroke={dotColor}
-              strokeWidth={0.5}
+              strokeWidth={1}
             />
           </pattern>
         </defs>

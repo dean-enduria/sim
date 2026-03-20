@@ -34,8 +34,8 @@ export const CONTAINER_DIMENSIONS = {
  * Handle position constants - must match CSS in workflow-block.tsx and subflow-node.tsx
  */
 export const HANDLE_POSITIONS = {
-  /** Default Y offset from block top for source/target handles */
-  DEFAULT_Y_OFFSET: 20,
+  /** Default Y offset from block top for source/target handles (below node-radius curve) */
+  DEFAULT_Y_OFFSET: 30,
   /** Error handle offset from block bottom */
   ERROR_BOTTOM_OFFSET: 17,
   /** Condition handle starting Y offset */

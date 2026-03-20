@@ -1594,7 +1594,7 @@ export const WorkflowBlock = memo(function WorkflowBlock({
         )}
         {hasRing && (
           <div
-            className={cn('pointer-events-none absolute inset-0 z-40 rounded-[8px]', ringStyles)}
+            className={cn('pointer-events-none absolute inset-0 z-40 rounded-[var(--node-radius)]', ringStyles)}
           />
         )}
       </div>
