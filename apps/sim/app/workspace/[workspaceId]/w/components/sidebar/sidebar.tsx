@@ -511,7 +511,7 @@ export const Sidebar = memo(function Sidebar() {
         <>
           <aside
             ref={sidebarRef}
-            className='sidebar-container fixed top-16 bottom-0 left-0 z-10 overflow-hidden bg-card shadow-sm'
+            className='sidebar-container fixed top-16 bottom-0 left-0 z-10 overflow-hidden bg-card'
             aria-label='Workspace sidebar'
             onClick={handleSidebarClick}
           >

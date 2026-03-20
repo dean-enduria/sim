@@ -475,7 +475,7 @@ export function DeployModal({
     <>
       <Modal open={open} onOpenChange={handleCloseModal}>
         <ModalContent size='lg' className='h-[76vh]'>
-          <ModalHeader>Workflow Deployment</ModalHeader>
+          <ModalHeader>Workflow Publication</ModalHeader>
 
           <ModalTabs
             value={activeTab}
@@ -877,7 +877,7 @@ export function DeployModal({
               Cancel
             </Button>
             <Button variant='destructive' onClick={handleUndeploy} disabled={isUndeploying}>
-              {isUndeploying ? 'Undeploying...' : 'Undeploy'}
+              {isUndeploying ? 'Unpublishing...' : 'Unpublish'}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -995,7 +995,7 @@ function GeneralFooter({
         <div />
         <div className='flex items-center gap-2'>
           <Button variant='tertiary' onClick={onDeploy} disabled={isSubmitting}>
-            {isSubmitting ? 'Deploying...' : 'Deploy'}
+            {isSubmitting ? 'Publishing...' : 'Publish'}
           </Button>
         </div>
       </ModalFooter>
@@ -1012,7 +1012,7 @@ function GeneralFooter({
           disabled={isUndeploying || isSubmitting}
           className='px-[7px] py-[5px]'
         >
-          {isUndeploying ? 'Undeploying...' : 'Undeploy'}
+          {isUndeploying ? 'Unpublishing...' : 'Unpublish'}
         </Button>
         {needsRedeployment && (
           <Button variant='tertiary' onClick={onRedeploy} disabled={isSubmitting || isUndeploying}>

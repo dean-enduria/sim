@@ -140,19 +140,10 @@ export function useConnectOAuthService() {
 
   return useMutation({
     mutationFn: async ({ providerId, callbackURL }: ConnectServiceParams) => {
-      if (providerId === 'trello') {
-        window.location.href = apiUrl('/api/auth/trello/authorize')
-        return { success: true }
-      }
-
-      if (providerId === 'shopify') {
-        const returnUrl = encodeURIComponent(callbackURL)
-        window.location.href = apiUrl(`/api/auth/shopify/authorize?returnUrl=${returnUrl}`)
-        return { success: true }
-      }
-
-      // OAuth linking is handled via direct redirect
-      logger.warn('oauth2.link called – Better Auth removed; no-op', { providerId })
+      const returnUrl = encodeURIComponent(callbackURL || window.location.href)
+      window.location.href = apiUrl(
+        `/api/auth/oauth/authorize?providerId=${encodeURIComponent(providerId)}&returnUrl=${returnUrl}`
+      )
       return { success: true }
     },
     onSuccess: () => {

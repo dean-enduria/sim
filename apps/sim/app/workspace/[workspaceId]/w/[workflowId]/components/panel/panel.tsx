@@ -496,7 +496,7 @@ export const Panel = memo(function Panel() {
                 ) : (
                   <Play className='h-[11.5px] w-[11.5px]' />
                 )}
-                {isExecuting ? 'Stop' : 'Run'}
+                {isExecuting ? 'Stop' : 'Execute'}
               </Button>
             </div>
           </div>

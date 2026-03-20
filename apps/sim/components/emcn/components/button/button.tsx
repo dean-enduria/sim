@@ -18,7 +18,7 @@ const buttonVariants = cva(
         destructive: 'bg-[var(--text-error)] text-white hover:text-white hover:brightness-106',
         secondary: 'bg-[var(--brand-secondary)] text-[var(--text-primary)]',
         tertiary:
-          '!bg-[var(--brand-tertiary-2)] !text-[var(--text-inverse)] hover:brightness-106 hover:!text-[var(--text-inverse)] ![transition-property:background-color,border-color,fill,stroke]',
+          '!bg-[var(--brand-primary-hex)] !text-[var(--text-inverse)] hover:!bg-[var(--brand-primary-hover-hex)] hover:!text-[var(--text-inverse)] ![transition-property:background-color,border-color,fill,stroke]',
         ghost: '',
         'ghost-secondary': 'text-[var(--text-muted)]',
         /** Branded button - requires branded-button-gradient or branded-button-custom class for colors */

@@ -408,22 +408,11 @@ export function OAuthRequiredModal({
         hasNewScopes: newScopes.length > 0,
       })
 
-      if (providerId === 'trello') {
-        onClose()
-        window.location.href = apiUrl('/api/auth/trello/authorize')
-        return
-      }
-
-      if (providerId === 'shopify') {
-        onClose()
-        const returnUrl = encodeURIComponent(window.location.href)
-        window.location.href = apiUrl(`/api/auth/shopify/authorize?returnUrl=${returnUrl}`)
-        return
-      }
-
-      // OAuth linking via Better Auth removed; no-op
-      logger.warn('oauth2.link called – Better Auth removed; no-op', { providerId })
       onClose()
+      const returnUrl = encodeURIComponent(window.location.href)
+      window.location.href = apiUrl(
+        `/api/auth/oauth/authorize?providerId=${encodeURIComponent(providerId)}&returnUrl=${returnUrl}`
+      )
     } catch (err) {
       logger.error('Error initiating OAuth flow:', { error: err })
       setError('Failed to connect. Please try again.')

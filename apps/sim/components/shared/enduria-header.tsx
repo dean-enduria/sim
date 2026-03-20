@@ -99,9 +99,9 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'AI & Automation',
     items: [
-      { label: 'Workflow Builder', href: '/sim/workspace', icon: Workflow, internal: true },
-      { label: 'Templates', href: '/sim/templates', icon: Zap, internal: true },
-      { label: 'Executions', href: '/sim/workspace/logs', icon: History, internal: true },
+      { label: 'Workflow Builder', href: '/workflows/workspace', icon: Workflow, internal: true },
+      { label: 'Templates', href: '/workflows/templates', icon: Zap, internal: true },
+      { label: 'Executions', href: '/workflows/workspace/logs', icon: History, internal: true },
     ],
   },
 ]
@@ -150,7 +150,6 @@ export function EnduriaHeader() {
         // Match Enduria's glassmorphic header exactly
         'border-b border-[var(--border-soft)]',
         'bg-background/80 backdrop-blur-xl',
-        'shadow-[0_14px_38px_-28px_hsl(var(--foreground)/0.65)]',
         'supports-[backdrop-filter]:bg-background/60'
       )}
     >

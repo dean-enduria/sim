@@ -95,6 +95,7 @@ import { ManualTriggerBlock } from '@/blocks/blocks/manual_trigger'
 import { McpBlock } from '@/blocks/blocks/mcp'
 import { Mem0Block } from '@/blocks/blocks/mem0'
 import { MemoryBlock } from '@/blocks/blocks/memory'
+import { MicrosoftEntraIdBlock } from '@/blocks/blocks/microsoft_entra_id'
 import { MicrosoftDataverseBlock } from '@/blocks/blocks/microsoft_dataverse'
 import { MicrosoftExcelBlock, MicrosoftExcelV2Block } from '@/blocks/blocks/microsoft_excel'
 import { MicrosoftPlannerBlock } from '@/blocks/blocks/microsoft_planner'
@@ -186,8 +187,9 @@ import { ZepBlock } from '@/blocks/blocks/zep'
 import { ZoomBlock } from '@/blocks/blocks/zoom'
 import type { BlockConfig } from '@/blocks/types'
 
-// Registry of all available blocks, alphabetically sorted
+// Registry of all available blocks — Enduria first, then alphabetically sorted
 export const registry: Record<string, BlockConfig> = {
+  enduria: EnduriaBlock,
   a2a: A2ABlock,
   agent: AgentBlock,
   ahrefs: AhrefsBlock,
@@ -224,7 +226,6 @@ export const registry: Record<string, BlockConfig> = {
   duckduckgo: DuckDuckGoBlock,
   dynamodb: DynamoDBBlock,
   elasticsearch: ElasticsearchBlock,
-  enduria: EnduriaBlock,
   elevenlabs: ElevenLabsBlock,
   enrich: EnrichBlock,
   evaluator: EvaluatorBlock,
@@ -297,6 +298,7 @@ export const registry: Record<string, BlockConfig> = {
   mcp: McpBlock,
   mem0: Mem0Block,
   memory: MemoryBlock,
+  microsoft_entra_id: MicrosoftEntraIdBlock,
   microsoft_dataverse: MicrosoftDataverseBlock,
   microsoft_excel: MicrosoftExcelBlock,
   microsoft_excel_v2: MicrosoftExcelV2Block,

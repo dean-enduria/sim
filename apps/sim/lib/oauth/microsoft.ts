@@ -3,6 +3,7 @@ export const PROACTIVE_REFRESH_THRESHOLD_DAYS = 7
 
 export const MICROSOFT_PROVIDERS = new Set([
   'microsoft-dataverse',
+  'microsoft-entra-id',
   'microsoft-excel',
   'microsoft-planner',
   'microsoft-teams',

@@ -4,21 +4,14 @@ import { useEffect, useRef, useState } from 'react'
 import { createLogger } from '@sim/logger'
 import { Camera, Check, Pencil } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import {
   Button,
   Combobox,
   Label,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   Switch,
 } from '@/components/emcn'
 import { Input, Skeleton } from '@/components/ui'
-import { signOut, useSession } from '@/lib/auth/auth-client'
-import { ANONYMOUS_USER_ID } from '@/lib/auth/constants'
+import { useSession } from '@/lib/auth/auth-client'
 import { getEnv, isTruthy } from '@/lib/core/config/env'
 import { isHosted } from '@/lib/core/config/feature-flags'
 import { getBaseUrl } from '@/lib/core/utils/urls'
@@ -26,7 +19,6 @@ import { useProfilePictureUpload } from '@/app/workspace/[workspaceId]/w/compone
 import { useBrandConfig } from '@/lib/branding'
 import { useGeneralSettings, useUpdateGeneralSetting } from '@/hooks/queries/general-settings'
 import { useUpdateUserProfile, useUserProfile } from '@/hooks/queries/user-profile'
-import { clearUserData } from '@/stores'
 
 const logger = createLogger('General')
 
@@ -120,7 +112,6 @@ interface GeneralProps {
 }
 
 export function General({ onOpenChange }: GeneralProps) {
-  const router = useRouter()
   const brandConfig = useBrandConfig()
   const { data: session } = useSession()
 
@@ -133,7 +124,6 @@ export function General({ onOpenChange }: GeneralProps) {
   const isLoading = isProfileLoading || isSettingsLoading
 
   const isTrainingEnabled = isTruthy(getEnv('NEXT_PUBLIC_COPILOT_TRAINING_ENABLED'))
-  const isAuthDisabled = session?.user?.id === ANONYMOUS_USER_ID
 
   const [isSuperUser, setIsSuperUser] = useState(false)
   const [loadingSuperUser, setLoadingSuperUser] = useState(true)
@@ -141,11 +131,6 @@ export function General({ onOpenChange }: GeneralProps) {
   const [name, setName] = useState(profile?.name || '')
   const [isEditingName, setIsEditingName] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const [isResettingPassword, setIsResettingPassword] = useState(false)
-  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
-  const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false)
-  const [resetPasswordError, setResetPasswordError] = useState<string | null>(null)
 
   const [uploadError, setUploadError] = useState<string | null>(null)
 
@@ -234,42 +219,6 @@ export function General({ onOpenChange }: GeneralProps) {
 
   const handleInputBlur = () => {
     handleUpdateName()
-  }
-
-  const handleSignOut = async () => {
-    try {
-      await Promise.all([signOut(), clearUserData()])
-      router.push('/login?fromLogout=true')
-    } catch (error) {
-      logger.error('Error signing out:', { error })
-      router.push('/login?fromLogout=true')
-    }
-  }
-
-  const handleResetPasswordConfirm = async () => {
-    if (!profile?.email) return
-
-    setIsResettingPassword(true)
-    setResetPasswordError(null)
-
-    try {
-      // Stubbed - password reset is managed by Enduria
-      setResetPasswordSuccess(true)
-
-      setTimeout(() => {
-        setShowResetPasswordModal(false)
-        setResetPasswordSuccess(false)
-      }, 1500)
-    } catch (error) {
-      logger.error('Error resetting password:', error)
-      setResetPasswordError('Failed to send email')
-
-      setTimeout(() => {
-        setResetPasswordError(null)
-      }, 5000)
-    } finally {
-      setIsResettingPassword(false)
-    }
   }
 
   const handleThemeChange = async (value: string) => {
@@ -538,16 +487,6 @@ export function General({ onOpenChange }: GeneralProps) {
       )}
 
       <div className='mt-auto flex items-center gap-[8px]'>
-        {!isAuthDisabled && (
-          <>
-            <Button onClick={handleSignOut} variant='active'>
-              Sign out
-            </Button>
-            <Button onClick={() => setShowResetPasswordModal(true)} variant='active'>
-              Reset password
-            </Button>
-          </>
-        )}
         {isHosted && (
           <Button
             onClick={() => window.open('/?from=settings', '_blank', 'noopener,noreferrer')}
@@ -558,42 +497,6 @@ export function General({ onOpenChange }: GeneralProps) {
           </Button>
         )}
       </div>
-
-      {/* Password Reset Confirmation Modal */}
-      <Modal open={showResetPasswordModal} onOpenChange={setShowResetPasswordModal}>
-        <ModalContent size='sm'>
-          <ModalHeader>Reset Password</ModalHeader>
-          <ModalBody>
-            <p className='text-[12px] text-[var(--text-secondary)]'>
-              A password reset link will be sent to{' '}
-              <span className='font-medium text-[var(--text-primary)]'>{profile?.email}</span>.
-              Click the link in the email to create a new password.
-            </p>
-            {resetPasswordError && (
-              <p className='mt-[8px] text-[12px] text-[var(--text-error)]'>{resetPasswordError}</p>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={() => setShowResetPasswordModal(false)}
-              disabled={isResettingPassword || resetPasswordSuccess}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant='tertiary'
-              onClick={handleResetPasswordConfirm}
-              disabled={isResettingPassword || resetPasswordSuccess}
-            >
-              {isResettingPassword
-                ? 'Sending...'
-                : resetPasswordSuccess
-                  ? 'Sent'
-                  : 'Send Reset Email'}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </div>
   )
 }

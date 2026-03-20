@@ -1,6 +1,6 @@
 import { createLogger } from '@sim/logger'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { syncThemeToNextThemes } from '@/lib/core/utils/theme'
+import { getThemeFromNextThemes, syncThemeToNextThemes } from '@/lib/core/utils/theme'
 import { apiUrl } from '@/lib/api/fetcher'
 
 const logger = createLogger('GeneralSettingsQuery')
@@ -40,11 +40,16 @@ async function fetchGeneralSettings(): Promise<GeneralSettings> {
 
   const { data } = await response.json()
 
+  // Use the user's explicitly saved theme, or fall back to localStorage (which
+  // next-themes already initialises from), or finally 'dark' as last resort.
+  const theme: GeneralSettings['theme'] =
+    data.theme || getThemeFromNextThemes() || 'dark'
+
   return {
     autoConnect: data.autoConnect ?? true,
     showTrainingControls: data.showTrainingControls ?? false,
     superUserModeEnabled: data.superUserModeEnabled ?? true,
-    theme: data.theme || 'dark',
+    theme,
     telemetryEnabled: data.telemetryEnabled ?? true,
     billingUsageNotificationsEnabled: data.billingUsageNotificationsEnabled ?? true,
     errorNotificationsEnabled: data.errorNotificationsEnabled ?? true,

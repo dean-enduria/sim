@@ -1,0 +1,1 @@
+ALTER TABLE "workspace" ADD COLUMN "org_id" text DEFAULT 'default-org' NOT NULL;

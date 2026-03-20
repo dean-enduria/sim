@@ -197,6 +197,18 @@ export const OAUTH_PROVIDERS: Record<string, OAuthProviderConfig> = {
           'offline_access',
         ],
       },
+      'microsoft-entra-id': {
+        name: 'Microsoft Entra ID',
+        description: 'Manage users, groups, roles, and devices in Microsoft Entra ID.',
+        providerId: 'microsoft-entra-id',
+        icon: MicrosoftIcon,
+        baseProviderIcon: MicrosoftIcon,
+        scopes: [
+          'openid', 'profile', 'email', 'offline_access',
+          'User.ReadWrite.All', 'Group.ReadWrite.All', 'GroupMember.ReadWrite.All',
+          'RoleManagement.ReadWrite.Directory', 'Directory.Read.All', 'Device.ReadWrite.All',
+        ],
+      },
       'microsoft-excel': {
         name: 'Microsoft Excel',
         description: 'Connect to Microsoft Excel and manage spreadsheets.',

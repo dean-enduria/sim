@@ -16,7 +16,13 @@ import { QueryProvider } from '@/app/_shell/providers/query-provider'
 import { SessionProvider } from '@/app/_shell/providers/session-provider'
 import { ThemeProvider } from '@/app/_shell/providers/theme-provider'
 import { TooltipProvider } from '@/app/_shell/providers/tooltip-provider'
-import { season } from '@/app/_styles/fonts/season/season'
+import { Inter } from 'next/font/google'
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-season',
+})
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -212,7 +218,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <PublicEnvScript />
       </head>
-      <body className={`${season.variable} font-season`} suppressHydrationWarning>
+      <body className={`${inter.variable} font-season`} suppressHydrationWarning>
         <HydrationErrorHandler />
         <OneDollarStats />
         <PostHogProvider>

@@ -13,7 +13,6 @@ import {
   Server,
   Settings,
   ShieldCheck,
-  User,
   Users,
   Wrench,
 } from 'lucide-react'
@@ -128,7 +127,6 @@ const sectionConfig: { key: NavigationSection; title: string }[] = [
 
 const allNavigationItems: NavigationItem[] = [
   { id: 'general', label: 'General', icon: Settings, section: 'account' },
-  { id: 'template-profile', label: 'Template Profile', icon: User, section: 'account' },
   {
     id: 'access-control',
     label: 'Access Control',

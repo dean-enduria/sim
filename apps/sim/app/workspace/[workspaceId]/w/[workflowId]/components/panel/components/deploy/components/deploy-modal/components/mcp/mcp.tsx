@@ -436,7 +436,7 @@ export function McpDeploy({
   if (!isDeployed) {
     return (
       <div className='flex h-full items-center justify-center text-[13px] text-[var(--text-muted)]'>
-        Deploy your workflow first to add it as an MCP tool.
+        Publish your workflow first to add it as an MCP tool.
       </div>
     )
   }

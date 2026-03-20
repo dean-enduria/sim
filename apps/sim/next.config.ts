@@ -9,7 +9,7 @@ import {
 
 const nextConfig: NextConfig = {
   // When SIM is served behind Enduria's reverse proxy, all routes, API calls,
-  // and assets must be namespaced under /sim/ so the proxy works correctly.
+  // and assets must be namespaced under /workflows/ so the proxy works correctly.
   basePath: env.SIM_BASE_PATH || '',
   devIndicators: false,
   images: {

@@ -209,7 +209,7 @@ export function GeneralDeploy({
               </>
             ) : (
               <div className='flex h-full items-center justify-center text-[#8D8D8D] text-[13px]'>
-                Deploy your workflow to see a preview
+                Publish your workflow to see a preview
               </div>
             )}
           </div>

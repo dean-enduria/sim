@@ -76,21 +76,21 @@ export function Deploy({ activeWorkflowId, userPermissions, className }: DeployP
    */
   const getTooltipText = () => {
     if (isEmpty) {
-      return 'Cannot deploy an empty workflow'
+      return 'Cannot publish an empty workflow'
     }
     if (!canDeploy) {
       return 'Admin permissions required'
     }
     if (isDeploying) {
-      return 'Deploying...'
+      return 'Publishing...'
     }
     if (changeDetected) {
-      return 'Update deployment'
+      return 'Update publication'
     }
     if (isDeployed) {
-      return 'Active deployment'
+      return 'Active publication'
     }
-    return 'Deploy workflow'
+    return 'Publish workflow'
   }
 
   return (
@@ -107,7 +107,7 @@ export function Deploy({ activeWorkflowId, userPermissions, className }: DeployP
               disabled={isRegistryLoading || isDisabled}
             >
               {isDeploying && <Loader2 className='h-[13px] w-[13px] animate-spin' />}
-              {changeDetected ? 'Update' : isDeployed ? 'Live' : 'Deploy'}
+              {changeDetected ? 'Update' : isDeployed ? 'Live' : 'Publish'}
             </Button>
           </span>
         </Tooltip.Trigger>
