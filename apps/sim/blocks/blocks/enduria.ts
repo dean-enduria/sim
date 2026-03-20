@@ -12,6 +12,7 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
   category: 'tools',
   bgColor: '#1E3A5F',
   icon: EnduriaIcon,
+  triggerAllowed: true,
   subBlocks: [
     // Operation selector
     {
