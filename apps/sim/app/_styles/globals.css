@@ -14,7 +14,7 @@
   --panel-width: 320px; /* PANEL_WIDTH.DEFAULT */
   --toolbar-triggers-height: 300px; /* TOOLBAR_TRIGGERS_HEIGHT.DEFAULT */
   --editor-connections-height: 172px; /* EDITOR_CONNECTIONS_HEIGHT.DEFAULT */
-  --terminal-height: 206px; /* TERMINAL_HEIGHT.DEFAULT */
+  --terminal-height: 0px; /* Terminal moved to panel tab */
 }
 
 .sidebar-container {
@@ -200,21 +200,44 @@
     --terminal-status-warning-bg: #fefce8;
     --terminal-status-warning-border: #facc15;
     --terminal-status-warning-color: #a16207;
+
+    /* Canvas redesign — glow & glassmorphism */
+    --glow-primary: #6366f1;
+    --glow-primary-rgb: 99, 102, 241;
+    --glow-spread: 12px;
+    --glow-opacity: 0.25;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-blur: 12px;
+    --canvas-bg: var(--bg);
+    --canvas-dot-color: rgba(0, 0, 0, 0.05);
+    --canvas-dot-size: 1px;
+    --edge-color: var(--workflow-edge);
+    --edge-active-color: var(--glow-primary);
+    --edge-active-width: 2.5px;
+    --node-bg: var(--surface-2);
+    --node-border: var(--border-1);
+    --node-radius: 20px;
+    --node-header-radius: 16px;
+    --node-selected-ring: var(--glow-primary);
+    --node-selected-shadow: 0 0 var(--glow-spread)
+      rgba(var(--glow-primary-rgb), var(--glow-opacity));
+    --node-hover-shadow: 0 0 8px rgba(var(--glow-primary-rgb), 0.1);
   }
   .dark {
     /* Surface */
-    --bg: #1b1b1b;
-    --surface-1: #1e1e1e;
-    --surface-2: #232323;
-    --surface-3: #242424;
-    --surface-4: #292929;
-    --border: #2c2c2c;
-    --surface-5: #363636;
-    --border-1: #3d3d3d;
+    --bg: #0d0d0f;
+    --surface-1: #111114;
+    --surface-2: #161619;
+    --surface-3: #1a1a1e;
+    --surface-4: #1e1e23;
+    --border: #1f1f24;
+    --surface-5: #252529;
+    --border-1: #2a2a30;
     --surface-6: #454545;
     --surface-7: #454545;
 
-    --workflow-edge: #454545; /* workflow handles/edges - same as surface-6 in dark */
+    --workflow-edge: #3a3a44; /* workflow handles/edges - slightly purple-tinted */
 
     /* Text */
     --text-primary: #e6e6e6;
@@ -321,6 +344,30 @@
     --terminal-status-warning-bg: #3d3520;
     --terminal-status-warning-border: #5c4d1f;
     --terminal-status-warning-color: #d4a72c;
+
+    /* Canvas redesign — glow & glassmorphism */
+    --glow-primary: #8357ff;
+    --glow-primary-rgb: 131, 87, 255;
+    --glow-spread: 16px;
+    --glow-opacity: 0.4;
+    --glass-bg: rgba(17, 17, 20, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --glass-blur: 20px;
+    --canvas-bg: var(--bg);
+    --canvas-dot-color: rgba(138, 138, 168, 0.07);
+    --canvas-dot-size: 1px;
+    --edge-color: var(--workflow-edge);
+    --edge-active-color: var(--glow-primary);
+    --edge-active-width: 2.5px;
+    --node-bg: rgba(22, 22, 25, 0.85);
+    --node-border: rgba(255, 255, 255, 0.06);
+    --node-radius: 16px;
+    --node-header-radius: 12px;
+    --node-selected-ring: var(--glow-primary);
+    --node-selected-shadow: 0 0 20px rgba(var(--glow-primary-rgb), 0.45), 0 0 60px
+      rgba(var(--glow-primary-rgb), 0.15);
+    --node-hover-shadow: 0 0 12px rgba(var(--glow-primary-rgb), 0.2), 0 0 40px
+      rgba(var(--glow-primary-rgb), 0.06);
   }
 }
 
