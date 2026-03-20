@@ -1,7 +1,35 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
   const secret = request.headers.get('x-internal-api-secret')
-  return NextResponse.json({ received: true, hasSecret: !!secret, event: body.event })
+  const expectedSecret = process.env.INTERNAL_API_SECRET
+
+  if (!expectedSecret || !secret || secret !== expectedSecret) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  let payload: { event: string; orgId: string; data: Record<string, unknown>; timestamp: string }
+  try {
+    payload = await request.json()
+  } catch (_e) {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+
+  if (!payload.event || !payload.orgId) {
+    return NextResponse.json(
+      { error: 'Missing required fields: event, orgId' },
+      { status: 400 }
+    )
+  }
+
+  console.log(`[Webhook] Received ${payload.event} for org ${payload.orgId}`)
+
+  // TODO: Look up workflows triggered by this event type
+  // and queue them for execution via the async job system.
+
+  return NextResponse.json({
+    received: true,
+    event: payload.event,
+    orgId: payload.orgId,
+  })
 }
