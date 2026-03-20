@@ -3,6 +3,51 @@
  */
 
 /**
+ * Dropdown options for the trigger type selector in the Enduria block
+ */
+export const enduriaTriggerOptions = [
+  { label: 'All Events (Webhook)', id: 'enduria_webhook' },
+  { label: 'Ticket Created', id: 'enduria_ticket_created' },
+  { label: 'Ticket Updated', id: 'enduria_ticket_updated' },
+  { label: 'Ticket Assigned', id: 'enduria_ticket_assigned' },
+  { label: 'Ticket Escalated', id: 'enduria_ticket_escalated' },
+  { label: 'Ticket Resolved', id: 'enduria_ticket_resolved' },
+  { label: 'Ticket Reopened', id: 'enduria_ticket_reopened' },
+  { label: 'Ticket Commented', id: 'enduria_ticket_commented' },
+  { label: 'Ticket Priority Changed', id: 'enduria_ticket_priority_changed' },
+  { label: 'Ticket Status Changed', id: 'enduria_ticket_status_changed' },
+  { label: 'Incident Created', id: 'enduria_incident_created' },
+  { label: 'Incident Triggered', id: 'enduria_incident_triggered' },
+  { label: 'Incident Updated', id: 'enduria_incident_updated' },
+  { label: 'Incident Escalated', id: 'enduria_incident_escalated' },
+  { label: 'Incident Resolved', id: 'enduria_incident_resolved' },
+  { label: 'Incident Acknowledged', id: 'enduria_incident_acknowledged' },
+  { label: 'Change Created', id: 'enduria_change_created' },
+  { label: 'Change Submitted', id: 'enduria_change_submitted' },
+  { label: 'Change Approved', id: 'enduria_change_approved' },
+  { label: 'Change Rejected', id: 'enduria_change_rejected' },
+  { label: 'Change Implemented', id: 'enduria_change_implemented' },
+  { label: 'Change Closed', id: 'enduria_change_closed' },
+  { label: 'Asset Created', id: 'enduria_asset_created' },
+  { label: 'Asset Updated', id: 'enduria_asset_updated' },
+  { label: 'Asset Discovered', id: 'enduria_asset_discovered' },
+  { label: 'Asset Retired', id: 'enduria_asset_retired' },
+  { label: 'Asset Maintenance Due', id: 'enduria_asset_maintenance_due' },
+  { label: 'Article Published', id: 'enduria_kb_article_published' },
+  { label: 'Article Updated', id: 'enduria_kb_article_updated' },
+  { label: 'Article Archived', id: 'enduria_kb_article_archived' },
+  { label: 'Article Deleted', id: 'enduria_kb_article_deleted' },
+  { label: 'Project Created', id: 'enduria_project_created' },
+  { label: 'Task Completed', id: 'enduria_project_task_completed' },
+  { label: 'Task Overdue', id: 'enduria_project_task_overdue' },
+  { label: 'Milestone Reached', id: 'enduria_project_milestone_reached' },
+  { label: 'SLA Breached', id: 'enduria_sla_breached' },
+  { label: 'SLA Warning', id: 'enduria_sla_warning' },
+  { label: 'Client Created', id: 'enduria_client_created' },
+  { label: 'Client Updated', id: 'enduria_client_updated' },
+]
+
+/**
  * Map of trigger IDs to their corresponding Enduria event types
  */
 const TRIGGER_EVENT_MAP: Record<string, string> = {

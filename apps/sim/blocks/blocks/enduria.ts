@@ -1,6 +1,8 @@
 import { EnduriaIcon } from '@/components/icons'
 import type { BlockConfig } from '@/blocks/types'
 import type { EnduriaResponse } from '@/tools/enduria/types'
+import { getTrigger } from '@/triggers'
+import { enduriaTriggerOptions } from '@/triggers/enduria/utils'
 
 export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
   type: 'enduria',
@@ -14,7 +16,56 @@ export const EnduriaBlock: BlockConfig<EnduriaResponse> = {
   icon: EnduriaIcon,
   triggerAllowed: true,
   subBlocks: [
-    // Operation selector
+    // Trigger type selector (visible in trigger mode only)
+    {
+      id: 'selectedTriggerId',
+      title: 'Trigger Type',
+      type: 'dropdown',
+      mode: 'trigger',
+      options: enduriaTriggerOptions,
+      value: () => 'enduria_webhook',
+      required: true,
+    },
+    ...getTrigger('enduria_webhook').subBlocks,
+    ...getTrigger('enduria_ticket_created').subBlocks,
+    ...getTrigger('enduria_ticket_updated').subBlocks,
+    ...getTrigger('enduria_ticket_assigned').subBlocks,
+    ...getTrigger('enduria_ticket_escalated').subBlocks,
+    ...getTrigger('enduria_ticket_resolved').subBlocks,
+    ...getTrigger('enduria_ticket_reopened').subBlocks,
+    ...getTrigger('enduria_ticket_commented').subBlocks,
+    ...getTrigger('enduria_ticket_priority_changed').subBlocks,
+    ...getTrigger('enduria_ticket_status_changed').subBlocks,
+    ...getTrigger('enduria_incident_created').subBlocks,
+    ...getTrigger('enduria_incident_triggered').subBlocks,
+    ...getTrigger('enduria_incident_updated').subBlocks,
+    ...getTrigger('enduria_incident_escalated').subBlocks,
+    ...getTrigger('enduria_incident_resolved').subBlocks,
+    ...getTrigger('enduria_incident_acknowledged').subBlocks,
+    ...getTrigger('enduria_change_created').subBlocks,
+    ...getTrigger('enduria_change_submitted').subBlocks,
+    ...getTrigger('enduria_change_approved').subBlocks,
+    ...getTrigger('enduria_change_rejected').subBlocks,
+    ...getTrigger('enduria_change_implemented').subBlocks,
+    ...getTrigger('enduria_change_closed').subBlocks,
+    ...getTrigger('enduria_asset_created').subBlocks,
+    ...getTrigger('enduria_asset_updated').subBlocks,
+    ...getTrigger('enduria_asset_discovered').subBlocks,
+    ...getTrigger('enduria_asset_retired').subBlocks,
+    ...getTrigger('enduria_asset_maintenance_due').subBlocks,
+    ...getTrigger('enduria_kb_article_published').subBlocks,
+    ...getTrigger('enduria_kb_article_updated').subBlocks,
+    ...getTrigger('enduria_kb_article_archived').subBlocks,
+    ...getTrigger('enduria_kb_article_deleted').subBlocks,
+    ...getTrigger('enduria_project_created').subBlocks,
+    ...getTrigger('enduria_project_task_completed').subBlocks,
+    ...getTrigger('enduria_project_task_overdue').subBlocks,
+    ...getTrigger('enduria_project_milestone_reached').subBlocks,
+    ...getTrigger('enduria_sla_breached').subBlocks,
+    ...getTrigger('enduria_sla_warning').subBlocks,
+    ...getTrigger('enduria_client_created').subBlocks,
+    ...getTrigger('enduria_client_updated').subBlocks,
+    // Operation selector (visible in action/block mode only)
     {
       id: 'operation',
       title: 'Operation',
